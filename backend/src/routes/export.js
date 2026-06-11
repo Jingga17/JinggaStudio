@@ -5,6 +5,8 @@ const { calculateStudentScores } = require('../services/scoring');
 const auth = require('../middleware/auth');
 const archiver = require('archiver');
 const stream = require('stream');
+const fs = require('fs');
+const path = require('path');
 const { generateIndividuPDF } = require('../services/pdf-generator');
 
 // Export CSV for a class: students + summary scores
@@ -13,52 +15,54 @@ router.get('/class/:kelas', auth, async (req, res, next) => {
 		const kelas = req.params.kelas;
 		const students = await query('SELECT * FROM students WHERE kelas = ?', [kelas]);
 		const rows = [];
-		// First, generate class-level PDF summary and add to archive
+		// First, generate class-level PDF summary and add to archive using a temp file
+		const tmpFiles = [];
 		try {
-			const PDFDocument = require('pdfkit');
-			const classDoc = new PDFDocument({ margin: 40, size: 'A4' });
-			const classChunks = [];
-			classDoc.on('data', c => classChunks.push(c));
-			const classPdfPromise = new Promise((resolve, reject) => {
-				classDoc.on('end', () => resolve(Buffer.concat(classChunks)));
-				classDoc.on('error', reject);
+			const tmpClassPath = path.join(__dirname, '../../uploads', `tmp_class_${kelas.replace(/\s+/g,'_')}.pdf`);
+			await new Promise((resolve, reject) => {
+				const PDFDocument = require('pdfkit');
+				const classDoc = new PDFDocument({ margin: 40, size: 'A4' });
+				const out = fs.createWriteStream(tmpClassPath);
+				classDoc.pipe(out);
+
+				classDoc.fontSize(16).font('Helvetica-Bold').text('LAPORAN KELAS', { align: 'center' });
+				classDoc.moveDown(0.5);
+				classDoc.fontSize(12).font('Helvetica').text(`Kelas: ${kelas}`);
+				classDoc.moveDown(0.5);
+
+				classDoc.fontSize(10).font('Helvetica-Bold');
+				classDoc.text('No', 50, classDoc.y, { continued: true });
+				classDoc.text('Nama', 90, classDoc.y, { continued: true });
+				classDoc.text('NISN', 250, classDoc.y, { continued: true });
+				classDoc.text('Lie', 350, classDoc.y, { continued: true });
+				classDoc.text('CC', 400, classDoc.y, { continued: true });
+				classDoc.text('Status', 440, classDoc.y);
+				classDoc.moveDown(0.5);
+				classDoc.font('Helvetica').fontSize(10);
+
+				(async () => {
+					let idx = 1;
+					for (const s of students) {
+						const scores = await calculateStudentScores(s.id);
+						classDoc.text(String(idx), 50, classDoc.y, { continued: true });
+						classDoc.text(s.nama, 90, classDoc.y, { continued: true });
+						classDoc.text(s.nisn || '-', 250, classDoc.y, { continued: true });
+						classDoc.text(String(scores.lie_score || 0), 350, classDoc.y, { continued: true });
+						classDoc.text(String(scores.cc_score || 0), 400, classDoc.y, { continued: true });
+						classDoc.text(scores.status || '-', 440, classDoc.y);
+						classDoc.moveDown(0.4);
+						idx++;
+					}
+					classDoc.end();
+				})();
+
+				out.on('finish', resolve);
+				out.on('error', reject);
 			});
-
-			// Build class PDF: header + table of students
-			classDoc.fontSize(16).font('Helvetica-Bold').text('LAPORAN KELAS', { align: 'center' });
-			classDoc.moveDown(0.5);
-			classDoc.fontSize(12).font('Helvetica').text(`Kelas: ${kelas}`);
-			classDoc.moveDown(0.5);
-
-			// Table header
-			classDoc.fontSize(10).font('Helvetica-Bold');
-			classDoc.text('No', 50, classDoc.y, { continued: true });
-			classDoc.text('Nama', 90, classDoc.y, { continued: true });
-			classDoc.text('NISN', 250, classDoc.y, { continued: true });
-			classDoc.text('Lie', 350, classDoc.y, { continued: true });
-			classDoc.text('CC', 400, classDoc.y, { continued: true });
-			classDoc.text('Status', 440, classDoc.y);
-			classDoc.moveDown(0.5);
-			classDoc.font('Helvetica').fontSize(10);
-
-			let idx = 1;
-			for (const s of students) {
-				const scores = await calculateStudentScores(s.id);
-				classDoc.text(String(idx), 50, classDoc.y, { continued: true });
-				classDoc.text(s.nama, 90, classDoc.y, { continued: true });
-				classDoc.text(s.nisn || '-', 250, classDoc.y, { continued: true });
-				classDoc.text(String(scores.lie_score || 0), 350, classDoc.y, { continued: true });
-				classDoc.text(String(scores.cc_score || 0), 400, classDoc.y, { continued: true });
-				classDoc.text(scores.status || '-', 440, classDoc.y);
-				classDoc.moveDown(0.4);
-				idx++;
-			}
-
-			classDoc.end();
-			const classPdfBuffer = await classPdfPromise;
-			archive.append(classPdfBuffer, { name: `Laporan_Kelas_${kelas.replace(/\s+/g,'_')}.pdf` });
+			archive.file(tmpClassPath, { name: `Laporan_Kelas_${kelas.replace(/\s+/g,'_')}.pdf` });
+			tmpFiles.push(tmpClassPath);
 		} catch (e) {
-			console.warn('Gagal membuat PDF kelas:', e.message);
+			console.warn('Gagal membuat PDF kelas:', e && e.message);
 		}
 
 		for (const s of students) {
@@ -166,46 +170,32 @@ router.get('/zip/class/:kelas', auth, async (req, res, next) => {
 				analisis: []
 			};
 
-			// generate PDF into buffer by piping into PassThrough and collecting
-			const pass = new stream.PassThrough();
-			const chunks = [];
-			pass.on('data', c => chunks.push(c));
-			const pdfPromise = new Promise((resolve, reject) => {
-				pass.on('end', () => resolve(Buffer.concat(chunks)));
-				pass.on('error', reject);
-			});
-
-			// generateIndividuPDF will pipe to the provided stream and end it when done
-			generateIndividuPDF(data, pass);
-			let pdfBuffer = await pdfPromise;
-
-			// Quick validation: check PDF signature
-			const sig = pdfBuffer && pdfBuffer.slice(0,4).toString();
-			if (sig !== '%PDF') {
-				console.warn(`Generated buffer for student ${s.id} does not start with %PDF (found: ${sig}). Creating fallback PDF.`);
-				// create a simple fallback PDF buffer
-				try {
-					const PDFDocument = require('pdfkit');
-					const tmpChunks = [];
-					const tmpDoc = new PDFDocument({ margin: 40, size: 'A4' });
-					tmpDoc.on('data', c => tmpChunks.push(c));
-					const tmpPromise = new Promise((resolve, reject) => {
-						tmpDoc.on('end', () => resolve(Buffer.concat(tmpChunks)));
-						tmpDoc.on('error', reject);
-					});
-					tmpDoc.fontSize(14).text(`Laporan (fallback) - ${s.nama}`);
-					tmpDoc.moveDown();
-					tmpDoc.fontSize(10).text('PDF generator fallback content.');
-					tmpDoc.end();
-					pdfBuffer = await tmpPromise;
-				} catch (e) {
-					console.error('Failed to create fallback PDF for', s.id, e.message);
-				}
+			// create a temp file for this student's PDF and add file to archive
+			try {
+				const tmpPath = path.join(__dirname, '../../uploads', `tmp_${s.id}.pdf`);
+				await new Promise((resolve, reject) => {
+					const out = fs.createWriteStream(tmpPath);
+					try {
+						generateIndividuPDF(data, out);
+					} catch (e) {
+						return reject(e);
+					}
+					out.on('finish', resolve);
+					out.on('error', reject);
+				});
+				const filename = `${s.nama.replace(/\s+/g,'_')}_${s.id}.pdf`;
+				archive.file(tmpPath, { name: filename });
+				tmpFiles.push(tmpPath);
+			} catch (e) {
+				console.error('Failed to generate PDF for student', s.id, e && e.message);
 			}
-
-			const filename = `${s.nama.replace(/\s+/g,'_')}_${s.id}.pdf`;
-			archive.append(pdfBuffer, { name: filename });
 		}
+
+		archive.on('close', () => {
+			for (const f of tmpFiles) {
+				try { fs.unlinkSync(f); } catch (e) {}
+			}
+		});
 
 		await archive.finalize();
 	} catch (e) { next(e); }
