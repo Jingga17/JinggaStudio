@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  # ─── BACKEND (Node.js + SQLite) ───────────────────────
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: dcm-backend
+    restart: unless-stopped
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+      - JWT_SECRET=dcm220-secret-key-ganti-ini-di-produksi
+      - CSV_PATH=/data-csv
+      - JS_OUTPUT_PATH=/app/frontend_js_shared/data-analisis.js
+      - DATABASE_PATH=/app/src/db_persistent/database.sqlite
+    volumes:
+      # Persist SQLite database
+      - dcm_database:/app/src/db_persistent
+      # Persist uploaded images (logo, TTD)
+      - dcm_uploads:/app/uploads
+      # CSV analisis dari host (read-only)
+      - type: bind
+        source: "../SOAL DAN ANALISIS DCM"
+        target: /data-csv
+        read_only: true
+      # Shared folder — backend write data-analisis.js, nginx baca
+      - dcm_frontend_js:/app/frontend_js_shared
+    networks:
+      - dcm-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/api"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  # ─── FRONTEND (Nginx static server) ───────────────────
+  frontend:
+    image: nginx:alpine
+    container_name: dcm-frontend
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      # Seluruh folder frontend
+      - ./frontend:/usr/share/nginx/html
+      # data-analisis.js yang digenerate backend
+      - dcm_frontend_js:/usr/share/nginx/html/js_shared:ro
+      # Nginx config
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - dcm-network
+
+networks:
+  dcm-network:
+    driver: bridge
+
+volumes:
+  dcm_database:
+    driver: local
+  dcm_uploads:
+    driver: local
+  dcm_frontend_js:
+    driver: local

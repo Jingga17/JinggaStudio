@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test LocalStorage</title>
+</head>
+<body style="background:#000; color:#fff; font-family:monospace; padding:20px;">
+  <h2>LocalStorage Test Results</h2>
+  <div id="out">Checking...</div>
+
+  <script src="js/utils/storage.js?v=2"></script>
+  <script src="js/utils/api.js?v=2"></script>
+  <script>
+    (async () => {
+      const out = document.getElementById('out');
+      const params = new URLSearchParams(window.location.search);
+      const token = params.get('token');
+      
+      let html = '';
+      html += '<p><b>Token from URL:</b> ' + token + '</p>';
+      
+      const rawSessions = localStorage.getItem('dcm_mock_sessions');
+      html += '<p><b>Raw dcm_mock_sessions in localStorage:</b><br>' + rawSessions + '</p>';
+      
+      try {
+        const parsed = JSON.parse(rawSessions);
+        html += '<p><b>Parsed sessions count:</b> ' + (parsed ? parsed.length : 0) + '</p>';
+        if (parsed) {
+          html += '<ul>';
+          parsed.forEach(s => {
+            html += `<li>ID: ${s.id}, Token: ${s.token}, Active: ${s.is_active}</li>`;
+          });
+          html += '</ul>';
+        }
+      } catch (e) {
+        html += '<p style="color:red"><b>JSON Parse Error:</b> ' + e.message + '</p>';
+      }
+
+      if (token) {
+        const check = await API.cekSesiAktif(token);
+        html += '<p><b>API.cekSesiAktif result:</b> ' + JSON.stringify(check) + '</p>';
+      }
+      
+      out.innerHTML = html;
+    })();
+  </script>
+</body>
+</html>

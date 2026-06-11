@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — DCM 220 Psikometri</title>
+  <meta name="description" content="Panel admin Psikometri Problem Checklist DCM 220">
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="stylesheet" href="css/style.css">
+  
+  <!-- PDF Generation Libraries (Client-side) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- SheetJS untuk Export Excel -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- JSZip untuk Bulk ZIP -->
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <!-- FileSaver untuk trigger download -->
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+</head>
+<body>
+
+<!-- ═══════════ SPINNER ═══════════ -->
+<div id="global-spinner" class="spinner-overlay">
+  <div class="spinner"></div>
+</div>
+
+<!-- ═══════════ TOAST ═══════════ -->
+<div id="toast-container" class="toast-container"></div>
+
+<!-- ═══════════ MODAL ═══════════ -->
+<div id="modal-overlay" class="modal-overlay">
+  <div class="modal">
+    <h3 id="modal-title" class="modal-title"></h3>
+    <div id="modal-body" class="modal-body"></div>
+    <div class="modal-actions">
+      <button id="modal-cancel" class="btn btn-outline">Batal</button>
+      <button id="modal-ok" class="btn btn-primary">OK</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ LOGIN PAGE ═══════════ -->
+<div id="admin-login" class="login-page" style="display:none">
+  <div class="login-card fade-in">
+    <div class="login-logo">
+      <div class="login-logo-icon">📊</div>
+      <h1 class="login-title">Panel Admin</h1>
+      <p class="login-sub">Psikometri Problem Checklist DCM 220</p>
+    </div>
+
+    <form id="login-form" class="login-form" novalidate>
+      <div class="form-group">
+        <label class="form-label" for="login-user">Username</label>
+        <input id="login-user" type="text" class="form-control" placeholder="Masukkan username" autocomplete="username" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="login-pass">Password</label>
+        <div style="position:relative">
+          <input id="login-pass" type="password" class="form-control" placeholder="Masukkan password" autocomplete="current-password" required style="padding-right:44px">
+          <button type="button" id="login-pass-toggle" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:16px">👁</button>
+        </div>
+      </div>
+
+      <div id="login-error" style="display:none;padding:10px 14px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);border-radius:var(--radius-sm);font-size:13px;color:#FCA5A5"></div>
+
+      <button type="submit" id="login-btn" class="btn btn-primary btn-full btn-lg">
+        Masuk
+      </button>
+
+      <div style="text-align:center;font-size:12px;color:var(--text-muted)">
+        Demo: username <code style="color:var(--accent)">admin</code> / password <code style="color:var(--accent)">admin123</code>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ═══════════ ADMIN SHELL ═══════════ -->
+<div id="admin-shell" class="admin-shell" style="display:none">
+
+  <!-- Sidebar Overlay (mobile) -->
+  <div id="sidebar-overlay" class="sidebar-overlay" style="display:none" onclick="AdminApp.closeSidebar()"></div>
+
+  <!-- ── SIDEBAR ── -->
+  <nav id="sidebar" class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-text">📊 DCM 220</div>
+      <div class="sidebar-logo-sub">Psikometri Problem Checklist</div>
+    </div>
+
+    <div class="sidebar-nav">
+      <div class="nav-item active" data-page="home">
+        <span class="nav-icon">🏠</span>
+        <span>Home</span>
+      </div>
+      <div class="nav-item" data-page="laporan">
+        <span class="nav-icon">🖨️</span>
+        <span>Cetak Laporan</span>
+      </div>
+      <div class="nav-item" data-page="pengaturan">
+        <span class="nav-icon">⚙️</span>
+        <span>Pengaturan</span>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="admin-avatar">
+        <div class="avatar-circle" id="avatar-initials">A</div>
+        <div>
+          <div class="avatar-name" id="admin-name">Admin</div>
+          <div style="font-size:11px;color:var(--text-muted)">Administrator</div>
+        </div>
+      </div>
+      <button id="logout-btn" class="btn btn-ghost btn-sm btn-full" style="margin-top:8px">
+        🚪 Keluar
+      </button>
+    </div>
+  </nav>
+
+  <!-- ── MAIN CONTENT ── -->
+  <div class="main-content">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <button id="hamburger" class="topbar-hamburger" onclick="AdminApp.toggleSidebar()">☰</button>
+      <h2 id="topbar-title" class="topbar-title">🏠 Dashboard</h2>
+      <div class="topbar-actions">
+        <button class="btn btn-outline btn-sm" onclick="AdminApp.exportExcel()" title="Export data ke Excel">
+          📊 Export Excel
+        </button>
+      </div>
+    </div>
+
+    <!-- Page Content -->
+    <div class="page-content">
+
+      <!-- ═══════════════════════════════════
+           PAGE: HOME
+      ═══════════════════════════════════ -->
+      <div id="page-home" style="display:none">
+
+        <!-- Notifikasi Tahunan -->
+        <div id="yearly-notif" class="notif-banner fade-in" style="display:none">
+          <span class="notif-banner-icon">🔔</span>
+          <div class="notif-banner-text">
+            <strong>Pengingat Tahunan!</strong> Segera download dan backup data jawaban siswa sebelum database dikosongkan untuk tahun ajaran baru.
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="AdminApp.exportExcel()">📊 Export</button>
+          <button class="btn btn-ghost btn-sm" onclick="AdminApp.dismissYearlyNotif()">✕</button>
+        </div>
+
+        <!-- Stat Cards -->
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-blue">👥</div>
+            <div>
+              <div class="stat-label">Total Responden</div>
+              <div class="stat-value" id="stat-responden">—</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-green">🏫</div>
+            <div>
+              <div class="stat-label">Kelas Terdaftar</div>
+              <div class="stat-value" id="stat-kelas">—</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-orange">📈</div>
+            <div>
+              <div class="stat-label">% Pengisian</div>
+              <div class="stat-value" id="stat-pct">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sesi Asesmen -->
+        <div class="card" style="margin-bottom:20px">
+          <div class="section-header">
+            <div>
+              <div class="section-title">🔗 Manajemen Sesi Asesmen</div>
+              <div class="section-sub">Buat link unik untuk membagikan kuesioner kepada siswa</div>
+            </div>
+            <button class="btn btn-primary" onclick="AdminApp.buatSesi()">
+              ✚ Buat Sesi Baru
+            </button>
+          </div>
+          <div id="sessions-list"></div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+          <div class="filter-group">
+            <label class="filter-label">Analisis Kelas</label>
+            <select id="filter-kelas-home" class="form-control filter-kelas" onchange="AdminApp.filterByKelas()">
+              <option value="">— Semua Kelas —</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Analisis Individu</label>
+            <select id="filter-siswa-home" class="form-control" onchange="AdminApp.filterBySiswa()">
+              <option value="">— Pilih kelas dulu —</option>
+            </select>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="AdminApp.resetFilter()" style="align-self:flex-end">
+            ✕ Reset Filter
+          </button>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-grid">
+          <!-- Donut -->
+          <div class="chart-card">
+            <div class="chart-title">🍩 Skor Per Bidang</div>
+            <div class="chart-wrap">
+              <canvas id="chart-donut" width="220" height="220"></canvas>
+            </div>
+            <div id="donut-legend" class="chart-legend"></div>
+          </div>
+
+          <!-- Bar -->
+          <div class="chart-card">
+            <div class="chart-title">📊 Skor Per Sub Bidang (25 sub bidang)</div>
+            <div class="chart-wrap" style="overflow-x:auto">
+              <canvas id="chart-bar"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Deskripsi Analisis -->
+        <div class="section-header" style="margin-bottom:12px">
+          <div class="section-title">📝 Deskripsi Analisis</div>
+        </div>
+        <div id="deskripsi-grid" class="deskripsi-grid" style="margin-bottom:20px"></div>
+
+        <!-- Tabel Rekap -->
+        <div class="card">
+          <div class="section-header">
+            <div class="section-title">📋 Rekap Jawaban Siswa</div>
+            <div class="search-wrap" style="width:220px">
+              <span class="search-icon">🔍</span>
+              <input id="tabel-search" type="text" class="form-control search-input" placeholder="Cari nama / kelas / NISN...">
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Nama</th>
+                  <th>Kelas</th>
+                  <th>NISN</th>
+                  <th>Status</th>
+                  <th>Skor Per Bidang</th>
+                  <th>Kategori</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="rekap-tbody">
+                <tr><td colspan="8" class="table-empty">Memuat data...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div><!-- end page-home -->
+
+      <!-- ═══════════════════════════════════
+           PAGE: CETAK LAPORAN
+      ═══════════════════════════════════ -->
+      <div id="page-laporan" style="display:none">
+
+        <!-- Sub-menu toggle -->
+        <div class="laporan-submenu">
+          <div class="laporan-sub-card active" id="lap-sub-kelas" onclick="AdminApp.switchLapSubMenu('kelas')">
+            <div class="laporan-sub-icon">🏫</div>
+            <div class="laporan-sub-title">Laporan Analisis Kelas</div>
+            <div class="laporan-sub-desc">Download laporan per kelas atau semua kelas</div>
+          </div>
+          <div class="laporan-sub-card" id="lap-sub-individu" onclick="AdminApp.switchLapSubMenu('individu')">
+            <div class="laporan-sub-icon">👤</div>
+            <div class="laporan-sub-title">Laporan Analisis Individu</div>
+            <div class="laporan-sub-desc">Download laporan per siswa dalam kelas</div>
+          </div>
+        </div>
+
+        <!-- ── Kelas ── -->
+        <div id="lap-content-kelas">
+          <div class="card">
+            <div class="section-title" style="margin-bottom:16px">🏫 Laporan Kelas</div>
+            <div class="form-group" style="margin-bottom:16px">
+              <label class="form-label">Pilih Kelas</label>
+              <select id="lap-kelas-select" class="form-control" onchange="AdminApp.pilihKelasLaporan()" style="max-width:300px">
+                <option value="">— Pilih Kelas —</option>
+              </select>
+            </div>
+            <div id="lap-kelas-dl-wrap" style="display:none;gap:10px;flex-wrap:wrap;align-items:center">
+              <button class="btn btn-primary" onclick="AdminApp.downloadKelas()">
+                ⬇️ Download PDF Kelas Ini
+              </button>
+            </div>
+            <hr class="divider">
+            <div>
+              <div class="section-sub" style="margin-bottom:12px">Download semua laporan kelas sekaligus</div>
+              <button class="btn btn-outline" onclick="AdminApp.downloadBulkKelas()">
+                📦 Download Semua Laporan Kelas (ZIP)
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Individu ── -->
+        <div id="lap-content-individu" style="display:none">
+          <div class="card">
+            <div class="section-title" style="margin-bottom:16px">👤 Laporan Individu</div>
+            <div class="form-group" style="margin-bottom:16px">
+              <label class="form-label">Pilih Kelas</label>
+              <select id="lap-ind-kelas-select" class="form-control" onchange="AdminApp.pilihKelasIndividu()" style="max-width:300px">
+                <option value="">— Pilih Kelas —</option>
+              </select>
+            </div>
+
+            <div id="lap-ind-table-wrap" style="display:none">
+              <div class="section-header" style="margin-bottom:12px">
+                <div class="section-sub">Daftar siswa di kelas yang dipilih</div>
+                <button class="btn btn-outline btn-sm" onclick="AdminApp.downloadBulkIndividu()">
+                  📦 Download Bulk Kelas Ini (ZIP)
+                </button>
+              </div>
+              <div class="table-wrap">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>No</th>
+                      <th>Nama</th>
+                      <th>Jenis Kelamin</th>
+                      <th>Status</th>
+                      <th>Download</th>
+                    </tr>
+                  </thead>
+                  <tbody id="lap-ind-tbody">
+                    <tr><td colspan="5" class="table-empty">Pilih kelas terlebih dahulu</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Info catatan teknis -->
+        <div class="card" style="margin-top:16px;background:rgba(59,130,246,0.05);border-color:rgba(59,130,246,0.15)">
+          <div style="font-size:13px;color:var(--text-muted);line-height:1.8">
+            <strong style="color:var(--accent)">ℹ️ Catatan Teknis:</strong><br>
+            • PDF diunduh langsung ke perangkat (tidak disimpan di server)<br>
+            • Ukuran kertas: A4 | Watermark: DOKUMEN RAHASIA<br>
+            • Grafik berwarna sesuai bidang (Pribadi=Biru, Belajar=Hijau, Sosial=Oranye, Karir=Ungu)<br>
+            • Mode demo: PDF memerlukan backend untuk di-generate
+          </div>
+        </div>
+
+      </div><!-- end page-laporan -->
+
+      <!-- ═══════════════════════════════════
+           PAGE: PENGATURAN
+      ═══════════════════════════════════ -->
+      <div id="page-pengaturan" style="display:none">
+
+        <form id="pengaturan-form" onsubmit="event.preventDefault(); AdminApp.savePengaturan()">
+
+          <!-- Identitas Sekolah -->
+          <div class="settings-section">
+            <div class="settings-section-title">🏫 Identitas Sekolah</div>
+            <div class="settings-grid">
+              <div class="form-group">
+                <label class="form-label" for="set-nama-sekolah">Nama Sekolah</label>
+                <input id="set-nama-sekolah" type="text" class="form-control" placeholder="SMA Negeri 1 Contoh">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="set-tahun-ajaran">Tahun Ajaran</label>
+                <input id="set-tahun-ajaran" type="text" class="form-control" placeholder="2025/2026">
+              </div>
+            </div>
+            <div class="settings-grid" style="margin-top:12px;">
+              <div class="form-group" style="flex:2;">
+                <label class="form-label" for="set-alamat">Alamat & Identitas Sekolah</label>
+                <textarea id="set-alamat" class="form-control" rows="1" placeholder="Jl. Pendidikan No. 1..." style="resize:vertical"></textarea>
+              </div>
+              <div class="form-group" style="flex:1;">
+                <label class="form-label" for="set-kota">Nama Kota (Untuk TTD)</label>
+                <input id="set-kota" type="text" class="form-control" placeholder="Jakarta">
+              </div>
+            </div>
+          </div>
+
+          <!-- Identitas Konselor -->
+          <div class="settings-section">
+            <div class="settings-section-title">👤 Identitas Konselor</div>
+            <div class="settings-grid">
+              <div class="form-group">
+                <label class="form-label" for="set-nama-konselor">Nama Konselor</label>
+                <input id="set-nama-konselor" type="text" class="form-control" placeholder="Drs. Budi Raharjo, M.Pd.">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="set-nip">NIP</label>
+                <input id="set-nip" type="text" class="form-control" placeholder="19800101 200501 2 001">
+              </div>
+            </div>
+          </div>
+
+          <!-- Upload Logo & TTD -->
+          <div class="settings-section">
+            <div class="settings-section-title">🖼️ Logo & Tanda Tangan</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px">
+
+              <div>
+                <label class="form-label" style="margin-bottom:8px;display:block">Logo Sekolah <span style="color:var(--text-muted);text-transform:none;font-weight:400">(kiri laporan)</span></label>
+                <div class="upload-box" id="upload-logo-sekolah">
+                  <input type="file" name="logo_sekolah" accept="image/*">
+                  <img class="upload-preview" src="" alt="Preview">
+                  <div class="upload-icon">🖼️</div>
+                  <div class="upload-label">Klik untuk upload</div>
+                  <div class="upload-name"></div>
+                </div>
+              </div>
+
+              <div>
+                <label class="form-label" style="margin-bottom:8px;display:block">Logo BK Sekolah <span style="color:var(--text-muted);text-transform:none;font-weight:400">(kanan laporan)</span></label>
+                <div class="upload-box" id="upload-logo-bk">
+                  <input type="file" name="logo_bk" accept="image/*">
+                  <img class="upload-preview" src="" alt="Preview">
+                  <div class="upload-icon">🖼️</div>
+                  <div class="upload-label">Klik untuk upload</div>
+                  <div class="upload-name"></div>
+                </div>
+              </div>
+
+              <div>
+                <label class="form-label" style="margin-bottom:8px;display:block">Cap Konselor <span style="color:var(--text-muted);text-transform:none;font-weight:400">(di atas TTD)</span></label>
+                <div class="upload-box" id="upload-cap-konselor">
+                  <input type="file" name="cap_konselor" accept="image/*">
+                  <img class="upload-preview" src="" alt="Preview">
+                  <div class="upload-icon">🔏</div>
+                  <div class="upload-label">Klik untuk upload</div>
+                  <div class="upload-name"></div>
+                </div>
+              </div>
+
+              <div>
+                <label class="form-label" style="margin-bottom:8px;display:block">Tanda Tangan Konselor</label>
+                <div class="upload-box" id="upload-ttd-konselor">
+                  <input type="file" name="ttd_konselor" accept="image/*">
+                  <img class="upload-preview" src="" alt="Preview">
+                  <div class="upload-icon">✍️</div>
+                  <div class="upload-label">Klik untuk upload</div>
+                  <div class="upload-name"></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Manajemen Kelas Manual -->
+          <div class="settings-section">
+            <div class="settings-section-title">🏫 Manajemen Daftar Kelas</div>
+            <div style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">Daftar kelas ini akan muncul sebagai pilihan di halaman pengisian data diri siswa. Anda dapat menambah atau menghapus kelas sesuai kebutuhan tahun ajaran.</div>
+            
+            <div style="display:flex;gap:10px;margin-bottom:16px;">
+              <input id="new-kelas-input" type="text" class="form-control" placeholder="Contoh: XII IPA 1" style="max-width:250px">
+              <button type="button" class="btn btn-outline" onclick="AdminApp.tambahKelas()">✚ Tambah Kelas</button>
+              <button type="button" class="btn btn-outline" style="color:#ef4444; border-color:#fca5a5;" onclick="AdminApp.hapusSemuaKelas()">🗑️ Hapus Semua</button>
+            </div>
+            
+            <div id="kelas-list-container" style="display:flex;flex-wrap:wrap;gap:8px;">
+              <!-- Tags list kelas diisi oleh admin.js -->
+            </div>
+          </div>
+
+          <!-- Preview Laporan -->
+          <div class="settings-section">
+            <div class="settings-section-title">👁️ Preview Posisi di Laporan</div>
+            <div style="background:white;border-radius:var(--radius-md);padding:20px;color:#1a1a1a;max-width:600px">
+              <!-- Kop surat mini preview -->
+              <div style="display:flex;align-items:center;gap:12px;border-bottom:2px solid #1a1a1a;padding-bottom:10px;margin-bottom:10px">
+                <div style="width:50px;height:50px;border:1px dashed #ccc;display:flex;align-items:center;justify-content:center;font-size:10px;color:#999;border-radius:4px">LOGO<br>Sekolah</div>
+                <div style="flex:1;text-align:center">
+                  <div style="font-weight:800;font-size:14px" id="prev-nama-sekolah">NAMA SEKOLAH</div>
+                  <div style="font-size:11px;color:#555" id="prev-alamat">Alamat & Identitas Sekolah</div>
+                </div>
+                <div style="width:50px;height:50px;border:1px dashed #ccc;display:flex;align-items:center;justify-content:center;font-size:10px;color:#999;border-radius:4px">LOGO<br>BK</div>
+              </div>
+              <div style="font-size:11px;color:#888;text-align:center">... isi laporan ...</div>
+              <div style="display:flex;justify-content:flex-end;margin-top:10px;padding-top:10px;border-top:1px solid #eee">
+                <div style="text-align:center;font-size:10px;color:#555">
+                  <div style="width:60px;height:40px;border:1px dashed #ccc;margin:0 auto 4px;display:flex;align-items:center;justify-content:center;color:#999;font-size:8px">Cap<br>Konselor</div>
+                  <div style="width:80px;height:30px;border:1px dashed #ccc;margin:0 auto 4px;display:flex;align-items:center;justify-content:center;color:#999;font-size:8px">Tanda Tangan</div>
+                  <div id="prev-nama-konselor" style="font-weight:700">Nama Konselor</div>
+                  <div id="prev-tahun" style="color:#888">TA. 2025/2026</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:10px">
+            <button type="submit" class="btn btn-primary btn-lg">
+              💾 Simpan Pengaturan
+            </button>
+          </div>
+        </form>
+
+      </div><!-- end page-pengaturan -->
+
+    </div><!-- end page-content -->
+  </div><!-- end main-content -->
+
+</div><!-- end admin-shell -->
+
+<!-- Scripts -->
+<script src="js/data-soal.js"></script>
+<script src="js/utils/storage.js?v=2"></script>
+<script src="js/utils/scoring.js"></script>
+<script src="js/utils/api.js?v=2"></script>
+<script src="js/components/ui.js"></script>
+<script src="js/pages/admin.js?v=2"></script>
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  AdminApp.init();
+
+  // Live preview pengaturan
+  const fields = {
+    'set-nama-sekolah': 'prev-nama-sekolah',
+    'set-alamat':       'prev-alamat',
+    'set-nama-konselor':'prev-nama-konselor',
+    'set-tahun-ajaran': 'prev-tahun',
+  };
+  Object.entries(fields).forEach(([inputId, previewId]) => {
+    const inp = document.getElementById(inputId);
+    const prv = document.getElementById(previewId);
+    if (inp && prv) {
+      inp.addEventListener('input', () => { prv.textContent = inp.value || prv.dataset.default || ''; });
+    }
+  });
+
+  // Init upload boxes
+  AdminApp.initUploadBoxes();
+
+  // Resize charts on window resize
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      if (AdminApp.chartDataCache) AdminApp.renderCharts(AdminApp.chartDataCache);
+    }, 200);
+  });
+});
+</script>
+</body>
+</html>

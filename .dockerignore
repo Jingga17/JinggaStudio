@@ -1,0 +1,8 @@
+node_modules
+npm-debug.log
+.env
+backend/src/db/database.sqlite
+backend/uploads
+*.md
+.git
+.gitignore

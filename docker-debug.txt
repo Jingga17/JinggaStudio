@@ -1,0 +1,43 @@
+=== START FRONTEND === 
+dcm-frontend
+ 
+=== INSPECT FRONTEND ERROR === 
+
+ 
+=== DOCKER PS === 
+CONTAINER ID   IMAGE          COMMAND                  CREATED         STATUS                            PORTS                                     NAMES
+a8460019dd05   nginx:alpine   "/docker-entrypoint.…"   5 seconds ago   Up Less than a second             0.0.0.0:8080->80/tcp, [::]:8080->80/tcp   dcm-frontend
+b7a5476dc229   dcm-backend    "docker-entrypoint.s…"   5 seconds ago   Up 4 seconds (health: starting)   3000/tcp                                  dcm-backend
+ 
+=== DOCKER COMPOSE LOGS === 
+time="2026-06-10T10:02:23+07:00" level=warning msg="C:\\Users\\LENOVO\\Desktop\\WORK\\aplikasi\\DCM\\docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
+dcm-backend  | ✅ Generated frontend/js/data-analisis.js from CSV files!
+dcm-backend  | Server is running on http://localhost:3000
+dcm-backend  | Connected to SQLite database.
+dcm-frontend  | /docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
+dcm-frontend  | /docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/
+dcm-frontend  | /docker-entrypoint.sh: Launching /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh
+dcm-frontend  | 10-listen-on-ipv6-by-default.sh: info: can not modify /etc/nginx/conf.d/default.conf (read-only file system?)
+dcm-frontend  | /docker-entrypoint.sh: Sourcing /docker-entrypoint.d/15-local-resolvers.envsh
+dcm-frontend  | /docker-entrypoint.sh: Launching /docker-entrypoint.d/20-envsubst-on-templates.sh
+dcm-frontend  | /docker-entrypoint.sh: Launching /docker-entrypoint.d/30-tune-worker-processes.sh
+dcm-frontend  | /docker-entrypoint.sh: Configuration complete; ready for start up
+dcm-frontend  | 2026/06/10 03:02:23 [notice] 1#1: using the "epoll" event method
+dcm-frontend  | 2026/06/10 03:02:23 [notice] 1#1: nginx/1.31.1
+dcm-frontend  | 2026/06/10 03:02:23 [notice] 1#1: built by gcc 15.2.0 (Alpine 15.2.0) 
+dcm-frontend  | 2026/06/10 03:02:23 [notice] 1#1: OS: Linux 6.6.114.1-microsoft-standard-WSL2
+dcm-frontend  | 2026/06/10 03:02:23 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+dcm-frontend  | 2026/06/10 03:02:23 [notice] 1#1: start worker processes
+dcm-frontend  | 2026/06/10 03:02:23 [notice] 1#1: start worker process 21
+dcm-frontend  | 2026/06/10 03:02:23 [notice] 1#1: start worker process 22
+dcm-frontend  | 2026/06/10 03:02:23 [notice] 1#1: start worker process 23
+dcm-frontend  | 2026/06/10 03:02:23 [notice] 1#1: start worker process 24
+dcm-frontend  | 2026/06/10 03:02:23 [notice] 1#1: start worker process 25
+dcm-frontend  | 2026/06/10 03:02:23 [notice] 1#1: start worker process 26
+dcm-frontend  | 2026/06/10 03:02:23 [notice] 1#1: start worker process 27
+dcm-frontend  | 2026/06/10 03:02:23 [notice] 1#1: start worker process 28
+dcm-frontend  | 2026/06/10 03:02:23 [notice] 1#1: start worker process 29
+dcm-frontend  | 2026/06/10 03:02:23 [notice] 1#1: start worker process 30
+dcm-frontend  | 2026/06/10 03:02:23 [notice] 1#1: start worker process 31
+dcm-frontend  | 2026/06/10 03:02:23 [notice] 1#1: start worker process 32
+ 

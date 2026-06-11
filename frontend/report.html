@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laporan DCM 220</title>
+  <link rel="stylesheet" href="css/report.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  
+  <div id="print-controls" class="no-print">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <h2 style="margin:0; font-size:18px;">Pratinjau Laporan</h2>
+        <p style="margin:0; font-size:13px; color:#64748b; margin-top:4px;">Gunakan pengaturan kertas A4 pada mode cetak browser.</p>
+      </div>
+      <div>
+        <button onclick="window.close()" class="btn btn-outline" style="margin-right:8px;">Tutup</button>
+        <button onclick="window.print()" class="btn btn-primary">🖨️ Cetak / Simpan PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="report-container">
+    <div id="loading" style="text-align:center; padding:50px;">
+      <p>Membuat laporan, mohon tunggu...</p>
+    </div>
+    <!-- Report content will be injected here by JS -->
+  </div>
+
+  <script src="js/data-soal.js"></script>
+  <script src="js/data-analisis.js"></script>
+  <script src="js/utils/storage.js"></script>
+  <script src="js/utils/api.js"></script>
+  <script src="js/pages/report.js"></script>
+  <script>
+    window.onload = () => ReportApp.init();
+  </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+FROM node:18-alpine
+
+# Install wget untuk health check
+RUN apk add --no-cache wget
+
+WORKDIR /app
+
+# Copy package.json dulu (cache layer)
+COPY backend/package*.json ./
+
+# Install dependencies
+RUN npm install --legacy-peer-deps --omit=dev
+
+# Copy backend source
+COPY backend/src ./src
+
+# Buat folder yang dibutuhkan
+RUN mkdir -p uploads src/db /app/frontend_js_shared
+
+EXPOSE 3000
+
+ENV PORT=3000
+ENV NODE_ENV=production
+
+CMD ["node", "src/index.js"]

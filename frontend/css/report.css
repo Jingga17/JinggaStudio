@@ -1,0 +1,235 @@
+/* 
+  Styling Khusus Laporan Cetak DCM 220 
+*/
+
+:root {
+  --primary: #2563eb;
+  --text: #1e293b;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  
+  /* Warna Bidang */
+  --c-pribadi: #3b82f6; /* Biru */
+  --c-belajar: #10b981; /* Hijau */
+  --c-sosial: #f59e0b;  /* Oranye */
+  --c-karir: #8b5cf6;   /* Ungu */
+  
+  /* Status Warna */
+  --bg-sangat-berat: #fef2f2;
+  --border-sangat-berat: #ef4444;
+  --text-sangat-berat: #b91c1c;
+
+  --bg-berat: #fffbeb;
+  --border-berat: #f59e0b;
+  --text-berat: #b45309;
+
+  --bg-sedang: #f0fdfa;
+  --border-sedang: #14b8a6;
+  --text-sedang: #0f766e;
+  
+  --bg-ringan: #f8fafc;
+  --border-ringan: #cbd5e1;
+  --text-ringan: #334155;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  color: var(--text);
+  line-height: 1.5;
+  background: #f1f5f9;
+  margin: 0;
+  padding: 0;
+}
+
+/* Control Panel (Hide when printing) */
+#print-controls {
+  background: white;
+  border-bottom: 1px solid var(--border);
+  padding: 16px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+}
+
+.btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.btn-primary { background: var(--primary); color: white; }
+.btn-outline { border-color: var(--border); background: white; color: var(--text); }
+
+/* A4 Container */
+#report-container {
+  width: 210mm;
+  min-height: 297mm;
+  background: white;
+  margin: 30px auto;
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+  padding: 20mm;
+  box-sizing: border-box;
+}
+
+/* KOP SURAT */
+.kop-surat {
+  text-align: center;
+  border-bottom: 3px solid black;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+.kop-surat h1 { font-size: 20px; font-weight: 800; margin: 0 0 4px 0; text-transform: uppercase; }
+.kop-surat p { font-size: 12px; margin: 0; color: #475569; text-align: center; }
+.kop-title { text-align: center; font-size: 18px; font-weight: 700; margin: 20px 0; }
+
+/* Typo */
+h2 { font-size: 16px; font-weight: 700; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-top: 24px; margin-bottom: 12px; text-transform: uppercase; color: var(--primary); }
+h3 { font-size: 14px; font-weight: 600; margin-top: 16px; margin-bottom: 8px; }
+p { font-size: 12px; margin-bottom: 8px; text-align: justify; }
+ul { font-size: 12px; padding-left: 20px; margin-bottom: 16px; text-align: justify; }
+li { margin-bottom: 6px; }
+
+/* Tabel Standar */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  font-size: 11px;
+}
+th, td {
+  border: 1px solid var(--border);
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: middle;
+  line-height: 1.4;
+}
+th { 
+  background: #f1f5f9; 
+  font-weight: 600; 
+  border-bottom: 2px solid #cbd5e1;
+  text-align: center;
+}
+tr:nth-child(even) td {
+  background: #f8fafc;
+}
+
+/* Identitas Table */
+.tbl-identitas { width: 100%; font-size: 12px; }
+.tbl-identitas th { width: 30%; background: #f8fafc; text-align: left; }
+
+/* Chart Gauges & Bars */
+.chart-box {
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+/* CSS Bar Chart */
+.bar-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 11px;
+}
+.bar-label { width: 150px; font-weight: 500; }
+.bar-track {
+  flex: 1;
+  height: 12px;
+  background: #e2e8f0;
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 0 10px;
+}
+.bar-fill { height: 100%; background: var(--primary); border-radius: 6px; }
+.bar-value { width: 80px; text-align: right; font-weight: 600; }
+
+/* CSS Donut Chart (Grid 2 cols) */
+.donut-container {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin: 20px 0;
+}
+.donut-chart {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  /* Conic gradient akan diset lewat JS style inline */
+  background: conic-gradient(
+    var(--c-pribadi) 0% 25%, 
+    var(--c-belajar) 25% 50%, 
+    var(--c-sosial) 50% 75%, 
+    var(--c-karir) 75% 100%
+  );
+  position: relative;
+}
+.donut-hole {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70px; height: 70px;
+  background: white;
+  border-radius: 50%;
+}
+.donut-legend { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 11px; }
+.legend-item { display: flex; align-items: center; gap: 6px; }
+.legend-color { width: 12px; height: 12px; border-radius: 3px; }
+
+/* Alert / Deskripsi Box */
+.desc-box {
+  padding: 12px 16px;
+  border-left: 4px solid var(--primary);
+  background: #f8fafc;
+  margin-bottom: 12px;
+  font-size: 11px;
+}
+
+/* Tag Status */
+.tag { padding: 3px 8px; border-radius: 12px; font-weight: 600; font-size: 10px; display: inline-block;}
+.tag-sangat-berat { background: var(--bg-sangat-berat); color: var(--text-sangat-berat); border: 1px solid var(--border-sangat-berat); }
+.tag-berat { background: var(--bg-berat); color: var(--text-berat); border: 1px solid var(--border-berat); }
+.tag-sedang { background: var(--bg-sedang); color: var(--text-sedang); border: 1px solid var(--border-sedang); }
+.tag-ringan { background: var(--bg-ringan); color: var(--text-ringan); border: 1px solid var(--border-ringan); }
+
+/* Footer TTD */
+.footer-ttd {
+  margin-top: 40px;
+  display: flex;
+  justify-content: flex-end;
+  text-align: center;
+  font-size: 12px;
+}
+.ttd-box { width: 250px; }
+.ttd-space { height: 80px; }
+
+.footer-rahasia {
+  margin-top: 40px;
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+  text-align: center;
+  font-size: 10px;
+  color: var(--muted);
+}
+
+/* Utility Print Breaks */
+.page-break { page-break-before: always; margin-top: 20mm; }
+.avoid-break { page-break-inside: avoid; }
+
+/* MEDIA PRINT RULE */
+@media print {
+  @page { margin: 0; size: A4; }
+  body { background: white; }
+  .no-print { display: none !important; }
+  #report-container { 
+    box-shadow: none; 
+    margin: 0; 
+    width: 100%; 
+    padding: 15mm; 
+    min-height: 0;
+  }
+}
