@@ -345,16 +345,16 @@ const API = {
     } catch(e) { console.error(e); Toast.error('Gagal membuat ZIP'); }
   },
   async downloadBulkKelas() {
-    Toast.info('Membuat ZIP laporan kelas...');
+    Toast.info('Membuat ZIP seluruh laporan kelas...');
     try {
       const token = Storage.getAdminToken();
-      const url = `${API_BASE}/export/zip/class/${encodeURIComponent(Storage.get('selected_kelas')||'')}`;
+      const url = `${API_BASE}/export/zip/all`;
       const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
       if (!res.ok) throw new Error('Gagal membuat ZIP');
       const blob = await res.blob();
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = `Laporan_Kelas.zip`;
+      a.download = `Bulk_Semua_Laporan.zip`;
       a.click();
     } catch(e) { console.error(e); Toast.error('Gagal membuat ZIP'); }
   },

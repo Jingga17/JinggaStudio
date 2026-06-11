@@ -90,7 +90,7 @@ router.get('/individu/:id', auth, async (req, res, next) => {
             });
 
         // Load CSV descriptions if available
-        const csvBase = process.env.CSV_PATH || path.join(__dirname, '../../../SOAL DAN ANALISIS DCM');
+        const csvBase = process.env.CSV_PATH || path.join(__dirname, '../../../../SOAL DAN ANALISIS DCM');
         const csvBidangPath = path.join(csvBase, 'analisis Bidang.csv');
         const csvSubPath = path.join(csvBase, 'analisis sub Bidang.csv');
 
@@ -132,6 +132,12 @@ router.get('/individu/:id', auth, async (req, res, next) => {
             if (d) analisis.push(`Bidang ${b.nama} (${b.score}%): ${d}`);
         });
 
+        // Build subDescriptions map for E. PROFIL 5 SUB BIDANG PRIORITAS in PDF
+        const subDescriptions = {};
+        prioritas.forEach(p => {
+            subDescriptions[p.nama] = getDescSub(p.nama, p.skor);
+        });
+
         // Build data payload for PDF generator
         const data = {
             student: Object.assign({}, studentRow, {
@@ -150,7 +156,8 @@ router.get('/individu/:id', auth, async (req, res, next) => {
             bidang,
             prioritas,
             answers,
-            analisis
+            analisis,
+            subDescriptions
         };
 
         // Set response headers for PDF download
