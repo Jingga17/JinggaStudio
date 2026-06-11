@@ -1,5 +1,5 @@
 /**
- * DCM 220 — Scoring Engine
+ * Counselor Connect — Scoring Engine
  * Implementasi logika hitung sesuai BACKEND_SPEC.md
  */
 

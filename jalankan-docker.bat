@@ -2,7 +2,7 @@
 chcp 65001 >nul
 echo.
 echo  ╔══════════════════════════════════════════════╗
-echo  ║     DCM 220 — Docker Local Setup             ║
+echo  ║     Counselor Connect — Docker Local Setup   ║
 echo  ║     Psikometri Problem Checklist             ║
 echo  ╚══════════════════════════════════════════════╝
 echo.
@@ -50,7 +50,7 @@ if errorlevel 1 (
 
 echo.
 echo  ╔══════════════════════════════════════════════╗
-echo  ║  ✅ DCM 220 BERHASIL DIJALANKAN!             ║
+echo  ║  ✅ Counselor Connect BERHASIL DIJALANKAN!    ║
 echo  ╠══════════════════════════════════════════════╣
 echo  ║  🌐 Kuesioner Siswa : http://localhost:8080  ║
 echo  ║  🔐 Admin Panel     : http://localhost:8080/admin.html ║

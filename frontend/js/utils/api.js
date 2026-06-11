@@ -1,5 +1,5 @@
 /**
- * DCM 220 — API Client
+ * Counselor Connect — API Client
  * Komunikasi ke backend REST API.
  * Jika backend belum ready, gunakan MOCK_MODE = true untuk data demo.
  */

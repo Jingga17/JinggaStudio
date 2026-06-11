@@ -1,5 +1,5 @@
 /**
- * DCM 220 — Halaman Kuesioner
+ * Counselor Connect — Halaman Kuesioner
  * Biodata → Soal (11 halaman × 20 soal) → Selesai
  */
 

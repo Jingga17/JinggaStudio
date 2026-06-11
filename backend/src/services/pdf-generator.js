@@ -14,7 +14,7 @@ function generateIndividuPDF(data, res) {
     doc.opacity(1).fillColor('black');
 
     // Header
-    doc.fontSize(16).font('Helvetica-Bold').text('LAPORAN ANALISIS INDIVIDU — DCM 220', { align: 'center' });
+    doc.fontSize(16).font('Helvetica-Bold').text('LAPORAN ANALISIS INDIVIDU — Counselor Connect', { align: 'center' });
     doc.fontSize(11).font('Helvetica').text(safe(data.title || 'Psikometri Problem Checklist'), { align: 'center' });
     doc.moveDown();
 

@@ -1,5 +1,5 @@
 /**
- * DCM 220 — Admin App
+ * Counselor Connect — Admin App
  * Login, Home (Dashboard), Cetak Laporan, Pengaturan
  */
 
@@ -616,7 +616,7 @@ const AdminApp = {
     const maxBidang = ['Pribadi','Belajar','Sosial','Karir'][Object.values([s.pribadi_pct,s.belajar_pct,s.sosial_pct,s.karir_pct]).indexOf(Math.max(s.pribadi_pct,s.belajar_pct,s.sosial_pct,s.karir_pct))];
     return [
       '=' .repeat(50),
-      `REKAP JAWABAN DCM 220`,
+      `REKAP JAWABAN Counselor Connect`,
       `Sekolah    : ${namaSekolah}`,
       `Tahun Ajaran: ${tahunAjaran}`,
       `Dicetak    : ${today}`,

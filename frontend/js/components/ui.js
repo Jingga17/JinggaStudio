@@ -1,5 +1,5 @@
 /**
- * DCM 220 — UI Components
+ * Counselor Connect — UI Components
  * Toast, Modal, Spinner, Charts
  */
 

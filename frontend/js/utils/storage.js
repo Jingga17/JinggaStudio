@@ -1,5 +1,5 @@
 /**
- * DCM 220 — LocalStorage Utilities with Cookie and window.name Fallbacks
+ * Counselor Connect — LocalStorage Utilities with Cookie and window.name Fallbacks
  */
 let memoryStorage = {};
 const Storage = {

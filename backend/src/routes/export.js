@@ -128,7 +128,7 @@ router.get('/excel', auth, async (req, res, next) => {
 		}).join(','))).join('\n');
 
 		res.setHeader('Content-Type', 'text/csv');
-		res.setHeader('Content-Disposition', `attachment; filename=DCM_Export_All.csv`);
+		res.setHeader('Content-Disposition', `attachment; filename=Counselor_Connect_Export_All.csv`);
 		res.send(csv);
 	} catch (e) { next(e); }
 });

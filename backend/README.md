@@ -1,4 +1,4 @@
-# DCM 220 Backend — Running & Tests
+# Counselor Connect Backend — Running & Tests
 
 Instruksi singkat untuk menjalankan server dan tes lokal pada Windows.
 

@@ -1,5 +1,5 @@
 /**
- * DCM 220 — Data Soal Lengkap
+ * Counselor Connect — Data Soal Lengkap
  * 220 pertanyaan dengan metadata bidang, sub bidang, tipe, dan arah jawaban
  */
 const QUESTIONS_DATA = [

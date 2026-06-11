@@ -201,7 +201,7 @@ const ReportApp = {
     }
 
     let html = `
-      ${this.getKopSurat('LAPORAN ANALISIS INDIVIDU &mdash; DCM 220')}
+      ${this.getKopSurat('LAPORAN ANALISIS INDIVIDU &mdash; Counselor Connect')}
       
       <h2>IDENTITAS SISWA</h2>
       <table class="tbl-identitas">
@@ -369,7 +369,7 @@ const ReportApp = {
     }
 
     let html = `
-      ${this.getKopSurat(`LAPORAN ANALISIS KELAS &mdash; DCM 220<br>KELAS ${kelasName}`)}
+      ${this.getKopSurat(`LAPORAN ANALISIS KELAS &mdash; Counselor Connect<br>KELAS ${kelasName}`)}
       
       <h2>IDENTITAS KELAS</h2>
       <table class="tbl-identitas">
@@ -587,7 +587,7 @@ const ReportApp = {
     `).join('');
 
     let html = `
-      ${this.getKopSurat('LAPORAN ANALISIS INDIVIDU &mdash; DCM 220')}
+      ${this.getKopSurat('LAPORAN ANALISIS INDIVIDU &mdash; Counselor Connect')}
       
       <h2>IDENTITAS SISWA</h2>
       <table class="tbl-identitas">
@@ -799,7 +799,7 @@ const ReportApp = {
     `).join('');
 
     let html = `
-      ${this.getKopSurat(`LAPORAN ANALISIS KELAS &mdash; DCM 220<br>KELAS ${kelas}`)}
+      ${this.getKopSurat(`LAPORAN ANALISIS KELAS &mdash; Counselor Connect<br>KELAS ${kelas}`)}
       
       <h2>IDENTITAS KELAS</h2>
       <table class="tbl-identitas">

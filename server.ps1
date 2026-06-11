@@ -1,5 +1,5 @@
 
-# DCM 220 — Simple HTTP Server (PowerShell + .NET)
+# Counselor Connect — Simple HTTP Server (PowerShell + .NET)
 # Jalankan file ini untuk membuka frontend di browser
 
 $port = 8080
@@ -11,7 +11,7 @@ $listener.Start()
 
 Write-Host ""
 Write-Host "  =====================================" -ForegroundColor Cyan
-Write-Host "    DCM 220 Server Berjalan!" -ForegroundColor Green
+Write-Host "    Counselor Connect Server Berjalan!" -ForegroundColor Green
 Write-Host "  =====================================" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "  Panel Admin   : http://localhost:$port/admin.html" -ForegroundColor Yellow

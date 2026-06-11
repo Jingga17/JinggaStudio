@@ -40,7 +40,7 @@ app.use('/uploads', express.static(uploadsDir));
 
 // Basic Route
 app.get('/api', (req, res) => {
-    res.json({ message: 'DCM 220 Backend API v1.0.0 is running' });
+    res.json({ message: 'Counselor Connect Backend API v1.0.0 is running' });
 });
 
 // Import Routes

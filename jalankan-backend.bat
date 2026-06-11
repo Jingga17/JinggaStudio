@@ -1,6 +1,6 @@
 @echo off
 echo =======================================================
-echo     MENGINSTALL & MENJALANKAN BACKEND DCM 220
+echo     MENGINSTALL & MENJALANKAN BACKEND Counselor Connect
 echo =======================================================
 echo.
 echo Sedang masuk ke folder backend...
