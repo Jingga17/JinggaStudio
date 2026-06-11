@@ -177,7 +177,31 @@ router.get('/zip/class/:kelas', auth, async (req, res, next) => {
 
 			// generateIndividuPDF will pipe to the provided stream and end it when done
 			generateIndividuPDF(data, pass);
-			const pdfBuffer = await pdfPromise;
+			let pdfBuffer = await pdfPromise;
+
+			// Quick validation: check PDF signature
+			const sig = pdfBuffer && pdfBuffer.slice(0,4).toString();
+			if (sig !== '%PDF') {
+				console.warn(`Generated buffer for student ${s.id} does not start with %PDF (found: ${sig}). Creating fallback PDF.`);
+				// create a simple fallback PDF buffer
+				try {
+					const PDFDocument = require('pdfkit');
+					const tmpChunks = [];
+					const tmpDoc = new PDFDocument({ margin: 40, size: 'A4' });
+					tmpDoc.on('data', c => tmpChunks.push(c));
+					const tmpPromise = new Promise((resolve, reject) => {
+						tmpDoc.on('end', () => resolve(Buffer.concat(tmpChunks)));
+						tmpDoc.on('error', reject);
+					});
+					tmpDoc.fontSize(14).text(`Laporan (fallback) - ${s.nama}`);
+					tmpDoc.moveDown();
+					tmpDoc.fontSize(10).text('PDF generator fallback content.');
+					tmpDoc.end();
+					pdfBuffer = await tmpPromise;
+				} catch (e) {
+					console.error('Failed to create fallback PDF for', s.id, e.message);
+				}
+			}
 
 			const filename = `${s.nama.replace(/\s+/g,'_')}_${s.id}.pdf`;
 			archive.append(pdfBuffer, { name: filename });

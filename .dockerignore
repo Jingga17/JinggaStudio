@@ -1,4 +1,4 @@
-node_modules
+yanode_modules
 npm-debug.log
 .env
 backend/src/db/database.sqlite
