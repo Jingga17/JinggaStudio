@@ -15,8 +15,7 @@ router.get('/class/:kelas', auth, async (req, res, next) => {
 		const kelas = req.params.kelas;
 		const students = await query('SELECT * FROM students WHERE kelas = ?', [kelas]);
 		const rows = [];
-		// First, generate class-level PDF summary and add to archive using a temp file
-		const tmpFiles = [];
+		// First, generate class-level PDF summary and save to a temp file
 		try {
 			const tmpClassPath = path.join(__dirname, '../../uploads', `tmp_class_${kelas.replace(/\s+/g,'_')}.pdf`);
 			await new Promise((resolve, reject) => {
@@ -59,8 +58,8 @@ router.get('/class/:kelas', auth, async (req, res, next) => {
 				out.on('finish', resolve);
 				out.on('error', reject);
 			});
-			archive.file(tmpClassPath, { name: `Laporan_Kelas_${kelas.replace(/\s+/g,'_')}.pdf` });
-			tmpFiles.push(tmpClassPath);
+			// Do not attempt to add to an archive here (archive isn't defined in this route)
+			// The temp file is left in uploads; cleanup is handled elsewhere if needed
 		} catch (e) {
 			console.warn('Gagal membuat PDF kelas:', e && e.message);
 		}
@@ -147,6 +146,7 @@ router.get('/zip/class/:kelas', auth, async (req, res, next) => {
 
 		const archive = archiver('zip', { zlib: { level: 9 } });
 		archive.pipe(res);
+		const tmpFiles = [];
 
 		for (const s of students) {
 			const scores = await calculateStudentScores(s.id);
