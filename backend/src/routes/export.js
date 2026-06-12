@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { query } = require('../db');
+const { query, get } = require('../db');
 const { calculateStudentScores } = require('../services/scoring');
 const auth = require('../middleware/auth');
 const archiver = require('archiver');
@@ -184,6 +184,8 @@ router.get('/zip/class/:kelas', auth, async (req, res, next) => {
 		res.setHeader('Content-Type', 'application/zip');
 		res.setHeader('Content-Disposition', `attachment; filename=${kelas.replace(/\s+/g,'_')}_laporan.zip`);
 
+		const settings = await get('SELECT * FROM schools WHERE id = 1') || {};
+
 		// Load CSV descriptions outside loop
 		const csvBase = process.env.CSV_PATH || path.join(__dirname, '../../../../SOAL DAN ANALISIS DCM');
 		const csvBidangPath = path.join(csvBase, 'analisis Bidang.csv');
@@ -271,7 +273,8 @@ router.get('/zip/class/:kelas', auth, async (req, res, next) => {
 				prioritas,
 				answers,
 				analisis,
-				subDescriptions
+				subDescriptions,
+				settings
 			};
 
 			// create a temp file for this student's PDF and add file to archive
@@ -295,7 +298,7 @@ router.get('/zip/class/:kelas', auth, async (req, res, next) => {
 			}
 		}
 
-		archive.on('close', () => {
+		res.on('finish', () => {
 			for (const f of tmpFiles) {
 				try { fs.unlinkSync(f); } catch (e) {}
 			}
@@ -312,6 +315,8 @@ router.get('/zip/all', auth, async (req, res, next) => {
 
 		res.setHeader('Content-Type', 'application/zip');
 		res.setHeader('Content-Disposition', `attachment; filename=Bulk_Semua_Laporan.zip`);
+
+		const settings = await get('SELECT * FROM schools WHERE id = 1') || {};
 
 		// Load CSV descriptions outside loop
 		const csvBase = process.env.CSV_PATH || path.join(__dirname, '../../../../SOAL DAN ANALISIS DCM');
@@ -400,7 +405,8 @@ router.get('/zip/all', auth, async (req, res, next) => {
 				prioritas,
 				answers,
 				analisis,
-				subDescriptions
+				subDescriptions,
+				settings
 			};
 
 			// create a temp file for this student's PDF and add file to archive
@@ -425,7 +431,7 @@ router.get('/zip/all', auth, async (req, res, next) => {
 			}
 		}
 
-		archive.on('close', () => {
+		res.on('finish', () => {
 			for (const f of tmpFiles) {
 				try { fs.unlinkSync(f); } catch (e) {}
 			}
