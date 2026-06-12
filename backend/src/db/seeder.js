@@ -79,8 +79,7 @@ async function seed() {
         // 4. Add dummy answers for dummy students if they don't have any answers
         const students = await query("SELECT id, nama FROM students");
         for (const s of students) {
-            const answersCount = await get("SELECT COUNT(*) as count FROM answers WHERE student_id = ?", [s.id]);
-            if (answersCount.count < 220 && (s.nama === 'Ahmad Fauzi' || s.nama === 'Siti Rahayu')) {
+            if (s.nama === 'Ahmad Fauzi' || s.nama === 'Siti Rahayu') {
                 console.log(`Seeding/resetting dummy answers for ${s.nama}...`);
                 await run("DELETE FROM answers WHERE student_id = ?", [s.id]);
                 const questions = await query("SELECT * FROM questions");

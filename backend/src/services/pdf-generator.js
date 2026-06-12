@@ -469,12 +469,19 @@ function generateIndividuPDF(data, res) {
     for (let i = range.start; i < range.start + range.count; i++) {
         doc.switchToPage(i);
         
+        // Save original bottom margin and set to 0 to prevent automatic page breaks during footer rendering
+        const oldBottomMargin = doc.page.margins.bottom;
+        doc.page.margins.bottom = 0;
+        
         // Draw running footer line
-        doc.moveTo(40, 795).lineTo(555, 795).lineWidth(0.5).strokeColor(borderColor).stroke();
+        doc.moveTo(40, 780).lineTo(555, 780).lineWidth(0.5).strokeColor(borderColor).stroke();
         
         // Draw running footer page number
         doc.fontSize(7.5).font('Helvetica').fillColor(textMuted);
-        doc.text(`Halaman ${i + 1} dari ${range.count}`, 40, 802, { align: 'right', width: 515 });
+        doc.text(`Halaman ${i + 1} dari ${range.count}`, 40, 785, { align: 'right', width: 515 });
+        
+        // Restore original bottom margin
+        doc.page.margins.bottom = oldBottomMargin;
         
         // Draw running header (Page 2 onwards)
         if (i > 0) {
