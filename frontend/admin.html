@@ -178,17 +178,18 @@
         </div>
 
         <!-- Sesi Asesmen -->
-        <div class="card" style="margin-bottom:20px">
-          <div class="section-header">
-            <div>
-              <div class="section-title">🔗 Manajemen Sesi Asesmen</div>
-              <div class="section-sub">Buat link unik untuk membagikan kuesioner kepada siswa</div>
-            </div>
-            <button class="btn btn-primary" onclick="AdminApp.buatSesi()">
-              ✚ Buat Sesi Baru
+        <div class="card" style="margin-bottom:20px; display:flex; align-items:center; justify-content:space-between;">
+          <div>
+            <div class="section-title">🔗 Akses Kuesioner Siswa</div>
+            <div class="section-sub" style="margin-bottom: 8px;">Link pengerjaan: <a href="/index.html" target="_blank" style="font-weight:bold; color:var(--primary); text-decoration:none;">http://localhost:8080/index.html</a></div>
+            <div style="font-size:13px; color:var(--text-muted);">Siswa hanya dapat mengakses kuesioner jika status akses <b>Dibuka</b>.</div>
+          </div>
+          <div style="text-align:center;">
+            <div id="assessment-status-label" style="font-size:14px; font-weight:bold; margin-bottom:8px;">Status: Memuat...</div>
+            <button id="btn-toggle-assessment" class="btn" style="min-width:140px; font-weight:bold;" onclick="AdminApp.toggleAssessmentStatus()">
+              Memuat...
             </button>
           </div>
-          <div id="sessions-list"></div>
         </div>
 
         <!-- Filter Bar -->
@@ -306,7 +307,7 @@
             <div>
               <div class="section-sub" style="margin-bottom:12px">Download semua laporan kelas sekaligus</div>
               <button class="btn btn-outline" onclick="AdminApp.downloadBulkKelas()">
-                📦 Download Semua Laporan Kelas (ZIP)
+                📦 Download Semua Laporan Kelas (PDF)
               </button>
             </div>
           </div>
@@ -327,7 +328,7 @@
               <div class="section-header" style="margin-bottom:12px">
                 <div class="section-sub">Daftar siswa di kelas yang dipilih</div>
                 <button class="btn btn-outline btn-sm" onclick="AdminApp.downloadBulkIndividu()">
-                  📦 Download Bulk Kelas Ini (ZIP)
+                  📦 Download Bulk Kelas Ini (PDF)
                 </button>
               </div>
               <div class="table-wrap">
@@ -346,6 +347,14 @@
                   </tbody>
                 </table>
               </div>
+            </div>
+            
+            <hr class="divider" style="margin-top:20px; margin-bottom:20px;">
+            <div>
+              <div class="section-sub" style="margin-bottom:12px">Download seluruh laporan individu (semua kelas)</div>
+              <button class="btn btn-outline" onclick="AdminApp.downloadBulkSemuaIndividu()">
+                📦 Download Seluruh Laporan Individu (PDF)
+              </button>
             </div>
           </div>
         </div>
@@ -519,11 +528,11 @@
 
 <!-- Scripts -->
 <script src="js/data-soal.js"></script>
-<script src="js/utils/storage.js?v=2"></script>
+<script src="js/utils/storage.js?v=6"></script>
 <script src="js/utils/scoring.js"></script>
-<script src="js/utils/api.js?v=2"></script>
+<script src="js/utils/api.js?v=6"></script>
 <script src="js/components/ui.js"></script>
-<script src="js/pages/admin.js?v=2"></script>
+<script src="js/pages/admin.js?v=6"></script>
 <script>
 window.addEventListener('DOMContentLoaded', () => {
   AdminApp.init();

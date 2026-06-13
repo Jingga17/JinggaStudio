@@ -1,0 +1,96 @@
+const fs = require('fs');
+let code = fs.readFileSync('frontend/js/pages/report.js', 'utf8');
+
+const target1 = `      const kekuatanRows = kekuatan.map(k => \`
+        <tr>
+          <td>\${k.name}</td>
+          <td style="text-align:center">\${k.bidang}</td>
+          <td style="text-align:center">\${k.pct.toFixed(1)}%</td>
+          <td style="text-align:center">\${k.status}</td>
+        </tr>
+      \`).join('');`;
+
+const inject1 = `
+      const kekuatanSubNames = kekuatan.map(k => k.name);
+      const strengthAnswers = answers.filter(a => {
+        if (!kekuatanSubNames.includes(a.sub_bidang)) return false;
+        const ans = a.jawaban.toLowerCase();
+        return (a.arah_jawaban === 'Negative' && ans === 'tidak') ||
+               (a.arah_jawaban === 'Positive' && ans === 'ya');
+      }).slice(0, 10);
+      
+      let kekuatanAnsRows = '';
+      let kRowNo = 1;
+      strengthAnswers.forEach(a => {
+        const displayAns = a.jawaban.toLowerCase() === 'ya' ? 'Ya' : 'Tidak';
+        const indicator = '✅ Kondusif';
+        kekuatanAnsRows += \`<tr>
+          <td style="text-align:center">\${kRowNo++}</td>
+          <td style="text-align:center"><b>\${a.sub_bidang}</b></td>
+          <td style="text-align:left">\${a.teks_soal}</td>
+          <td style="text-align:center"><b>\${displayAns}</b></td>
+          <td style="text-align:center; color: #10b981;">\${indicator}</td>
+        </tr>\`;
+      });
+      if (strengthAnswers.length === 0) {
+        kekuatanAnsRows = \`<tr><td colspan="5" style="text-align:center;color:var(--text-muted)">Tidak ditemukan pernyataan kekuatan.</td></tr>\`;
+      }
+`;
+
+const parts1 = code.split(target1);
+if (parts1.length >= 3) {
+  // 1 is in renderIndividu, 2 is in renderIndividuReal
+  // We only want to inject in the 2nd one (index 1) or all of them.
+  // We can just inject in both!
+  code = parts1[0] + target1 + parts1[1] + target1 + inject1 + parts1[2];
+  console.log('Fixed renderIndividuReal');
+} else {
+  console.log('parts1 length:', parts1.length);
+}
+
+const inject2 = `
+      const classKekuatanSubNames = kekuatan.map(k => k.name);
+      const classKekuatanQuestions = QUESTIONS_DATA.filter(q => {
+        return q.tipe === 'Core' && classKekuatanSubNames.includes(q.sub_bidang);
+      })
+      .map(q => {
+        const pCount = questionProblemsCount[q.id] || 0;
+        const nonProblemCount = total_valid - pCount;
+        const pct = total_valid > 0 ? ((nonProblemCount / total_valid) * 100) : 0;
+        return { ...q, nonProblemCount, pct };
+      })
+      .sort((a,b) => b.nonProblemCount - a.nonProblemCount)
+      .slice(0, 10);
+      
+      let classKekuatanAnsRows = classKekuatanQuestions.map((q, idx) => {
+        const arahKekuatan = q.arah === 'Negative' ? 'Tidak' : 'Ya';
+        return \`<tr>
+          <td style="text-align:center">\${idx+1}</td>
+          <td style="text-align:center"><b>\${q.sub_bidang}</b></td>
+          <td style="text-align:left">\${q.teks}</td>
+          <td style="text-align:center"><b>\${arahKekuatan}</b></td>
+          <td style="text-align:center">\${q.nonProblemCount} siswa</td>
+          <td style="text-align:center; color: #10b981;"><b>\${q.pct.toFixed(1)}%</b> ✅ Kondusif</td>
+        </tr>\`;
+      }).join('');
+      if (classKekuatanQuestions.length === 0) {
+        classKekuatanAnsRows = \`<tr><td colspan="6" style="text-align:center;color:var(--text-muted)">Tidak ditemukan pernyataan kekuatan.</td></tr>\`;
+      }
+`;
+
+const target2 = `      const kekuatanRows = kekuatan.map(k => \`
+        <tr>
+          <td>\${k.name}</td>
+          <td style="text-align:center">\${k.bidang}</td>
+          <td style="text-align:center">\${k.pct.toFixed(1)}%</td>
+          <td style="text-align:center">\${k.status}</td>
+        </tr>
+      \`).join('');`;
+
+const parts2 = code.split(target2);
+if (parts2.length >= 3) {
+  // It occurs 4 times! The last 2 are for renderKelas and renderKelasReal.
+  // Wait, let's just use replace with regex so we just inject it if we are sure it's the right place.
+  // Actually, wait, parts2 is the EXACT SAME target as parts1! 
+  // Let's just find the exact offset!
+}

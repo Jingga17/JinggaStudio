@@ -108,6 +108,9 @@ const ReportApp = {
         <div style="width:80px;height:80px;flex-shrink:0;">${logo2}</div>
       </div>
       <div class="kop-title">${title}</div>
+        <div style="text-align:justify; font-size:12.5px; font-weight:bold; color:#1e293b; margin: 0 0 20px 0; line-height: 1.5;">
+          Dokumen ini berisi laporan analisis komprehensif mengenai profil perkembangan dan indikasi hambatan siswa pada bidang Pribadi, Belajar, Sosial, dan Karir. Hasil analisis ini berfungsi sebagai instrumen deteksi dini bagi konselor untuk memberikan layanan intervensi dan konseling yang sesuai dengan kebutuhan prioritas siswa. Seluruh data dalam dokumen ini bersifat rahasia dan hanya diperuntukkan bagi pihak yang berkepentingan.
+        </div>
     `;
   },
 
@@ -123,9 +126,8 @@ const ReportApp = {
             ${capKonselor}
             ${ttdKonselor}
             <div>${s.kota || 'Kota'}, ${new Date().toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'})}</div>
-            <div style="margin-top:4px">Mengetahui,</div>
             <div>Guru Bimbingan dan Konseling</div>
-            <div class="ttd-space" style="height:70px;"></div>
+            <div class="ttd-space" style="height:50px;"></div>
             <div><b><u>${s.nama_konselor || 'Nama Konselor'}</u></b></div>
             <div>NIP. ${s.nip || '-'}</div>
           </div>
@@ -137,6 +139,160 @@ const ReportApp = {
         </div>
       </div>
     `;
+  },
+
+  
+  
+   getLieScaleSvg(score) {
+    const r = 55;
+    const cx = 150;
+    const cy = 100;
+    const strokeWidth = 20;
+    const C = 2 * Math.PI * r;
+    const halfC = Math.PI * r;
+    
+    const s = Math.min(Math.max(score, 0), 22);
+    const angle = -180 + (s/22)*180;
+
+    return `
+      <svg width="100%" height="100" viewBox="0 0 300 130" style="overflow:visible; font-family: 'Inter', sans-serif;">
+        <defs>
+          <linearGradient id="soft-grad-lie" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#60a5fa"/> <!-- Soft Blue -->
+            <stop offset="50%" stop-color="#fde047"/> <!-- Soft Yellow -->
+            <stop offset="100%" stop-color="#f87171"/> <!-- Soft Red -->
+          </linearGradient>
+          <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000" flood-opacity="0.05"/>
+          </filter>
+        </defs>
+        
+        <!-- Background track -->
+        <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#f1f5f9" stroke-width="${strokeWidth}"
+          stroke-dasharray="${halfC} ${halfC}" stroke-linecap="round" transform="rotate(180, ${cx}, ${cy})" />
+        
+        <!-- Gradient segment -->
+        <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="url(#soft-grad-lie)" stroke-width="${strokeWidth}"
+          stroke-dasharray="${halfC} ${halfC}" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(180, ${cx}, ${cy})" filter="url(#shadow)"/>
+
+        <!-- Labels -->
+        <text x="${cx - r - 25}" y="${cy + 5}" font-size="9" font-weight="600" fill="#64748b" text-anchor="end">SANGAT</text>
+        <text x="${cx - r - 25}" y="${cy + 17}" font-size="9" font-weight="600" fill="#64748b" text-anchor="end">JUJUR</text>
+        
+        <text x="${cx}" y="${cy - r - 20}" font-size="9" font-weight="600" fill="#64748b" text-anchor="middle">WASPADA</text>
+        
+        <text x="${cx + r + 25}" y="${cy + 5}" font-size="9" font-weight="600" fill="#64748b" text-anchor="start">BERBOHONG</text>
+        
+        <text x="${cx - r}" y="${cy + 22}" font-size="10" font-weight="700" fill="#94a3b8" text-anchor="middle">0</text>
+        <text x="${cx + r}" y="${cy + 22}" font-size="10" font-weight="700" fill="#94a3b8" text-anchor="middle">22</text>
+
+        <!-- Needle -->
+        <g transform="rotate(${angle}, ${cx}, ${cy})">
+          <polygon points="${cx - 4},${cy} ${cx},${cy - r + 10} ${cx + 4},${cy}" fill="#475569"/>
+          <circle cx="${cx}" cy="${cy}" r="6" fill="#1e293b"/>
+          <circle cx="${cx}" cy="${cy}" r="2" fill="#ffffff"/>
+        </g>
+      </svg>
+    `
+  },
+
+  getConsistencySvg(score, isClass = false) {
+    const r = 55;
+    const cx = 150;
+    const cy = 100;
+    const strokeWidth = 20;
+    const C = 2 * Math.PI * r;
+    const halfC = Math.PI * r;
+    
+    // score adalah jumlah pasangan yang inkonsisten (abu-abu di versi sebelumnya)
+    // 0 = paling konsisten, 9 = paling tidak konsisten
+    const s = isClass ? parseFloat(score) : Math.min(Math.max(score, 0), 9);
+    const angle = -180 + (s/9)*180;
+    const konsisten = 9 - s;
+    const inkonsisten = s;
+
+    return `
+      <svg width="100%" height="100" viewBox="0 0 300 130" style="overflow:visible; font-family: 'Inter', sans-serif;">
+        <defs>
+          <linearGradient id="soft-grad-cons" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#34d399"/> <!-- Soft Green (Consistent) -->
+            <stop offset="50%" stop-color="#fde047"/> <!-- Soft Yellow -->
+            <stop offset="100%" stop-color="#f87171"/> <!-- Soft Red (Inconsistent) -->
+          </linearGradient>
+          <filter id="shadow-cons" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000" flood-opacity="0.05"/>
+          </filter>
+        </defs>
+        
+        <!-- Background track -->
+        <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#f1f5f9" stroke-width="${strokeWidth}"
+          stroke-dasharray="${halfC} ${halfC}" stroke-linecap="round" transform="rotate(180, ${cx}, ${cy})" />
+        
+        <!-- Gradient segment -->
+        <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="url(#soft-grad-cons)" stroke-width="${strokeWidth}"
+          stroke-dasharray="${halfC} ${halfC}" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(180, ${cx}, ${cy})" filter="url(#shadow-cons)"/>
+
+        <!-- Labels -->
+        <text x="${cx - r - 25}" y="${cy + 5}" font-size="9" font-weight="600" fill="#64748b" text-anchor="end">SANGAT</text>
+        <text x="${cx - r - 25}" y="${cy + 17}" font-size="9" font-weight="600" fill="#64748b" text-anchor="end">KONSISTEN</text>
+        
+        <text x="${cx}" y="${cy - r - 20}" font-size="9" font-weight="600" fill="#64748b" text-anchor="middle">KURANG KONSISTEN</text>
+        
+        <text x="${cx + r + 25}" y="${cy + 10}" font-size="9" font-weight="600" fill="#64748b" text-anchor="start">INKONSISTEN</text>
+        
+        <text x="${cx - r}" y="${cy + 22}" font-size="10" font-weight="700" fill="#94a3b8" text-anchor="middle">0</text>
+        <text x="${cx + r}" y="${cy + 22}" font-size="10" font-weight="700" fill="#94a3b8" text-anchor="middle">9</text>
+
+        <!-- Needle -->
+        <g transform="rotate(${angle}, ${cx}, ${cy})">
+          <polygon points="${cx - 4},${cy} ${cx},${cy - r + 10} ${cx + 4},${cy}" fill="#475569"/>
+          <circle cx="${cx}" cy="${cy}" r="6" fill="#1e293b"/>
+          <circle cx="${cx}" cy="${cy}" r="2" fill="#ffffff"/>
+        </g>
+      </svg>
+    `
+  },
+
+  getDonutSvg(pPct, bPct, sPct, kPct) {
+    const total = pPct + bPct + sPct + kPct || 1;
+    const p = (pPct/total) * 100;
+    const b = (bPct/total) * 100;
+    const s = (sPct/total) * 100;
+    const k = (kPct/total) * 100;
+    
+    const cx = 21;
+    const cy = 21;
+    const rText = 15.91549430918954; 
+    
+    function getText(offsetStart, length, val) {
+        if (val <= 0) return '';
+        const midLength = offsetStart + (length / 2);
+        const angle = (midLength / 100) * 2 * Math.PI;
+        const tx = cx + rText * Math.sin(angle);
+        const ty = cy - rText * Math.cos(angle);
+        return `<text x="${tx}" y="${ty}" fill="white" font-size="3" font-weight="bold" font-family="sans-serif" text-anchor="middle" dominant-baseline="central">${Math.round(val)}%</text>`;
+    }
+    
+    const tP = getText(0, p, pPct);
+    const tB = getText(p, b, bPct);
+    const tS = getText(p+b, s, sPct);
+    const tK = getText(p+b+s, k, kPct);
+
+    return `
+    <svg width="100%" height="100%" viewBox="0 0 42 42" style="border-radius:50%;">
+      <g transform="rotate(-90 21 21)">
+        <circle cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#cbd5e1" stroke-width="8"></circle>
+        ${p>0 ? `<circle cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#3b82f6" stroke-width="8" stroke-dasharray="${p} ${100 - p}" stroke-dashoffset="0"></circle>` : ''}
+        ${b>0 ? `<circle cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#10b981" stroke-width="8" stroke-dasharray="${b} ${100 - b}" stroke-dashoffset="-${p}"></circle>` : ''}
+        ${s>0 ? `<circle cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#f59e0b" stroke-width="8" stroke-dasharray="${s} ${100 - s}" stroke-dashoffset="-${p + b}"></circle>` : ''}
+        ${k>0 ? `<circle cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#8b5cf6" stroke-width="8" stroke-dasharray="${k} ${100 - k}" stroke-dashoffset="-${p + b + s}"></circle>` : ''}
+      </g>
+      <circle cx="21" cy="21" r="11.91549430918954" fill="white"></circle>
+      ${tP}
+      ${tB}
+      ${tS}
+      ${tK}
+    </svg>`;
   },
 
   getKategoriWarna(pct) {
@@ -200,8 +356,8 @@ const ReportApp = {
       });
     }
 
-    let html = `
-      ${this.getKopSurat('LAPORAN ANALISIS INDIVIDU &mdash; Counselor Connect')}
+      let html = `
+      ${this.getKopSurat('LAPORAN ANALISIS INDIVIDU')}
       
       <h2>IDENTITAS SISWA</h2>
       <table class="tbl-identitas">
@@ -213,45 +369,63 @@ const ReportApp = {
       </table>
 
       <h2>A. VALIDITAS PENGISIAN</h2>
-      <div style="display:flex; gap:20px;">
-        <div class="chart-box" style="flex:1;">
-          <h3>A.1 Lie Scale (Skala Kebohongan)</h3>
-          <p>Skor: <b>${student.lie_score} dari 22</b></p>
-          <div style="margin-top:10px; font-size:11px; color:#475569;">
-            <div style="display:flex; height:10px; background:#e2e8f0; border-radius:5px; overflow:hidden; margin-bottom:5px;">
-              <div style="width:${(student.lie_score/22)*100}%; background:#3b82f6;"></div>
+      <div class="validity-container">
+        <!-- Lie Scale Card -->
+        <div class="validity-card blue">
+          <div class="validity-header">
+            <span>👁️</span> A.1 Lie Scale (Skala Kebohongan)
+          </div>
+          <div class="validity-body" style="display:flex; flex-direction:column; align-items:center; text-align:center;">
+            <div style="width: 100%; max-width: 250px; margin: 10px auto;">
+              ${this.getLieScaleSvg(student.lie_score, false)}
             </div>
-            ${this.getDeskripsiAnalisis('bidang', 'Lie Scale', student.lie_score)}
+            <div style="font-size: 13px; color: #475569; font-weight: 600; margin-top: -15px; margin-bottom: 15px;">
+              Skor: <span style="color:#1e293b;">${student.lie_score} dari 22</span>
+            </div>
+            <div class="validity-desc" style="text-align:justify; width: 100%;">
+              ${this.getDeskripsiAnalisis('bidang', 'Lie Scale', student.lie_score)}
+            </div>
           </div>
         </div>
-        <div class="chart-box" style="flex:1;">
-          <h3>A.2 Consistency Check</h3>
-          <p>Skor Inkonsistensi: <b>${student.cc_score} dari 9 pasang</b></p>
-          <div style="margin-top:10px; font-size:11px; color:#475569;">
-            <div style="display:flex; height:10px; background:#e2e8f0; border-radius:5px; overflow:hidden; margin-bottom:5px;">
-              <div style="width:${(student.cc_score/9)*100}%; background:#10b981;"></div>
-            </div>
-            ${this.getDeskripsiAnalisis('bidang', 'Consistency', student.cc_score)}
+
+        <!-- Consistency Card -->
+        <div class="validity-card green">
+          <div class="validity-header">
+            <span>⚖️</span> A.2 Consistency Check
           </div>
+          <div class="validity-body" style="display:flex; flex-direction:column; align-items:center; text-align:center;">
+            <div style="width: 100%; max-width: 250px; margin: 10px auto;">
+              ${this.getConsistencySvg(student.cc_score, false)}
+            </div>
+            <div style="font-size: 13px; color: #475569; font-weight: 600; margin-top: -15px; margin-bottom: 15px;">
+              Skor Inkonsistensi: <span style="color:#1e293b;">${student.cc_score} dari 9 pasang</span>
+            </div>
+            <div class="validity-desc" style="text-align:justify; width: 100%;">
+              ${this.getDeskripsiAnalisis('bidang', 'Consistency', student.cc_score)}
+            </div>
+          </div>
+        </div>
+
+        <!-- Kesimpulan Badge -->
+        <div class="kesimpulan-badge">
+          <h4>👁️ KESIMPULAN 👍</h4>
+          <ul>
+            <li>PROFIL DATA SANGAT VALID</li>
+            <li>DAPAT DIANDALKAN</li>
+            <li>LANDASAN INTERVENSI KOKOH</li>
+          </ul>
         </div>
       </div>
 
       <h2>B. PROFIL MASALAH PER BIDANG</h2>
       <div class="donut-container">
         <!-- Mock donut sizes using conic gradient based on pct relative to total -->
-        <div class="donut-chart" style="background: conic-gradient(
-          var(--c-pribadi) 0% 25%,
-          var(--c-belajar) 25% 50%,
-          var(--c-sosial) 50% 75%,
-          var(--c-karir) 75% 100%
-        );">
-          <div class="donut-hole"></div>
-        </div>
+        <div class="donut-chart" style="background:none;">${this.getDonutSvg(pPct, bPct, sPct, kPct)}</div>
         <div class="donut-legend">
-          <div class="legend-item"><div class="legend-color" style="background:var(--c-pribadi)"></div> 🔵 Pribadi: ${pPct}% <span class="tag ${pKat.cls}">${pKat.label}</span></div>
-          <div class="legend-item"><div class="legend-color" style="background:var(--c-belajar)"></div> 🟢 Belajar: ${bPct}% <span class="tag ${bKat.cls}">${bKat.label}</span></div>
-          <div class="legend-item"><div class="legend-color" style="background:var(--c-sosial)"></div> 🟠 Sosial: ${sPct}% <span class="tag ${sKat.cls}">${sKat.label}</span></div>
-          <div class="legend-item"><div class="legend-color" style="background:var(--c-karir)"></div> 🟣 Karir: ${kPct}% <span class="tag ${kKat.cls}">${kKat.label}</span></div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--c-pribadi)"></div> 🔵 Pribadi <span class="tag ${pKat.cls}">${pKat.label}</span></div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--c-belajar)"></div> 🟢 Belajar <span class="tag ${bKat.cls}">${bKat.label}</span></div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--c-sosial)"></div> 🟠 Sosial <span class="tag ${sKat.cls}">${sKat.label}</span></div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--c-karir)"></div> 🟣 Karir <span class="tag ${kKat.cls}">${kKat.label}</span></div>
         </div>
       </div>
       <div style="margin-top:20px;">
@@ -261,8 +435,6 @@ const ReportApp = {
           </div>
         `).join('')}
       </div>
-
-      <div class="page-break"></div>
 
       <h2>C. PROFIL 5 SUB BIDANG PRIORITAS</h2>
       <div class="chart-box">
@@ -284,14 +456,18 @@ const ReportApp = {
       <h2>D. TABEL JAWABAN KRISIS (5 SUB BIDANG PRIORITAS)</h2>
       <p>Berikut adalah rincian pernyataan yang terindikasi bermasalah dari 5 sub bidang prioritas tertinggi siswa:</p>
       <table>
-        <tr>
-          <th style="width:40px;">No</th>
-          <th style="width:140px;">Sub Bidang</th>
-          <th style="text-align:left;">Pernyataan</th>
-          <th style="width:90px;">Jawaban</th>
-          <th style="width:130px;">Indikasi Masalah</th>
-        </tr>
-        ${mockKrisisRows}
+        <thead>
+          <tr>
+            <th style="width:40px;">No</th>
+            <th style="width:140px;">Sub Bidang</th>
+            <th style="text-align:left;">Pernyataan</th>
+            <th style="width:90px;">Jawaban</th>
+            <th style="width:130px;">Indikasi Masalah</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${mockKrisisRows}
+        </tbody>
       </table>
 
       <h2>E. KEKUATAN YANG PERLU DIPERTAHANKAN</h2>
@@ -329,6 +505,16 @@ const ReportApp = {
     const studentsInClass = MOCK.students.filter(s => s.kelas === kelasName || s.kelas === 'XII IPA 1'); // Fallback if empty
     const validCount = studentsInClass.filter(s => s.is_valid).length;
     
+    const pPct = 44.7;
+    const bPct = 63.7;
+    const sPct = 48.3;
+    const kPct = 52.9;
+
+    const pKat = this.getKategoriWarna(pPct);
+    const bKat = this.getKategoriWarna(bPct);
+    const sKat = this.getKategoriWarna(sPct);
+    const kKat = this.getKategoriWarna(kPct);
+    
     const subPrioritas = [
       { name: 'Fokus Belajar', bidang: 'Belajar', pct: 75.5, kat: this.getKategoriWarna(75.5), icon: '🟢' },
       { name: 'Perencanaan Karir', bidang: 'Karir', pct: 71.4, kat: this.getKategoriWarna(71.4), icon: '🟣' },
@@ -338,10 +524,10 @@ const ReportApp = {
     ];
 
     const bidangList = [
-      { nama: 'Pribadi', pct: 44.7 },
-      { nama: 'Belajar', pct: 63.7 },
-      { nama: 'Sosial', pct: 48.3 },
-      { nama: 'Karir', pct: 52.9 }
+      { nama: 'Pribadi', pct: pPct },
+      { nama: 'Belajar', pct: bPct },
+      { nama: 'Sosial', pct: sPct },
+      { nama: 'Karir', pct: kPct }
     ].sort((a,b) => b.pct - a.pct);
 
     let mockKelasRows = '';
@@ -368,8 +554,8 @@ const ReportApp = {
       });
     }
 
-    let html = `
-      ${this.getKopSurat(`LAPORAN ANALISIS KELAS &mdash; Counselor Connect<br>KELAS ${kelasName}`)}
+      let html = `
+      ${this.getKopSurat(`LAPORAN ANALISIS KELAS<br>KELAS ${kelasName}`)}
       
       <h2>IDENTITAS KELAS</h2>
       <table class="tbl-identitas">
@@ -380,38 +566,73 @@ const ReportApp = {
       </table>
 
       <h2>A. VALIDITAS PENGISIAN KELAS</h2>
-      <div style="display:flex; gap:20px;">
-        <div class="chart-box" style="flex:1;">
-          <h3>A.1 Rata-Rata Lie Scale</h3>
-          <p>Skor Kelas: <b>3.2 dari 22</b></p>
-          <div style="margin-top:10px; font-size:11px; color:#475569;">
-            ${this.getDeskripsiAnalisis('bidang', 'Lie Scale', 3.2, true)}
+      <div class="validity-container">
+        <!-- Lie Scale Card -->
+        <div class="validity-card blue">
+          <div class="validity-header">
+            <span>👁️</span> A.1 Rata-Rata Lie Scale
+          </div>
+          <div class="validity-body">
+            <div class="validity-score-box">
+              <div style="color:#2563eb;font-size:14px;margin-bottom:2px">👁️</div>
+              Skor Kelas: <b>3.2 dari 22</b>
+            </div>
+            <div style="text-align:center; margin-top:-10px;">
+              ${this.getLieScaleSvg(3.2, true)}
+            </div>
+            <div class="validity-bar">
+              <div style="width:${((22 - 3.2)/22)*100}%; background:#2563eb;"></div>
+              <div style="width:${(3.2/22)*100}%; background:#cbd5e1;"></div>
+            </div>
+            <div class="validity-legend">
+              <div><span style="display:inline-block;width:10px;height:10px;background:#2563eb;margin-right:5px;"></span> Rata-rata Kejujuran: <b>${(22 - 3.2).toFixed(1)}</b></div>
+              <div><span style="display:inline-block;width:10px;height:10px;background:#cbd5e1;margin-right:5px;"></span> Rata-rata Berbohong: <b>3.2</b></div>
+            </div>
+            <div class="validity-desc" style="margin-top:15px;">
+              ${this.getDeskripsiAnalisis('bidang', 'Lie Scale', 3.2, true)}
+            </div>
           </div>
         </div>
-        <div class="chart-box" style="flex:1;">
-          <h3>A.2 Rata-Rata Consistency Check</h3>
-          <p>Skor Kelas: <b>1.4 dari 9</b></p>
-          <div style="margin-top:10px; font-size:11px; color:#475569;">
-            ${this.getDeskripsiAnalisis('bidang', 'Consistency', 1.4, true)}
+
+        <!-- Consistency Card -->
+        <div class="validity-card green">
+          <div class="validity-header">
+            <span>⚖️</span> A.2 Rata-Rata Consistency Check
           </div>
+          <div class="validity-body">
+            <div style="display:flex; align-items:flex-start; gap:10px;">
+              <div class="validity-score-box" style="align-self:flex-start; flex-shrink:0;">
+                <div style="color:#10b981;font-size:14px;margin-bottom:2px">👍</div>
+                Skor Kelas: <b>1.4<br>dari 9 pasang</b>
+              </div>
+              <div style="flex:1; min-width:0; overflow:hidden;">
+                ${this.getConsistencySvg(1.4, true)}
+              </div>
+            </div>
+            <div class="validity-desc" style="margin-top:8px;">
+              ${this.getDeskripsiAnalisis('bidang', 'Consistency', 1.4, true)}
+            </div>
+          </div>
+        </div>
+
+        <!-- Kesimpulan Badge -->
+        <div class="kesimpulan-badge">
+          <h4>👁️ KESIMPULAN KELAS 👍</h4>
+          <ul>
+            <li>DATA KELAS CUKUP VALID</li>
+            <li>DAPAT DIANDALKAN SECARA KOLEKTIF</li>
+          </ul>
         </div>
       </div>
 
       <h2>B. PROFIL MASALAH KELAS PER BIDANG</h2>
       <div class="donut-container">
-        <div class="donut-chart" style="background: conic-gradient(
-          var(--c-pribadi) 0% 20%,
-          var(--c-belajar) 20% 55%,
-          var(--c-sosial) 55% 75%,
-          var(--c-karir) 75% 100%
-        );">
-          <div class="donut-hole"></div>
-        </div>
+        <div class="donut-chart" style="background:none;">${this.getDonutSvg(pPct, bPct, sPct, kPct)}</div>
         <div class="donut-legend">
-          <div class="legend-item"><div class="legend-color" style="background:var(--c-pribadi)"></div> 🔵 Pribadi: 44.7% <span class="tag tag-sedang">Sedang</span></div>
-          <div class="legend-item"><div class="legend-color" style="background:var(--c-belajar)"></div> 🟢 Belajar: 63.7% <span class="tag tag-berat">Berat</span></div>
-          <div class="legend-item"><div class="legend-color" style="background:var(--c-sosial)"></div> 🟠 Sosial: 48.3% <span class="tag tag-sedang">Sedang</span></div>
-          <div class="legend-item"><div class="legend-color" style="background:var(--c-karir)"></div> 🟣 Karir: 52.9% <span class="tag tag-berat">Berat</span></div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--c-pribadi)"></div> 🔵 Pribadi <span class="tag ${pKat.cls}">${pKat.label}</span></div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--c-belajar)"></div> 🟢 Belajar <span class="tag ${bKat.cls}">${bKat.label}</span></div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--c-sosial)"></div> 🟠 Sosial <span class="tag ${sKat.cls}">${sKat.label}</span></div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--c-karir)"></div> 🟣 Karir <span class="tag ${kKat.cls}">${kKat.label}</span></div>
         </div>
       </div>
       <div style="margin-top:20px;">
@@ -421,8 +642,6 @@ const ReportApp = {
           </div>
         `).join('')}
       </div>
-
-      <div class="page-break"></div>
 
       <h2>C. PROFIL 5 SUB BIDANG PRIORITAS KELAS</h2>
       <div class="chart-box">
@@ -444,46 +663,58 @@ const ReportApp = {
       <h2>D. TABEL JAWABAN KRISIS KELAS (5 SUB BIDANG PRIORITAS)</h2>
       <p>Rekapitulasi pernyataan dengan persentase masalah tertinggi pada 5 sub bidang prioritas utama dari total ${validCount} siswa valid:</p>
       <table>
-        <tr>
-          <th style="width:40px;">No</th>
-          <th style="width:130px;">Sub Bidang</th>
-          <th style="text-align:left;">Pernyataan</th>
-          <th style="width:100px;">Indikator Masalah</th>
-          <th style="width:100px;">Jml Masalah</th>
-          <th style="width:100px;">% Masalah</th>
-        </tr>
-        ${mockKelasRows}
+        <thead>
+          <tr>
+            <th style="width:40px;">No</th>
+            <th style="width:130px;">Sub Bidang</th>
+            <th style="text-align:left;">Pernyataan</th>
+            <th style="width:100px;">Indikator Masalah</th>
+            <th style="width:100px;">Jml Masalah</th>
+            <th style="width:100px;">% Masalah</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${mockKelasRows}
+        </tbody>
       </table>
 
       <h2>E. DAFTAR SISWA YANG PERLU PENANGANAN KHUSUS</h2>
       <table>
-        <tr>
-          <th style="width:40px;">No</th>
-          <th style="text-align:left;">Nama Siswa</th>
-          <th style="width:140px;">Status Validitas</th>
-          <th style="width:250px; text-align:left;">Keterangan Diagnostik</th>
-        </tr>
-        ${studentsInClass.map((s,i) => `
+        <thead>
           <tr>
-            <td style="text-align:center">${i+1}</td>
-            <td><b>${s.nama}</b></td>
-            <td style="text-align:center">${s.is_valid ? '<span style="color:green">✅ Valid</span>' : '<span style="color:red">❌ Tidak Valid</span>'}</td>
-            <td>${s.is_valid ? 'Perlu pantauan (Belajar/Karir)' : 'Perlu wawancara ulang'}</td>
+            <th style="width:40px;">No</th>
+            <th style="text-align:left;">Nama Siswa</th>
+            <th style="width:140px;">Status Validitas</th>
+            <th style="width:250px; text-align:left;">Keterangan Diagnostik</th>
           </tr>
-        `).join('')}
+        </thead>
+        <tbody>
+          ${studentsInClass.map((s,i) => `
+            <tr>
+              <td style="text-align:center">${i+1}</td>
+              <td><b>${s.nama}</b></td>
+              <td style="text-align:center">${s.is_valid ? '<span style="color:green">✅ Valid</span>' : '<span style="color:red">❌ Tidak Valid</span>'}</td>
+              <td>${s.is_valid ? 'Perlu pantauan (Belajar/Karir)' : 'Perlu wawancara ulang'}</td>
+            </tr>
+          `).join('')}
+        </tbody>
       </table>
 
       <h2>F. KEKUATAN KELAS YANG PERLU DIPERTAHANKAN</h2>
       <table>
-        <tr>
-          <th style="text-align:left;">Sub Bidang</th>
-          <th style="width:130px;">Bidang</th>
-          <th style="width:100px;">Persentase</th>
-          <th style="width:140px;">Status</th>
-        </tr>
-        <tr><td>Nilai & Moral</td><td style="text-align:center">🔵 Pribadi</td><td style="text-align:center">12.9%</td><td style="text-align:center">✅ Sangat Baik</td></tr>
-        <tr><td>Etika Sosial</td><td style="text-align:center">🟠 Sosial</td><td style="text-align:center">23.8%</td><td style="text-align:center">✅ Baik</td></tr>
-        <tr><td>Kesiapan Karir</td><td style="text-align:center">🟣 Karir</td><td style="text-align:center">30.1%</td><td style="text-align:center">✅ Cukup Baik</td></tr>
+        <thead>
+          <tr>
+            <th style="text-align:left;">Sub Bidang</th>
+            <th style="width:130px;">Bidang</th>
+            <th style="width:100px;">Persentase</th>
+            <th style="width:140px;">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Nilai & Moral</td><td style="text-align:center">🔵 Pribadi</td><td style="text-align:center">12.9%</td><td style="text-align:center">✅ Sangat Baik</td></tr>
+          <tr><td>Etika Sosial</td><td style="text-align:center">🟠 Sosial</td><td style="text-align:center">23.8%</td><td style="text-align:center">✅ Baik</td></tr>
+          <tr><td>Kesiapan Karir</td><td style="text-align:center">🟣 Karir</td><td style="text-align:center">30.1%</td><td style="text-align:center">✅ Cukup Baik</td></tr>
+        </tbody>
       </table>
       <p>Kelas ${kelasName} memiliki landasan nilai dan moral yang sangat kuat sebagai kolektif. Etika dalam berinteraksi sosial juga masih terjaga dengan baik. Ini merupakan modal sosial yang berharga.</p>
 
@@ -586,8 +817,34 @@ const ReportApp = {
       </tr>
     `).join('');
 
-    let html = `
-      ${this.getKopSurat('LAPORAN ANALISIS INDIVIDU &mdash; Counselor Connect')}
+    
+      const kekuatanSubNames = kekuatan.map(k => k.name);
+      const strengthAnswers = answers.filter(a => {
+        if (!kekuatanSubNames.includes(a.sub_bidang)) return false;
+        const ans = a.jawaban.toLowerCase();
+        return (a.arah_jawaban === 'Negative' && ans === 'tidak') ||
+               (a.arah_jawaban === 'Positive' && ans === 'ya');
+      }).slice(0, 10);
+      
+      let kekuatanAnsRows = '';
+      let kRowNo = 1;
+      strengthAnswers.forEach(a => {
+        const displayAns = a.jawaban.toLowerCase() === 'ya' ? 'Ya' : 'Tidak';
+        const indicator = '✅ Kondusif';
+        kekuatanAnsRows += `<tr>
+          <td style="text-align:center">${kRowNo++}</td>
+          <td style="text-align:center"><b>${a.sub_bidang}</b></td>
+          <td style="text-align:left">${a.teks_soal}</td>
+          <td style="text-align:center"><b>${displayAns}</b></td>
+          <td style="text-align:center; color: #10b981;">${indicator}</td>
+        </tr>`;
+      });
+      if (strengthAnswers.length === 0) {
+        kekuatanAnsRows = `<tr><td colspan="5" style="text-align:center;color:var(--text-muted)">Tidak ditemukan pernyataan kekuatan.</td></tr>`;
+      }
+
+      let html = `
+      ${this.getKopSurat('LAPORAN ANALISIS INDIVIDU')}
       
       <h2>IDENTITAS SISWA</h2>
       <table class="tbl-identitas">
@@ -599,44 +856,72 @@ const ReportApp = {
       </table>
 
       <h2>A. VALIDITAS PENGISIAN</h2>
-      <div style="display:flex; gap:20px;">
-        <div class="chart-box" style="flex:1;">
-          <h3>A.1 Lie Scale (Skala Kebohongan)</h3>
-          <p>Skor: <b>${student.lie_score} dari 22</b></p>
-          <div style="margin-top:10px; font-size:11px; color:#475569;">
-            <div style="display:flex; height:10px; background:#e2e8f0; border-radius:5px; overflow:hidden; margin-bottom:5px;">
-              <div style="width:${(student.lie_score/22)*100}%; background:#3b82f6;"></div>
+      <div class="validity-container">
+        <!-- Lie Scale Card -->
+        <div class="validity-card blue">
+          <div class="validity-header">
+            <span>👁️</span> A.1 Lie Scale (Skala Kebohongan)
+          </div>
+          <div class="validity-body" style="display:flex; flex-direction:column; align-items:center; text-align:center;">
+            <div style="width: 100%; max-width: 250px; margin: 10px auto;">
+              ${this.getLieScaleSvg(student.lie_score, true)}
             </div>
-            ${this.getDeskripsiAnalisis('bidang', 'Lie Scale', student.lie_score)}
+            <div style="font-size: 13px; color: #475569; font-weight: 600; margin-top: -15px; margin-bottom: 15px;">
+              Rata-rata Skor: <span style="color:#1e293b;">${student.lie_score} dari 22</span>
+            </div>
+            <div class="validity-desc" style="text-align:justify; width: 100%;">
+              ${this.getDeskripsiAnalisis('bidang', 'Lie Scale', student.lie_score)}
+            </div>
           </div>
         </div>
-        <div class="chart-box" style="flex:1;">
-          <h3>A.2 Consistency Check</h3>
-          <p>Skor Inkonsistensi: <b>${student.cc_score} dari 9 pasang</b></p>
-          <div style="margin-top:10px; font-size:11px; color:#475569;">
-            <div style="display:flex; height:10px; background:#e2e8f0; border-radius:5px; overflow:hidden; margin-bottom:5px;">
-              <div style="width:${(student.cc_score/9)*100}%; background:#10b981;"></div>
-            </div>
-            ${this.getDeskripsiAnalisis('bidang', 'Consistency', student.cc_score)}
+
+        <!-- Consistency Card -->
+        <div class="validity-card green">
+          <div class="validity-header">
+            <span>⚖️</span> A.2 Consistency Check
           </div>
+          <div class="validity-body" style="display:flex; flex-direction:column; align-items:center; text-align:center;">
+            <div style="width: 100%; max-width: 250px; margin: 10px auto;">
+              ${this.getConsistencySvg(student.cc_score, true)}
+            </div>
+            <div style="font-size: 13px; color: #475569; font-weight: 600; margin-top: -15px; margin-bottom: 15px;">
+              Rata-rata Inkonsistensi: <span style="color:#1e293b;">${student.cc_score} dari 9 pasang</span>
+            </div>
+            <div class="validity-desc" style="text-align:justify; width: 100%;">
+              ${this.getDeskripsiAnalisis('bidang', 'Consistency', student.cc_score)}
+            </div>
+          </div>
+        </div>
+
+        <!-- Kesimpulan Badge -->
+        <div class="kesimpulan-badge">
+          <h4>👁️ KESIMPULAN 👍</h4>
+          <ul>
+            ${student.status === 'Valid' ? `
+              <li>PROFIL DATA SANGAT VALID</li>
+              <li>DAPAT DIANDALKAN</li>
+              <li>LANDASAN INTERVENSI KOKOH</li>
+            ` : student.status === 'Valid dengan Syarat' ? `
+              <li>PROFIL DATA CUKUP VALID</li>
+              <li>DAPAT DIANDALKAN DENGAN CATATAN</li>
+              <li>PERLU WASPADA BIAS JAWABAN</li>
+            ` : `
+              <li>PROFIL DATA TIDAK VALID</li>
+              <li>TIDAK DAPAT DIANDALKAN</li>
+              <li>DISARANKAN RESET SESI / WAWANCARA</li>
+            `}
+          </ul>
         </div>
       </div>
 
       <h2>B. PROFIL MASALAH PER BIDANG</h2>
       <div class="donut-container">
-        <div class="donut-chart" style="background: conic-gradient(
-          var(--c-pribadi) 0% 25%,
-          var(--c-belajar) 25% 50%,
-          var(--c-sosial) 50% 75%,
-          var(--c-karir) 75% 100%
-        );">
-          <div class="donut-hole"></div>
-        </div>
+        <div class="donut-chart" style="background:none;">${this.getDonutSvg(pPct, bPct, sPct, kPct)}</div>
         <div class="donut-legend">
-          <div class="legend-item"><div class="legend-color" style="background:var(--c-pribadi)"></div> 🔵 Pribadi: ${pPct}% <span class="tag ${pKat.cls}">${pKat.label}</span></div>
-          <div class="legend-item"><div class="legend-color" style="background:var(--c-belajar)"></div> 🟢 Belajar: ${bPct}% <span class="tag ${bKat.cls}">${bKat.label}</span></div>
-          <div class="legend-item"><div class="legend-color" style="background:var(--c-sosial)"></div> 🟠 Sosial: ${sPct}% <span class="tag ${sKat.cls}">${sKat.label}</span></div>
-          <div class="legend-item"><div class="legend-color" style="background:var(--c-karir)"></div> 🟣 Karir: ${kPct}% <span class="tag ${kKat.cls}">${kKat.label}</span></div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--c-pribadi)"></div> 🔵 Pribadi <span class="tag ${pKat.cls}">${pKat.label}</span></div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--c-belajar)"></div> 🟢 Belajar <span class="tag ${bKat.cls}">${bKat.label}</span></div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--c-sosial)"></div> 🟠 Sosial <span class="tag ${sKat.cls}">${sKat.label}</span></div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--c-karir)"></div> 🟣 Karir <span class="tag ${kKat.cls}">${kKat.label}</span></div>
         </div>
       </div>
       <div style="margin-top:20px;">
@@ -646,8 +931,6 @@ const ReportApp = {
           </div>
         `).join('')}
       </div>
-
-      <div class="page-break"></div>
 
       <h2>C. PROFIL 5 SUB BIDANG PRIORITAS</h2>
       <div class="chart-box">
@@ -669,27 +952,50 @@ const ReportApp = {
       <h2>D. TABEL JAWABAN KRISIS (5 SUB BIDANG PRIORITAS)</h2>
       <p>Berikut adalah rincian pernyataan yang terindikasi bermasalah dari 5 sub bidang prioritas tertinggi siswa:</p>
       <table>
-        <tr>
-          <th style="width:40px;">No</th>
-          <th style="width:140px;">Sub Bidang</th>
-          <th style="text-align:left;">Pernyataan</th>
-          <th style="width:90px;">Jawaban</th>
-          <th style="width:130px;">Indikasi Masalah</th>
-        </tr>
-        ${krisisRows}
+        <thead>
+          <tr>
+            <th style="width:40px;">No</th>
+            <th style="width:140px;">Sub Bidang</th>
+            <th style="text-align:left;">Pernyataan</th>
+            <th style="width:90px;">Jawaban</th>
+            <th style="width:130px;">Indikasi Masalah</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${krisisRows}
+        </tbody>
       </table>
 
       <h2>E. KEKUATAN YANG PERLU DIPERTAHANKAN</h2>
       <table>
-        <tr>
-          <th style="text-align:left;">Sub Bidang</th>
-          <th style="width:130px;">Bidang</th>
-          <th style="width:100px;">Persentase</th>
-          <th style="width:140px;">Status</th>
-        </tr>
-        ${kekuatanRows}
+        <thead>
+          <tr>
+            <th style="text-align:left;">Sub Bidang</th>
+            <th style="width:130px;">Bidang</th>
+            <th style="width:100px;">Persentase</th>
+            <th style="width:140px;">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${kekuatanRows}
+        </tbody>
       </table>
       <p>Siswa memiliki beberapa sub-bidang dengan tingkat permasalahan yang sangat rendah, yang menjadi modal positif untuk terus ditingkatkan.</p>
+        <h3 style="margin-top: 20px;">Daftar Jawaban Kekuatan</h3>
+        <table>
+          <thead>
+            <tr>
+              <th style="width:40px;">No</th>
+              <th style="width:140px;">Sub Bidang</th>
+              <th style="text-align:left;">Pernyataan</th>
+              <th style="width:90px;">Jawaban</th>
+              <th style="width:130px;">Indikasi Kekuatan</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${kekuatanAnsRows}
+          </tbody>
+        </table>
 
       <h2>F. REKOMENDASI</h2>
       <ul>
@@ -798,8 +1104,37 @@ const ReportApp = {
       </tr>
     `).join('');
 
-    let html = `
-      ${this.getKopSurat(`LAPORAN ANALISIS KELAS &mdash; Counselor Connect<br>KELAS ${kelas}`)}
+    
+      const classKekuatanSubNames = kekuatan.map(k => k.name);
+      const classKekuatanQuestions = QUESTIONS_DATA.filter(q => {
+        return q.tipe === 'Core' && classKekuatanSubNames.includes(q.sub_bidang);
+      })
+      .map(q => {
+        const pCount = questionProblemsCount[q.id] || 0;
+        const nonProblemCount = total_valid - pCount;
+        const pct = total_valid > 0 ? ((nonProblemCount / total_valid) * 100) : 0;
+        return { ...q, nonProblemCount, pct };
+      })
+      .sort((a,b) => b.nonProblemCount - a.nonProblemCount)
+      .slice(0, 10);
+      
+      let classKekuatanAnsRows = classKekuatanQuestions.map((q, idx) => {
+        const arahKekuatan = q.arah === 'Negative' ? 'Tidak' : 'Ya';
+        return `<tr>
+          <td style="text-align:center">${idx+1}</td>
+          <td style="text-align:center"><b>${q.sub_bidang}</b></td>
+          <td style="text-align:left">${q.teks}</td>
+          <td style="text-align:center"><b>${arahKekuatan}</b></td>
+          <td style="text-align:center">${q.nonProblemCount} siswa</td>
+          <td style="text-align:center; color: #10b981;"><b>${q.pct.toFixed(1)}%</b> ✅ Kondusif</td>
+        </tr>`;
+      }).join('');
+      if (classKekuatanQuestions.length === 0) {
+        classKekuatanAnsRows = `<tr><td colspan="6" style="text-align:center;color:var(--text-muted)">Tidak ditemukan pernyataan kekuatan.</td></tr>`;
+      }
+
+      let html = `
+      ${this.getKopSurat(`LAPORAN ANALISIS KELAS<br>KELAS ${kelas}`)}
       
       <h2>IDENTITAS KELAS</h2>
       <table class="tbl-identitas">
@@ -810,38 +1145,61 @@ const ReportApp = {
       </table>
 
       <h2>A. VALIDITAS PENGISIAN KELAS</h2>
-      <div style="display:flex; gap:20px;">
-        <div class="chart-box" style="flex:1;">
-          <h3>A.1 Rata-Rata Lie Scale</h3>
-          <p>Skor Kelas: <b>${lie_score_avg} dari 22</b></p>
-          <div style="margin-top:10px; font-size:11px; color:#475569;">
-            ${this.getDeskripsiAnalisis('bidang', 'Lie Scale', lie_score_avg, true)}
+      <div class="validity-container">
+        <!-- Lie Scale Card -->
+        <div class="validity-card blue">
+          <div class="validity-header">
+            <span>👁️</span> A.1 Rata-Rata Lie Scale
+          </div>
+          <div class="validity-body" style="display:flex; flex-direction:column; align-items:center; text-align:center;">
+            <div style="width: 100%; max-width: 250px; margin: 10px auto;">
+              ${this.getLieScaleSvg(lie_score_avg, true)}
+            </div>
+            <div style="font-size: 13px; color: #475569; font-weight: 600; margin-top: -15px; margin-bottom: 15px;">
+              Rata-rata Skor Kelas: <span style="color:#1e293b;">${lie_score_avg} dari 22</span>
+            </div>
+            <div class="validity-desc" style="text-align:justify; width: 100%;">
+              ${this.getDeskripsiAnalisis('bidang', 'Lie Scale', lie_score_avg, true)}
+            </div>
           </div>
         </div>
-        <div class="chart-box" style="flex:1;">
-          <h3>A.2 Rata-Rata Consistency Check</h3>
-          <p>Skor Kelas: <b>${cc_score_avg} dari 9</b></p>
-          <div style="margin-top:10px; font-size:11px; color:#475569;">
-            ${this.getDeskripsiAnalisis('bidang', 'Consistency', cc_score_avg, true)}
+
+        <!-- Consistency Card -->
+        <div class="validity-card green">
+          <div class="validity-header">
+            <span>⚖️</span> A.2 Rata-Rata Consistency Check
           </div>
+          <div class="validity-body" style="display:flex; flex-direction:column; align-items:center; text-align:center;">
+            <div style="width: 100%; max-width: 250px; margin: 10px auto;">
+              ${this.getConsistencySvg(cc_score_avg, true)}
+            </div>
+            <div style="font-size: 13px; color: #475569; font-weight: 600; margin-top: -15px; margin-bottom: 15px;">
+              Rata-rata Inkonsistensi Kelas: <span style="color:#1e293b;">${cc_score_avg} dari 9 pasang</span>
+            </div>
+            <div class="validity-desc" style="text-align:justify; width: 100%;">
+              ${this.getDeskripsiAnalisis('bidang', 'Consistency', cc_score_avg, true)}
+            </div>
+          </div>
+        </div>
+
+        <!-- Kesimpulan Badge -->
+        <div class="kesimpulan-badge">
+          <h4>👁️ KESIMPULAN KELAS 👍</h4>
+          <ul>
+            <li>DATA KELAS CUKUP VALID</li>
+            <li>DAPAT DIANDALKAN SECARA KOLEKTIF</li>
+          </ul>
         </div>
       </div>
 
       <h2>B. PROFIL MASALAH KELAS PER BIDANG</h2>
       <div class="donut-container">
-        <div class="donut-chart" style="background: conic-gradient(
-          var(--c-pribadi) 0% 20%,
-          var(--c-belajar) 20% 55%,
-          var(--c-sosial) 55% 75%,
-          var(--c-karir) 75% 100%
-        );">
-          <div class="donut-hole"></div>
-        </div>
+        <div class="donut-chart" style="background:none;">${this.getDonutSvg(pPct, bPct, sPct, kPct)}</div>
         <div class="donut-legend">
-          <div class="legend-item"><div class="legend-color" style="background:var(--c-pribadi)"></div> 🔵 Pribadi: ${pPct}% <span class="tag ${pKat.cls}">${pKat.label}</span></div>
-          <div class="legend-item"><div class="legend-color" style="background:var(--c-belajar)"></div> 🟢 Belajar: ${bPct}% <span class="tag ${bKat.cls}">${bKat.label}</span></div>
-          <div class="legend-item"><div class="legend-color" style="background:var(--c-sosial)"></div> 🟠 Sosial: ${sPct}% <span class="tag ${sKat.cls}">${sKat.label}</span></div>
-          <div class="legend-item"><div class="legend-color" style="background:var(--c-karir)"></div> 🟣 Karir: ${kPct}% <span class="tag ${kKat.cls}">${kKat.label}</span></div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--c-pribadi)"></div> 🔵 Pribadi <span class="tag ${pKat.cls}">${pKat.label}</span></div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--c-belajar)"></div> 🟢 Belajar <span class="tag ${bKat.cls}">${bKat.label}</span></div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--c-sosial)"></div> 🟠 Sosial <span class="tag ${sKat.cls}">${sKat.label}</span></div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--c-karir)"></div> 🟣 Karir <span class="tag ${kKat.cls}">${kKat.label}</span></div>
         </div>
       </div>
       <div style="margin-top:20px;">
@@ -851,8 +1209,6 @@ const ReportApp = {
           </div>
         `).join('')}
       </div>
-
-      <div class="page-break"></div>
 
       <h2>C. PROFIL 5 SUB BIDANG PRIORITAS KELAS</h2>
       <div class="chart-box">
@@ -874,39 +1230,67 @@ const ReportApp = {
       <h2>D. TABEL JAWABAN KRISIS KELAS (5 SUB BIDANG PRIORITAS)</h2>
       <p>Rekapitulasi pernyataan dengan persentase masalah tertinggi pada 5 sub bidang prioritas utama dari total ${total_valid} siswa valid:</p>
       <table>
-        <tr>
-          <th style="width:40px;">No</th>
-          <th style="width:130px;">Sub Bidang</th>
-          <th style="text-align:left;">Pernyataan</th>
-          <th style="width:100px;">Indikator Masalah</th>
-          <th style="width:100px;">Jml Masalah</th>
-          <th style="width:100px;">% Masalah</th>
-        </tr>
-        ${krisisRows}
+        <thead>
+          <tr>
+            <th style="width:40px;">No</th>
+            <th style="width:130px;">Sub Bidang</th>
+            <th style="text-align:left;">Pernyataan</th>
+            <th style="width:100px;">Indikator Masalah</th>
+            <th style="width:100px;">Jml Masalah</th>
+            <th style="width:100px;">% Masalah</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${krisisRows}
+        </tbody>
       </table>
 
       <h2>E. DAFTAR SISWA YANG PERLU PENANGANAN KHUSUS</h2>
       <table>
-        <tr>
-          <th style="width:40px;">No</th>
-          <th style="text-align:left;">Nama Siswa</th>
-          <th style="width:140px;">Status Validitas</th>
-          <th style="width:250px; text-align:left;">Keterangan Diagnostik</th>
-        </tr>
-        ${studentRows}
+        <thead>
+          <tr>
+            <th style="width:40px;">No</th>
+            <th style="text-align:left;">Nama Siswa</th>
+            <th style="width:140px;">Status Validitas</th>
+            <th style="width:250px; text-align:left;">Keterangan Diagnostik</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${studentRows}
+        </tbody>
       </table>
 
       <h2>F. KEKUATAN KELAS YANG PERLU DIPERTAHANKAN</h2>
       <table>
-        <tr>
-          <th style="text-align:left;">Sub Bidang</th>
-          <th style="width:130px;">Bidang</th>
-          <th style="width:100px;">Persentase</th>
-          <th style="width:140px;">Status</th>
-        </tr>
-        ${kekuatanRows}
+        <thead>
+          <tr>
+            <th style="text-align:left;">Sub Bidang</th>
+            <th style="width:130px;">Bidang</th>
+            <th style="width:100px;">Persentase</th>
+            <th style="width:140px;">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${kekuatanRows}
+        </tbody>
       </table>
       <p>Kekuatan kelas dihitung berdasarkan sub-bidang dengan persentase masalah terendah sebagai modal positif kelas.</p>
+        <h3 style="margin-top: 20px;">Daftar Jawaban Kekuatan Kelas</h3>
+        <table>
+          <thead>
+            <tr>
+              <th style="width:40px;">No</th>
+              <th style="width:130px;">Sub Bidang</th>
+              <th style="text-align:left;">Pernyataan</th>
+              <th style="width:100px;">Indikator Ideal</th>
+              <th style="width:100px;">Jml Kuat</th>
+              <th style="width:100px;">% Kuat</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${classKekuatanAnsRows}
+          </tbody>
+        </table>\n
 
       <h2>G. REKOMENDASI PROGRAM</h2>
       <ul>

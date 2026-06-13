@@ -1,6 +1,31 @@
 const express = require('express');
 const router = express.Router();
 const { run, get } = require('../db');
+const auth = require('../middleware/auth');
+
+// GET assessment status (Public)
+router.get('/assessment-status', async (req, res, next) => {
+    try {
+        const row = await get('SELECT is_assessment_open FROM schools WHERE id = 1');
+        res.json({ status: 'success', data: { active: row ? row.is_assessment_open === 1 : false } });
+    } catch (err) { next(err); }
+});
+
+// POST assessment status (Auth required)
+router.post('/assessment-status', auth, async (req, res, next) => {
+    try {
+        const { active } = req.body;
+        const val = active ? 1 : 0;
+        const existing = await get('SELECT id FROM schools WHERE id = 1');
+        if (existing) {
+            await run('UPDATE schools SET is_assessment_open = ?, updated_at = CURRENT_TIMESTAMP WHERE id = 1', [val]);
+        } else {
+            await run('INSERT INTO schools (id, is_assessment_open) VALUES (1, ?)', [val]);
+        }
+        res.json({ status: 'success', message: active ? 'Asesmen dibuka' : 'Asesmen ditutup' });
+    } catch (err) { next(err); }
+});
+
 
 // GET settings
 router.get('/', async (req, res, next) => {

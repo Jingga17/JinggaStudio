@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { get, query } = require('../db');
 const auth = require('../middleware/auth');
-const { generateIndividuPDF } = require('../services/pdf-generator');
+const { generateIndividuPDF, generateKelasPDF } = require('../services/pdf-generator');
 const { calculateStudentScores } = require('../services/scoring');
 
 function parseCSV(text) {
@@ -166,7 +166,9 @@ router.get('/individu/:id', auth, async (req, res, next) => {
 
         // Set response headers for PDF download
         res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', `attachment; filename=Laporan_Individu_${studentRow.nama.replace(/\s+/g, '_')}.pdf`);
+        const safeClassName = studentRow.kelas.replace(/[^a-zA-Z0-9_\-\.]/g, '_');
+        const safeStudentName = studentRow.nama.replace(/[^a-zA-Z0-9_\-\.]/g, '_');
+        res.setHeader('Content-Disposition', `attachment; filename="LAI_${safeClassName}_${safeStudentName}.pdf"`);
 
         // Generate and stream the PDF
         generateIndividuPDF(data, res);
@@ -174,6 +176,15 @@ router.get('/individu/:id', auth, async (req, res, next) => {
     } catch (err) { next(err); }
 });
 
+router.get('/kelas/:kelas', auth, async (req, res, next) => {
+    try {
+        const kelas = req.params.kelas;
+        res.setHeader('Content-Type', 'application/pdf');
+        const safeClassName = kelas.replace(/[^a-zA-Z0-9_\-\.]/g, '_');
+        res.setHeader('Content-Disposition', `attachment; filename="${safeClassName}_LAK.pdf"`);
+        await generateKelasPDF(kelas, res);
+    } catch (err) { next(err); }
+});
 
 // TEMPORARY TEST ROUTE FOR VISUAL PDF DEBUGGING
 router.get('/test-pdf/:id', async (req, res, next) => {

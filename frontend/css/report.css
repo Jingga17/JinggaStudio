@@ -86,8 +86,8 @@ body {
 .kop-title { text-align: center; font-size: 18px; font-weight: 700; margin: 20px 0; }
 
 /* Typo */
-h2 { font-size: 16px; font-weight: 700; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-top: 24px; margin-bottom: 12px; text-transform: uppercase; color: var(--primary); }
-h3 { font-size: 14px; font-weight: 600; margin-top: 16px; margin-bottom: 8px; }
+h2 { font-size: 16px; font-weight: 700; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-top: 24px; margin-bottom: 12px; text-transform: uppercase; color: var(--primary); page-break-after: avoid; break-after: avoid; }
+h3 { font-size: 14px; font-weight: 600; margin-top: 16px; margin-bottom: 8px; page-break-after: avoid; break-after: avoid; }
 p { font-size: 12px; margin-bottom: 8px; text-align: justify; }
 ul { font-size: 12px; padding-left: 20px; margin-bottom: 16px; text-align: justify; }
 li { margin-bottom: 6px; }
@@ -98,6 +98,14 @@ table {
   border-collapse: collapse;
   margin-bottom: 20px;
   font-size: 11px;
+  page-break-inside: auto;
+}
+thead {
+  display: table-header-group;
+}
+tr {
+  page-break-inside: avoid;
+  page-break-after: auto;
 }
 th, td {
   border: 1px solid var(--border);
@@ -152,31 +160,33 @@ tr:nth-child(even) td {
 .donut-container {
   display: flex;
   align-items: center;
-  gap: 30px;
+  gap: 40px;
   margin: 20px 0;
+  page-break-inside: avoid;
+  break-inside: avoid;
 }
 .donut-chart {
-  width: 120px;
-  height: 120px;
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
-  /* Conic gradient akan diset lewat JS style inline */
-  background: conic-gradient(
-    var(--c-pribadi) 0% 25%, 
-    var(--c-belajar) 25% 50%, 
-    var(--c-sosial) 50% 75%, 
-    var(--c-karir) 75% 100%
-  );
   position: relative;
+  flex-shrink: 0;
 }
 .donut-hole {
   position: absolute;
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  width: 70px; height: 70px;
+  width: 90px; height: 90px;
   background: white;
   border-radius: 50%;
 }
-.donut-legend { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 11px; }
+.donut-legend { 
+  flex: 1;
+  display: grid; 
+  grid-template-columns: 1fr 1fr; 
+  gap: 15px; 
+  font-size: 11px; 
+}
 .legend-item { display: flex; align-items: center; gap: 6px; }
 .legend-color { width: 12px; height: 12px; border-radius: 3px; }
 
@@ -187,6 +197,8 @@ tr:nth-child(even) td {
   background: #f8fafc;
   margin-bottom: 12px;
   font-size: 11px;
+  page-break-inside: avoid;
+  break-inside: avoid;
 }
 
 /* Tag Status */
@@ -198,17 +210,16 @@ tr:nth-child(even) td {
 
 /* Footer TTD */
 .footer-ttd {
-  margin-top: 40px;
+  margin-top: 20px;
   display: flex;
   justify-content: flex-end;
-  text-align: center;
-  font-size: 12px;
+  font-size: 13px;
 }
 .ttd-box { width: 250px; }
 .ttd-space { height: 80px; }
 
 .footer-rahasia {
-  margin-top: 40px;
+  margin-top: 20px;
   border-top: 1px solid var(--border);
   padding-top: 10px;
   text-align: center;
@@ -217,19 +228,191 @@ tr:nth-child(even) td {
 }
 
 /* Utility Print Breaks */
-.page-break { page-break-before: always; margin-top: 20mm; }
-.avoid-break { page-break-inside: avoid; }
+.page-break { page-break-before: always; break-before: page; }
+.avoid-break { page-break-inside: avoid; break-inside: avoid; }
 
 /* MEDIA PRINT RULE */
 @media print {
-  @page { margin: 0; size: A4; }
-  body { background: white; }
-  .no-print { display: none !important; }
-  #report-container { 
-    box-shadow: none; 
-    margin: 0; 
-    width: 100%; 
-    padding: 15mm; 
-    min-height: 0;
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
+
+  /* Prevent breaking inside these elements */
+  tr,
+  .donut-container,
+  .donut-chart,
+  .chart-row,
+  .chart-box,
+  .section,
+  .desc-box,
+  .bar-row,
+  .validity-card,
+  .kop-surat,
+  .avoid-break {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Headings should not be orphaned at bottom of page */
+  h2, h3 {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  @page {
+    size: A4;
+    margin: 18mm 15mm 15mm 15mm;
+  }
+
+  body {
+    background: white;
+    font-size: 11px;
+  }
+
+  .no-print { display: none !important; }
+  #print-controls { display: none !important; }
+
+  #report-container {
+    box-shadow: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 0;
+    /* No padding needed — @page margin handles it */
+  }
+}
+
+/* Validity Charts UI */
+.validity-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 12px;
+  margin-top: 12px;
+  margin-bottom: 15px;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+.validity-card {
+  border-radius: 8px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+}
+.validity-card.blue {
+  border: 2px solid #3b82f6;
+}
+.validity-card.green {
+  border: 2px solid #10b981;
+}
+.validity-header {
+  color: #fff;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 6px 6px 0 0;
+}
+.validity-card.blue .validity-header {
+  background: #3b82f6;
+}
+.validity-card.green .validity-header {
+  background: #10b981;
+}
+.validity-body {
+  padding: 10px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.validity-score-box {
+  background: #f0fdf4;
+  border: 1px solid #10b981;
+  border-radius: 5px;
+  padding: 4px 8px;
+  text-align: center;
+  font-size: 11px;
+  display: inline-block;
+  margin-bottom: 6px;
+  align-self: flex-start;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.validity-card.blue .validity-score-box {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+.validity-desc {
+  font-size: 10px;
+  color: #475569;
+  margin-top: auto;
+  line-height: 1.35;
+}
+.validity-bar {
+  display: flex;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 4px;
+  margin-top: 6px;
+}
+.validity-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 10px;
+  color: #475569;
+}
+
+/* Kesimpulan badge — centered below both validity cards (spans 2 columns) */
+.kesimpulan-badge {
+  grid-column: 1 / -1;       /* span both columns */
+  background: linear-gradient(135deg, #f0f9ff 0%, #f0fdf4 100%);
+  border: 2px solid #94a3b8;
+  border-radius: 8px;
+  padding: 8px 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  text-align: center;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+.kesimpulan-badge h4 {
+  margin: 0;
+  font-size: 11px;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+.kesimpulan-badge ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 9.5px;
+  font-weight: 700;
+  color: #334155;
+  text-transform: uppercase;
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.kesimpulan-badge ul li {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.kesimpulan-badge ul li::before {
+  content: "✅";
+  font-size: 10px;
 }

@@ -83,13 +83,12 @@ async function http(method, path, body = null) {
 // ──────────────────────────────────────────
 const API = {
   // Kuesioner (publik)
-  async cekSesiAktif(token) {
+  async cekSesiAktif() {
     if (MOCK_MODE) {
-      const s = MOCK.sessions.find(x => x.token === token);
-      return { active: !!(s && s.is_active), token };
+      return { active: true };
     }
-    const res = await http('GET', `/sessions/${token}/status`);
-    return { active: res.data ? res.data.active : false, token };
+    const res = await http('GET', `/settings/assessment-status`);
+    return { active: res.data ? res.data.active : false };
   },
   async cekNISN(nisn) {
     if (MOCK_MODE) return { exists: nisn === '0012345678' };
@@ -131,42 +130,14 @@ const API = {
     return http('POST', '/auth/logout');
   },
 
-  // Admin — Sessions
-  async getSessions() {
-    if (MOCK_MODE) return MOCK.sessions;
-    return (await http('GET', '/sessions')).data;
+  // Admin — Assessment Status
+  async getAssessmentStatus() {
+    if (MOCK_MODE) return { active: true };
+    return (await http('GET', '/settings/assessment-status')).data;
   },
-  async buatSesi() {
-    if (MOCK_MODE) {
-      const id = Date.now();
-      const token = `test${id}`;
-      const s = { id, token, url:`${window.location.origin}/index.html?token=${token}`, is_active:true, created_at:new Date().toISOString() };
-      const list = MOCK.sessions;
-      list.unshift(s);
-      MOCK.sessions = list;
-      return s;
-    }
-    return (await http('POST', '/sessions')).data;
-  },
-  async tutupSesi(id) {
-    if (MOCK_MODE) {
-      const list = MOCK.sessions;
-      const s = list.find(x => x.id === id);
-      if(s){ s.is_active = false; s.closed_at = new Date().toISOString(); }
-      MOCK.sessions = list;
-      return { ok: true };
-    }
-    return http('PATCH', `/sessions/${id}/close`);
-  },
-  async hapusSesi(id) {
-    if (MOCK_MODE) {
-      const list = MOCK.sessions;
-      const idx = list.findIndex(x => x.id === id);
-      if(idx > -1) list.splice(idx, 1);
-      MOCK.sessions = list;
-      return { ok: true };
-    }
-    return http('DELETE', `/sessions/${id}`);
+  async toggleAssessmentStatus(active) {
+    if (MOCK_MODE) return { active };
+    return (await http('POST', '/settings/assessment-status', { active })).data;
   },
 
   // Admin — Dashboard
@@ -305,58 +276,44 @@ const API = {
 
 // Laporan (Menggunakan HTML Print View)
   async downloadLaporanIndividu(studentId, nama) {
-    Toast.info('Mengunduh laporan PDF...');
+    Toast.info('Mengunduh laporan PDF individu...');
     try {
       const token = Storage.getAdminToken();
-      const url = `${API_BASE}/reports/individu/${studentId}`;
-      const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
-      if (!res.ok) throw new Error('Gagal mengunduh laporan');
-      const blob = await res.blob();
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = `Laporan_Individu_${(nama||'siswa').replace(/\s+/g,'_')}.pdf`;
-      a.click();
+      const url = `${API_BASE}/reports/individu/${studentId}?token=${token}`;
+      window.location.href = url;
     } catch(err) {
       console.error(err);
       Toast.error('Gagal mengunduh laporan.');
     }
   },
   async downloadLaporanKelas(kelas) {
-    Toast.info('Membuka halaman laporan kelas...');
+    Toast.info('Mengunduh laporan PDF kelas...');
     try {
-      window.open(`report.html?type=kelas&id=${encodeURIComponent(kelas)}`, '_blank');
+      const token = Storage.getAdminToken();
+      const url = `${API_BASE}/reports/kelas/${encodeURIComponent(kelas)}?token=${token}`;
+      window.location.href = url;
     } catch(err) {
       console.error(err);
-      Toast.error('Gagal membuka halaman laporan kelas.');
+      Toast.error('Gagal mengunduh laporan kelas.');
     }
   },
   async downloadBulkIndividu(kelas) {
-    Toast.info('Membuat ZIP laporan individu...');
-    try {
-      const token = Storage.getAdminToken();
-      const url = `${API_BASE}/export/zip/class/${encodeURIComponent(kelas)}`;
-      const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
-      if (!res.ok) throw new Error('Gagal membuat ZIP');
-      const blob = await res.blob();
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = `Laporan_${kelas.replace(/\s+/g,'_')}.zip`;
-      a.click();
-    } catch(e) { console.error(e); Toast.error('Gagal membuat ZIP'); }
+    Toast.info('Memulai unduhan PDF laporan individu...');
+    const token = Storage.getAdminToken();
+    const url = `${API_BASE}/export/zip/class/${encodeURIComponent(kelas)}?token=${token}`;
+    window.location.href = url;
+  },
+  async downloadBulkSemuaIndividu() {
+    Toast.info('Memulai unduhan PDF seluruh laporan individu...');
+    const token = Storage.getAdminToken();
+    const url = `${API_BASE}/export/zip/all?token=${token}`;
+    window.location.href = url;
   },
   async downloadBulkKelas() {
-    Toast.info('Membuat ZIP seluruh laporan kelas...');
-    try {
-      const token = Storage.getAdminToken();
-      const url = `${API_BASE}/export/zip/all`;
-      const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
-      if (!res.ok) throw new Error('Gagal membuat ZIP');
-      const blob = await res.blob();
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = `Bulk_Semua_Laporan.zip`;
-      a.click();
-    } catch(e) { console.error(e); Toast.error('Gagal membuat ZIP'); }
+    Toast.info('Memulai unduhan PDF seluruh laporan kelas...');
+    const token = Storage.getAdminToken();
+    const url = `${API_BASE}/export/zip/kelas/all?token=${token}`;
+    window.location.href = url;
   },
   async exportExcel() {
     if (typeof XLSX === 'undefined') {
@@ -366,14 +323,8 @@ const API = {
     if (!MOCK_MODE) {
       // Ketika backend aktif, download dari server
       const token = Storage.getAdminToken();
-      const url = `${API_BASE}/export/excel`;
-      const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
-      if (!res.ok) throw new Error('Gagal mengunduh dari server');
-      const blob = await res.blob();
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = `DCM_Export_${new Date().toISOString().slice(0,10)}.xlsx`;
-      a.click();
+      const url = `${API_BASE}/export/excel?token=${token}`;
+      window.open(url, '_blank');
       return;
     }
     // MOCK MODE: generate dari data lokal

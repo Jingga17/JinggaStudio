@@ -15,6 +15,24 @@ const AdminApp = {
   // INIT
   // ─────────────────────────────────────
   async init() {
+    // Bind login form handler ONCE on page load (prevents double-submit bug)
+    const loginForm = _('login-form');
+    if (loginForm) {
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        await this.doLogin();
+      });
+    }
+    const passToggle = _('login-pass-toggle');
+    if (passToggle) {
+      passToggle.addEventListener('click', () => {
+        const inp = _('login-pass');
+        inp.type = inp.type === 'password' ? 'text' : 'password';
+        passToggle.textContent = inp.type === 'password' ? '👁' : '🙈';
+      });
+    }
+
     // Cek auth
     const token = Storage.getAdminToken();
     if (!token) { this.showLogin(); return; }
@@ -31,15 +49,13 @@ const AdminApp = {
   showLogin() {
     _('admin-login').style.display   = 'flex';
     _('admin-shell').style.display  = 'none';
-    _('login-form').onsubmit = async (e) => {
-      e.preventDefault();
-      await this.doLogin();
-    };
-    _('login-pass-toggle').onclick = () => {
-      const inp = _('login-pass');
-      inp.type = inp.type === 'password' ? 'text' : 'password';
-      _('login-pass-toggle').textContent = inp.type === 'password' ? '👁' : '🙈';
-    };
+    // Clear fields when showing login
+    const userField = _('login-user');
+    const passField = _('login-pass');
+    if (userField) userField.value = '';
+    if (passField) passField.value = '';
+    _('login-error').style.display = 'none';
+    if (userField) userField.focus();
   },
 
   async doLogin() {
@@ -75,8 +91,7 @@ const AdminApp = {
     if (!ok) return;
     await API.logout();
     Storage.clearAdminToken();
-    _('admin-shell').style.display  = 'none';
-    _('admin-login').style.display  = 'flex';
+    this.showLogin();
     Toast.info('Berhasil keluar');
   },
 
@@ -146,13 +161,13 @@ const AdminApp = {
   async loadHome() {
     Spinner.show();
     try {
-      const [summary, sessions, kelas] = await Promise.all([
+      const [summary, assessmentStatus, kelas] = await Promise.all([
         API.getSummary(),
-        API.getSessions(),
+        API.getAssessmentStatus(),
         API.getKelas(),
       ]);
       this.renderSummaryCards(summary);
-      this.renderSessions(sessions);
+      this.renderAssessmentStatus(assessmentStatus.active);
       this.populateFilterDropdowns(kelas);
       await this.loadChartAndTable();
     } catch(e) {
@@ -167,75 +182,42 @@ const AdminApp = {
     _('stat-pct').textContent       = (summary.persentase_pengisian ?? 0) + '%';
   },
 
-  renderSessions(sessions) {
-    const container = _('sessions-list');
-    if (!container) return;
-    if (!sessions?.length) {
-      container.innerHTML = '<p style="color:var(--text-muted);font-size:13px;padding:12px 0">Belum ada sesi yang dibuat.</p>';
-      return;
-    }
-    container.innerHTML = sessions.map(s => `
-      <div class="link-item fade-in" id="session-${s.id}">
-        <div style="flex:1;min-width:0">
-          <div class="link-url">${s.url || `${window.location.origin}/index.html?token=${s.token}`}</div>
-          <div class="link-meta">
-            <span class="badge ${s.is_active ? 'badge-aktif' : 'badge-ditutup'}">${s.is_active ? '● Aktif' : '✕ Ditutup'}</span>
-            ${formatDate(s.created_at)}
-          </div>
-        </div>
-        <div class="link-actions">
-          ${s.is_active ? `
-            <button class="btn btn-outline btn-sm" title="Salin link" onclick="copyToClipboard('${s.url || window.location.origin+'/index.html?token='+s.token}')">📋</button>
-            <button class="btn btn-danger btn-sm" title="Stop Sharing" onclick="AdminApp.stopSharing(${s.id})">🔒 Stop</button>
-          ` : `<span style="font-size:12px;color:var(--text-muted)">${formatDate(s.closed_at)}</span>`}
-          <button class="btn btn-outline btn-sm" title="Hapus Sesi" style="margin-left:8px;color:var(--text-sangat-berat);border-color:var(--border-sangat-berat)" onclick="AdminApp.hapusSesi(${s.id})">🗑️ Hapus</button>
-        </div>
-      </div>
-    `).join('');
-  },
+  renderAssessmentStatus(isActive) {
+    this.currentAssessmentStatus = isActive;
+    const label = _('assessment-status-label');
+    const btn = _('btn-toggle-assessment');
+    if (!label || !btn) return;
 
-  async buatSesi() {
-    Spinner.show();
-    try {
-      const sesi = await API.buatSesi();
-      await this.loadHome();
-      Toast.success('Sesi baru berhasil dibuat!');
-    } catch(e) {
-      Spinner.hide();
-      Toast.error(e.message);
+    if (isActive) {
+      label.innerHTML = 'Status: <span style="color:var(--success)">Dibuka</span>';
+      btn.className = 'btn btn-danger';
+      btn.textContent = 'Tutup Akses';
+    } else {
+      label.innerHTML = 'Status: <span style="color:var(--danger)">Ditutup</span>';
+      btn.className = 'btn btn-success';
+      btn.textContent = 'Buka Akses';
     }
   },
 
-  async stopSharing(id) {
+  async toggleAssessmentStatus() {
+    const newState = !this.currentAssessmentStatus;
+    const actionText = newState ? 'Membuka' : 'Menutup';
     const ok = await Modal.confirm({
-      title: '🔒 Tutup Sesi?',
-      body: 'Link ini tidak akan bisa diakses lagi oleh siswa. Yakin?',
-      confirmText: 'Tutup', danger: true
+      title: newState ? 'Buka Akses Kuesioner?' : 'Tutup Akses Kuesioner?',
+      body: newState 
+        ? 'Siswa akan dapat mengisi kuesioner melalui link yang tersedia.'
+        : 'Siswa tidak akan dapat lagi mengisi kuesioner sampai akses dibuka kembali.',
+      confirmText: newState ? 'Buka Akses' : 'Tutup Akses',
+      danger: !newState
     });
+    
     if (!ok) return;
+    
     Spinner.show();
     try {
-      await API.tutupSesi(id);
+      await API.toggleAssessmentStatus(newState);
       await this.loadHome();
-      Toast.success('Sesi berhasil ditutup');
-    } catch(e) {
-      Spinner.hide();
-      Toast.error(e.message);
-    }
-  },
-
-  async hapusSesi(id) {
-    const ok = await Modal.confirm({
-      title: '🗑️ Hapus Sesi?',
-      body: '<p>Apakah Anda yakin ingin menghapus sesi ini?</p><p style="margin-top:8px;color:var(--text-sangat-berat);font-size:12px">⚠️ Peringatan: Seluruh data siswa dan jawaban yang terekam pada sesi ini akan terhapus secara permanen!</p>',
-      confirmText: 'Hapus', danger: true
-    });
-    if (!ok) return;
-    Spinner.show();
-    try {
-      await API.hapusSesi(id);
-      await this.loadHome();
-      Toast.success('Sesi berhasil dihapus');
+      Toast.success(`Akses asesmen berhasil ${newState ? 'dibuka' : 'ditutup'}!`);
     } catch(e) {
       Spinner.hide();
       Toast.error(e.message);
@@ -489,6 +471,12 @@ const AdminApp = {
     if (!kelas) { Toast.warning('Pilih kelas terlebih dahulu'); return; }
     Spinner.show();
     try { await API.downloadBulkIndividu(kelas); }
+    catch(e) { Toast.error(e.message); }
+    Spinner.hide();
+  },
+  async downloadBulkSemuaIndividu() {
+    Spinner.show();
+    try { await API.downloadBulkSemuaIndividu(); }
     catch(e) { Toast.error(e.message); }
     Spinner.hide();
   },

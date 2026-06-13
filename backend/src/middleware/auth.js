@@ -3,7 +3,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'dcm220-secret-key-123';
 
 module.exports = function(req, res, next) {
     const authHeader = req.headers['authorization'] || req.headers['Authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
+    const token = (authHeader && authHeader.split(' ')[1]) || req.query.token;
     const expected = process.env.ADMIN_TOKEN || null;
     if (!token) return res.status(401).json({ status: 'error', message: 'Unauthorized' });
 

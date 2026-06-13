@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS schools (
     ttd_konselor TEXT,
     tahun_ajaran TEXT,
     nip TEXT,
+    is_assessment_open BOOLEAN DEFAULT 0,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 

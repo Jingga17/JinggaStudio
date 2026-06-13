@@ -14,12 +14,13 @@ services:
       - JWT_SECRET=dcm220-secret-key-ganti-ini-di-produksi
       - CSV_PATH=/data-csv
       - JS_OUTPUT_PATH=/app/frontend_js_shared/data-analisis.js
-      - DATABASE_PATH=/app/src/db_persistent/database.sqlite
     volumes:
-      # Persist SQLite database
-      - dcm_database:/app/src/db_persistent
-      # Persist uploaded images (logo, TTD)
-      - dcm_uploads:/app/uploads
+      # Sync source code otomatis (termasuk db SQLite di dalamnya)
+      - ./backend/src:/app/src
+      # Sync folder uploads (logo, TTD)
+      - ./backend/uploads:/app/uploads
+      # Akses ke folder frontend untuk seeder baca data-soal.js
+      - ./frontend:/frontend
       # CSV analisis dari host (read-only)
       - type: bind
         source: "../SOAL DAN ANALISIS DCM"
@@ -61,9 +62,5 @@ networks:
     driver: bridge
 
 volumes:
-  dcm_database:
-    driver: local
-  dcm_uploads:
-    driver: local
   dcm_frontend_js:
     driver: local

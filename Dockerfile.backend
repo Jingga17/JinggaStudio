@@ -1,7 +1,19 @@
 FROM node:18-alpine
 
-# Install wget untuk health check
-RUN apk add --no-cache wget
+# Install wget untuk health check, dan Chromium beserta dependensinya untuk Puppeteer
+RUN apk add --no-cache \
+      wget \
+      chromium \
+      nss \
+      freetype \
+      harfbuzz \
+      ca-certificates \
+      ttf-freefont \
+      font-noto-emoji
+
+# Set variable environment agar Puppeteer tahu dimana chromium berada
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 WORKDIR /app
 

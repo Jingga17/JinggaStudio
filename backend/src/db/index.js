@@ -34,6 +34,7 @@ const db = new sqlite3.Database(dbPath, (err) => {
         try {
             db.run("ALTER TABLE schools ADD COLUMN kota TEXT", (e) => { if (e) {/*ignore*/} else console.log('Added kota column'); });
             db.run("ALTER TABLE schools ADD COLUMN nip TEXT", (e) => { if (e) {/*ignore*/} else console.log('Added nip column'); });
+            db.run("ALTER TABLE schools ADD COLUMN is_assessment_open BOOLEAN DEFAULT 0", (e) => { if (e) {/*ignore*/} else console.log('Added is_assessment_open column'); });
         } catch (e) {
             // ignore
         }

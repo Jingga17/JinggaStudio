@@ -16,21 +16,12 @@ const KuesionerApp = {
   timerStart: null,
 
   async init() {
-    // Ambil token dari URL
-    const params = new URLSearchParams(window.location.search);
-    this.token = params.get('token');
-
-    if (!this.token) {
-      this.showError('Link tidak valid', 'Silakan gunakan link yang diberikan oleh guru/konselor Anda.');
-      return;
-    }
-
     Spinner.show();
     try {
-      const sesi = await API.cekSesiAktif(this.token);
+      const sesi = await API.cekSesiAktif();
       if (!sesi.active) {
         Spinner.hide();
-        this.showError('Sesi Sudah Ditutup', 'Link asesmen ini sudah tidak aktif. Hubungi guru/konselor Anda untuk informasi lebih lanjut.');
+        this.showError('Asesmen Ditutup', 'Saat ini pengisian kuesioner sedang ditutup oleh guru/konselor. Silakan cek kembali nanti atau hubungi guru Bimbingan dan Konseling Anda.');
         return;
       }
     } catch(e) {
@@ -42,7 +33,7 @@ const KuesionerApp = {
 
     // Cek apakah ada draft yang tersimpan
     const draft = Storage.getStudentDraft();
-    if (draft && draft.token === this.token) {
+    if (draft) {
       this.student   = draft;
       this.studentId = draft.student_id;
       this.answers   = Storage.getAnswers(this.studentId);
