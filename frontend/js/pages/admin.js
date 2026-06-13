@@ -252,6 +252,8 @@ const AdminApp = {
     await this.loadChartAndTable();
   },
 
+
+
   async resetFilter() {
     this.filterKelas = '';
     this.filterNisn  = '';
@@ -584,13 +586,26 @@ const AdminApp = {
       input.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (!file) return;
-        if (!file.type.startsWith('image/')) { Toast.error('File harus berupa gambar'); return; }
+        
+        if (!file.type.startsWith('image/')) { 
+          Toast.error('File harus berupa gambar'); 
+          input.value = '';
+          return; 
+        }
+
+        const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+        if (file.size > 5 * 1024 * 1024) {
+          Toast.error(`Ukuran file maksimal 5 MB. File Anda: ${sizeMB} MB`);
+          input.value = '';
+          return;
+        }
+
         const reader = new FileReader();
         reader.onload = (ev) => {
           const key = input.closest('.upload-box').id.replace('upload-','');
           this.showUploadPreview(key, ev.target.result);
           const namEl = input.closest('.upload-box').querySelector('.upload-name');
-          if (namEl) namEl.textContent = file.name;
+          if (namEl) namEl.textContent = `${file.name} (${sizeMB} MB)`;
         };
         reader.readAsDataURL(file);
       });
@@ -625,84 +640,14 @@ const AdminApp = {
     Spinner.hide();
   },
 
-  async exportExcel() {
-    if (typeof XLSX === 'undefined') {
-      Toast.error('Library XLSX belum termuat. Pastikan koneksi internet aktif.');
+  exportExcel() {
+    const token = Storage.getAdminToken();
+    if (!token) {
+      Toast.error('Akses ditolak. Silakan login kembali.');
       return;
     }
-    Spinner.show();
-    try {
-      const settings = await API.getSettings();
-      const namaSekolah = settings.nama_sekolah || 'DCM';
-      const tahunAjaran = settings.tahun_ajaran || new Date().getFullYear();
-      const konselor    = settings.nama_konselor || '-';
-
-      // Ambil semua data siswa
-      const allStudents = await API.getTableData();
-      const today = new Date().toLocaleDateString('id-ID', {day:'numeric',month:'long',year:'numeric'});
-
-      // ── SHEET 1: Rekap Semua Siswa ──
-      const sheet1Data = [
-        [`REKAP DATA DCM — ${namaSekolah.toUpperCase()}`],
-        [`Tahun Ajaran: ${tahunAjaran} | Konselor: ${konselor} | Dicetak: ${today}`],
-        [],
-        ['No','Nama','Kelas','NISN','Jenis Kelamin','Status','Pribadi (%)','Belajar (%)','Sosial (%)','Karir (%)','Kategori Tertinggi'],
-        ...allStudents.map((s,i) => [
-          i+1, s.nama, s.kelas, s.nisn,
-          s.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan',
-          s.status,
-          s.pribadi_pct ?? 0,
-          s.belajar_pct ?? 0,
-          s.sosial_pct ?? 0,
-          s.karir_pct ?? 0,
-          ['Pribadi','Belajar','Sosial','Karir'][Object.values({P:s.pribadi_pct,B:s.belajar_pct,S:s.sosial_pct,K:s.karir_pct}).indexOf(Math.max(s.pribadi_pct,s.belajar_pct,s.sosial_pct,s.karir_pct))]
-        ])
-      ];
-
-      // ── SHEET 2: Rekap Per Kelas ──
-      const byKelas = {};
-      allStudents.forEach(s => { if (!byKelas[s.kelas]) byKelas[s.kelas] = []; byKelas[s.kelas].push(s); });
-      const sheet2Data = [
-        ['Kelas','Jml Siswa','Jml Valid','Rata-rata Pribadi (%)','Rata-rata Belajar (%)','Rata-rata Sosial (%)','Rata-rata Karir (%)'],
-      ];
-      Object.entries(byKelas).forEach(([kelas, siswa]) => {
-        const valid = siswa.filter(s => s.status !== 'Tidak Valid');
-        const avg = (key) => valid.length ? Math.round(valid.reduce((sum,s) => sum + (s[key]??0), 0) / valid.length) : 0;
-        sheet2Data.push([kelas, siswa.length, valid.length, avg('pribadi_pct'), avg('belajar_pct'), avg('sosial_pct'), avg('karir_pct')]);
-      });
-
-      // ── SHEET 3: Siswa Tidak Valid ──
-      const invalid = allStudents.filter(s => s.status === 'Tidak Valid');
-      const sheet3Data = [
-        ['No','Nama','Kelas','NISN','Keterangan'],
-        ...invalid.map((s,i) => [i+1, s.nama, s.kelas, s.nisn, 'Jawaban tidak valid (lie scale / consistency check)'])
-      ];
-      if (invalid.length === 0) sheet3Data.push(['—','Tidak ada siswa dengan status tidak valid','','','']);
-
-      // ── BUAT WORKBOOK ──
-      const wb = XLSX.utils.book_new();
-
-      const ws1 = XLSX.utils.aoa_to_sheet(sheet1Data);
-      ws1['!cols'] = [{wch:5},{wch:30},{wch:15},{wch:15},{wch:15},{wch:20},{wch:14},{wch:14},{wch:14},{wch:14},{wch:20}];
-      ws1['!merges'] = [{s:{r:0,c:0},e:{r:0,c:10}},{s:{r:1,c:0},e:{r:1,c:10}}];
-      XLSX.utils.book_append_sheet(wb, ws1, 'Rekap Semua Siswa');
-
-      const ws2 = XLSX.utils.aoa_to_sheet(sheet2Data);
-      ws2['!cols'] = [{wch:18},{wch:12},{wch:12},{wch:22},{wch:22},{wch:22},{wch:22}];
-      XLSX.utils.book_append_sheet(wb, ws2, 'Rekap Per Kelas');
-
-      const ws3 = XLSX.utils.aoa_to_sheet(sheet3Data);
-      ws3['!cols'] = [{wch:5},{wch:30},{wch:15},{wch:15},{wch:50}];
-      XLSX.utils.book_append_sheet(wb, ws3, 'Siswa Tidak Valid');
-
-      const fileName = `DCM_${namaSekolah.replace(/\s+/g,'_')}_${tahunAjaran.replace('/','_')}.xlsx`;
-      XLSX.writeFile(wb, fileName);
-      Toast.success(`File ${fileName} berhasil diunduh!`);
-    } catch(e) {
-      Toast.error('Gagal export Excel: ' + e.message);
-      console.error(e);
-    }
-    Spinner.hide();
+    const url = `${API_BASE}/export/excel?token=${token}`;
+    window.open(url, '_blank');
   },
 
   // ─────────────────────────────────────

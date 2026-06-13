@@ -8,6 +8,7 @@ const stream = require('stream');
 const fs = require('fs');
 const path = require('path');
 const { generatePDFBuffer } = require('../services/pdf-generator');
+const ExcelJS = require('exceljs');
 
 function parseCSV(text) {
 	const lines = text.trim().split('\n');
@@ -90,39 +91,98 @@ router.get('/class/:kelas', auth, async (req, res, next) => {
 	} catch (e) { next(e); }
 });
 
-// Export all students as a single CSV (named excel for frontend compatibility)
+// Export all students as a single Excel file (Multi-sheet)
 router.get('/excel', auth, async (req, res, next) => {
 	try {
-		const students = await query('SELECT * FROM students');
-		const rows = [];
+		const workbook = new ExcelJS.Workbook();
+		workbook.creator = 'Counselor Connect';
+		workbook.created = new Date();
+
+		const sheet1 = workbook.addWorksheet('Rekap Nilai');
+		const sheet2 = workbook.addWorksheet('Detail Jawaban');
+
+		// Sheet 1 Headers
+		sheet1.columns = [
+			{ header: 'ID', key: 'id', width: 10 },
+			{ header: 'NISN', key: 'nisn', width: 15 },
+			{ header: 'Nama Lengkap', key: 'nama', width: 30 },
+			{ header: 'Kelas', key: 'kelas', width: 15 },
+			{ header: 'L/P', key: 'jenis_kelamin', width: 10 },
+			{ header: 'Status Validitas', key: 'status', width: 20 },
+			{ header: 'Lie Score', key: 'lie_score', width: 15 },
+			{ header: 'CC Score', key: 'cc_score', width: 15 },
+			{ header: '% Pribadi', key: 'pribadi_pct', width: 15 },
+			{ header: '% Belajar', key: 'belajar_pct', width: 15 },
+			{ header: '% Sosial', key: 'sosial_pct', width: 15 },
+			{ header: '% Karir', key: 'karir_pct', width: 15 }
+		];
+
+		// Sheet 2 Headers (Base + 220 Questions)
+		const sheet2Cols = [
+			{ header: 'NISN', key: 'nisn', width: 15 },
+			{ header: 'Nama Lengkap', key: 'nama', width: 30 },
+			{ header: 'Kelas', key: 'kelas', width: 15 },
+		];
+		for (let i = 1; i <= 220; i++) {
+			sheet2Cols.push({ header: `Q${i}`, key: `q${i}`, width: 5 });
+		}
+		sheet2.columns = sheet2Cols;
+
+		// Style headers
+		[sheet1, sheet2].forEach(sheet => {
+			sheet.getRow(1).font = { bold: true };
+			sheet.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD3D3D3' } };
+		});
+
+		// Fetch all students
+		const students = await query('SELECT * FROM students ORDER BY kelas, nama');
+		
+		// Fetch all answers mapped by student_id
+		const allAnswers = await query('SELECT * FROM answers');
+		const answerMap = {};
+		for (const a of allAnswers) {
+			if (!answerMap[a.student_id]) answerMap[a.student_id] = {};
+			answerMap[a.student_id][a.question_id] = a.answer;
+		}
+
 		for (const s of students) {
 			const scores = await calculateStudentScores(s.id);
-			rows.push({
+			
+			// Add to Sheet 1
+			sheet1.addRow({
 				id: s.id,
-				nama: s.nama,
 				nisn: s.nisn,
+				nama: s.nama,
 				kelas: s.kelas,
 				jenis_kelamin: s.jenis_kelamin,
+				status: scores.status,
 				lie_score: scores.lie_score,
 				cc_score: scores.cc_score,
-				status: scores.status,
 				pribadi_pct: scores.pribadi_pct,
 				belajar_pct: scores.belajar_pct,
 				sosial_pct: scores.sosial_pct,
-				karir_pct: scores.karir_pct,
-				subBidangPct: JSON.stringify(scores.subBidangPct || {})
+				karir_pct: scores.karir_pct
 			});
-		}
-		const headers = ['id','nama','nisn','kelas','jenis_kelamin','lie_score','cc_score','status','pribadi_pct','belajar_pct','sosial_pct','karir_pct','subBidangPct'];
-		const csv = [headers.join(',')].concat(rows.map(r => headers.map(h => {
-			let v = r[h];
-			if (v === null || v === undefined) return '';
-			return String(v).replace(/"/g, '""');
-		}).join(','))).join('\n');
 
-		res.setHeader('Content-Type', 'text/csv');
-		res.setHeader('Content-Disposition', `attachment; filename=Counselor_Connect_Export_All.csv`);
-		res.send(csv);
+			// Add to Sheet 2
+			const sheet2Row = {
+				nisn: s.nisn,
+				nama: s.nama,
+				kelas: s.kelas
+			};
+			const studentAnswers = answerMap[s.id] || {};
+			for (let i = 1; i <= 220; i++) {
+				const ans = studentAnswers[i];
+				sheet2Row[`q${i}`] = ans === 1 ? 'Ya' : (ans === 0 ? 'Tidak' : '');
+			}
+			sheet2.addRow(sheet2Row);
+		}
+
+		res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		res.setHeader('Content-Disposition', `attachment; filename=DCM_Export_All_${new Date().getTime()}.xlsx`);
+		
+		await workbook.xlsx.write(res);
+		res.end();
 	} catch (e) { next(e); }
 });
 

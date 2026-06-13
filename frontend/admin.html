@@ -128,9 +128,7 @@
       <button id="hamburger" class="topbar-hamburger" onclick="AdminApp.toggleSidebar()">☰</button>
       <h2 id="topbar-title" class="topbar-title">🏠 Dashboard</h2>
       <div class="topbar-actions">
-        <button class="btn btn-outline btn-sm" onclick="AdminApp.exportExcel()" title="Export data ke Excel">
-          📊 Export Excel
-        </button>
+        <!-- topbar actions -->
       </div>
     </div>
 
@@ -148,7 +146,7 @@
           <div class="notif-banner-text">
             <strong>Pengingat Tahunan!</strong> Segera download dan backup data jawaban siswa sebelum database dikosongkan untuk tahun ajaran baru.
           </div>
-          <button class="btn btn-outline btn-sm" onclick="AdminApp.exportExcel()">📊 Export</button>
+          <button class="btn btn-outline btn-sm" onclick="AdminApp.navigateTo('laporan')">Buka Laporan</button>
           <button class="btn btn-ghost btn-sm" onclick="AdminApp.dismissYearlyNotif()">✕</button>
         </div>
 
@@ -181,7 +179,10 @@
         <div class="card" style="margin-bottom:20px; display:flex; align-items:center; justify-content:space-between;">
           <div>
             <div class="section-title">🔗 Akses Kuesioner Siswa</div>
-            <div class="section-sub" style="margin-bottom: 8px;">Link pengerjaan: <a href="/index.html" target="_blank" style="font-weight:bold; color:var(--primary); text-decoration:none;">http://localhost:8080/index.html</a></div>
+            <div class="section-sub" style="margin-bottom: 8px;">
+              Link pengerjaan: <a href="/index.html" target="_blank" style="font-weight:bold; color:var(--primary); text-decoration:none;">http://localhost:8080/index.html</a>
+              <button class="btn btn-outline btn-sm" style="margin-left: 10px; padding: 2px 8px; font-size: 12px;" onclick="copyToClipboard(window.location.origin + '/index.html')" title="Salin link">📋 Salin Link</button>
+            </div>
             <div style="font-size:13px; color:var(--text-muted);">Siswa hanya dapat mengakses kuesioner jika status akses <b>Dibuka</b>.</div>
           </div>
           <div style="text-align:center;">
@@ -206,9 +207,11 @@
               <option value="">— Pilih kelas dulu —</option>
             </select>
           </div>
-          <button class="btn btn-ghost btn-sm" onclick="AdminApp.resetFilter()" style="align-self:flex-end">
-            ✕ Reset Filter
-          </button>
+          <div style="align-self:flex-end; display:flex; gap:10px;">
+            <button class="btn btn-ghost btn-sm" onclick="AdminApp.resetFilter()">
+              ✕ Reset Filter
+            </button>
+          </div>
         </div>
 
         <!-- Charts -->
@@ -308,6 +311,14 @@
               <div class="section-sub" style="margin-bottom:12px">Download semua laporan kelas sekaligus</div>
               <button class="btn btn-outline" onclick="AdminApp.downloadBulkKelas()">
                 📦 Download Semua Laporan Kelas (PDF)
+              </button>
+            </div>
+            <hr class="divider">
+            <div>
+              <div class="section-title" style="margin-bottom:16px">📊 Ekspor Excel (Rekap & Detail)</div>
+              <div class="section-sub" style="margin-bottom:12px">Download data lengkap seluruh siswa dalam format Excel (.xlsx)</div>
+              <button class="btn btn-success" onclick="AdminApp.exportExcel()">
+                📥 Unduh Data (Excel)
               </button>
             </div>
           </div>

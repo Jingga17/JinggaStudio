@@ -107,6 +107,9 @@ const ReportApp = {
         </div>
         <div style="width:80px;height:80px;flex-shrink:0;">${logo2}</div>
       </div>
+      <div style="text-align:center; font-size:13px; font-weight:700; margin-top:-10px; margin-bottom: 20px;">
+        TAHUN AJARAN ${s.tahun_ajaran || '2025/2026'}
+      </div>
       <div class="kop-title">${title}</div>
         <div style="text-align:justify; font-size:12.5px; font-weight:bold; color:#1e293b; margin: 0 0 20px 0; line-height: 1.5;">
           Dokumen ini berisi laporan analisis komprehensif mengenai profil perkembangan dan indikasi hambatan siswa pada bidang Pribadi, Belajar, Sosial, dan Karir. Hasil analisis ini berfungsi sebagai instrumen deteksi dini bagi konselor untuk memberikan layanan intervensi dan konseling yang sesuai dengan kebutuhan prioritas siswa. Seluruh data dalam dokumen ini bersifat rahasia dan hanya diperuntukkan bagi pihak yang berkepentingan.
@@ -116,8 +119,8 @@ const ReportApp = {
 
   getFooter() {
     const s = this.settings || {};
-    const ttdKonselor = s.ttd_konselor ? `<img src="${s.ttd_konselor}" style="max-height:70px;object-fit:contain;position:absolute;bottom:25px;left:50%;transform:translateX(-50%);">` : '';
-    const capKonselor = s.cap_konselor ? `<img src="${s.cap_konselor}" style="max-height:80px;object-fit:contain;position:absolute;bottom:20px;left:-30px;opacity:0.8;z-index:-1;">` : '';
+    const ttdKonselor = s.ttd_konselor ? `<img src="${s.ttd_konselor}" style="max-height:95px;object-fit:contain;position:absolute;bottom:15px;left:50%;transform:translateX(-50%);mix-blend-mode:multiply;z-index:2;">` : '';
+    const capKonselor = s.cap_konselor ? `<img src="${s.cap_konselor}" style="width:120px;height:120px;object-fit:contain;position:absolute;bottom:5px;left:50%;transform:translateX(-95%);opacity:0.85;mix-blend-mode:multiply;z-index:1;">` : '';
 
     return `
       <div class="avoid-break">
@@ -127,7 +130,7 @@ const ReportApp = {
             ${ttdKonselor}
             <div>${s.kota || 'Kota'}, ${new Date().toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'})}</div>
             <div>Guru Bimbingan dan Konseling</div>
-            <div class="ttd-space" style="height:50px;"></div>
+            <div class="ttd-space" style="height:70px;"></div>
             <div><b><u>${s.nama_konselor || 'Nama Konselor'}</u></b></div>
             <div>NIP. ${s.nip || '-'}</div>
           </div>
@@ -560,7 +563,6 @@ const ReportApp = {
       <h2>IDENTITAS KELAS</h2>
       <table class="tbl-identitas">
         <tr><th>Nama Kelas</th><td><b>${kelasName}</b></td></tr>
-        <tr><th>Tahun Ajaran</th><td>2025/2026</td></tr>
         <tr><th>Jumlah Mengisi</th><td>${studentsInClass.length} siswa</td></tr>
         <tr><th>Jumlah Valid (Digunakan)</th><td><b>${validCount} siswa</b></td></tr>
       </table>
@@ -1139,7 +1141,6 @@ const ReportApp = {
       <h2>IDENTITAS KELAS</h2>
       <table class="tbl-identitas">
         <tr><th>Nama Kelas</th><td><b>${kelas}</b></td></tr>
-        <tr><th>Tahun Ajaran</th><td>${this.settings?.tahun_ajaran || '2025/2026'}</td></tr>
         <tr><th>Jumlah Mengisi</th><td>${total_responden} siswa</td></tr>
         <tr><th>Jumlah Valid (Digunakan)</th><td><b>${total_valid} siswa</b></td></tr>
       </table>
