@@ -868,7 +868,8 @@ select.form-control {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(15,23,42,0.9);
+  background: linear-gradient(135deg, var(--accent-secondary), #D97706);
+  color: white;
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
   padding: 14px 24px;
@@ -880,7 +881,7 @@ select.form-control {
   display: none;
   background: none;
   border: none;
-  color: var(--text-secondary);
+  color: white;
   font-size: 22px;
   padding: 4px;
 }
