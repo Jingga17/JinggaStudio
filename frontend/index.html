@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Asesmen Counselor Connect — Psikometri Problem Checklist</title>
-  <meta name="description" content="Isi kuesioner Psikometri Problem Checklist (Counselor Connect) untuk membantu konselor memahami kebutuhanmu.">
+  <title>Resilien · Asesmen Perkembangan Siswa</title>
+  <meta name="description" content="Resilien — Platform asesmen perkembangan siswa berbasis Problem Checklist untuk bimbingan dan konseling.">
   <meta name="robots" content="noindex,nofollow">
   <link rel="stylesheet" href="css/style.css">
   <style>
     /* Kuesioner-specific overrides */
-    body { background: #0F172A; }
+    body { background: #f8fafc; }
     #kuis-header { display: flex; flex-direction: column; }
   </style>
 </head>
@@ -19,9 +19,13 @@
 <div id="global-spinner" class="spinner-overlay">
   <div class="spinner"></div>
 </div>
-
 <!-- ═══════════ TOAST ═══════════ -->
 <div id="toast-container" class="toast-container"></div>
+  
+<!-- Loading Spinner -->
+<div id="loading-spinner" class="spinner-overlay" style="display:none">
+  <div class="spinner"></div>
+</div>
 
 <!-- ═══════════ MODAL ═══════════ -->
 <div id="modal-overlay" class="modal-overlay">
@@ -38,14 +42,19 @@
 <!-- ═══════════ HALAMAN KUESIONER ═══════════ -->
 <div id="page-kuesioner">
 
-  <!-- HEADER (progress + timer) -->
+  <!-- 🌟 HEADER PROGRESS 🌟 -->
   <header id="kuis-header" class="kuis-header" style="display:none">
     <div class="kuis-header-inner">
       <div class="kuis-brand">
-        <span class="kuis-brand-name">📋 Counselor Connect</span>
-        <div class="kuis-timer">
-          <span class="timer-dot"></span>
-          <span id="timer-display">00:00</span>
+        <span class="kuis-brand-name" style="display:flex; align-items:center; gap:6px;">
+          <img src="img/logo.svg" alt="Resilien" style="height:22px; width:auto; display:inline-block; vertical-align:middle;">
+          Resilien
+        </span>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div class="kuis-timer">
+            <span class="timer-dot"></span>
+            <span id="timer-display">00:00</span>
+          </div>
         </div>
       </div>
       <div class="kuis-progress-row">
@@ -59,13 +68,13 @@
     </div>
   </header>
 
-  <!-- ── STEP 1: BIODATA ── -->
+  <!-- 👤 STEP 1: BIODATA 👤 -->
   <div id="step-biodata" style="display:none">
-    <div class="biodata-container fade-in">
+    <div class="card card-glass biodata-container">
       <div class="biodata-hero">
-        <div class="biodata-icon">📋</div>
-        <h1 class="biodata-title">Data Diri</h1>
-        <p class="biodata-sub">Isi biodata kamu dengan benar sebelum memulai asesmen</p>
+        <div class="biodata-icon" id="student-logo-container" style="background:none; width:160px; height:160px; margin:0 auto 20px; box-shadow:none; border-radius:0;">
+          <img src="img/logo-full.svg" alt="Resilien" style="width:100%; height:100%; object-fit:contain;">
+        </div>
       </div>
 
       <form id="biodata-form" class="biodata-form" novalidate>
@@ -78,11 +87,11 @@
           <label class="form-label">Jenis Kelamin</label>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
             <label style="display:flex;align-items:center;gap:8px;padding:11px 14px;background:var(--bg-input);border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all var(--transition)" id="jk-l-label">
-              <input type="radio" name="b-jk" id="b-jk" value="L" style="accent-color:var(--accent)" onchange="document.getElementById('jk-l-label').style.borderColor='var(--accent)';document.getElementById('jk-p-label').style.borderColor='var(--border)'">
+              <input type="radio" name="b-jk" id="b-jk" value="L" style="accent-color:var(--accent-secondary)" onchange="document.getElementById('jk-l-label').style.borderColor='var(--accent-secondary)';document.getElementById('jk-p-label').style.borderColor='var(--border)'">
               🧑 Laki-laki
             </label>
             <label style="display:flex;align-items:center;gap:8px;padding:11px 14px;background:var(--bg-input);border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all var(--transition)" id="jk-p-label">
-              <input type="radio" name="b-jk" value="P" style="accent-color:var(--accent)" onchange="document.getElementById('jk-p-label').style.borderColor='var(--accent)';document.getElementById('jk-l-label').style.borderColor='var(--border)'">
+              <input type="radio" name="b-jk" value="P" style="accent-color:var(--accent-secondary)" onchange="document.getElementById('jk-p-label').style.borderColor='var(--accent-secondary)';document.getElementById('jk-l-label').style.borderColor='var(--border)'">
               👩 Perempuan
             </label>
           </div>
@@ -113,14 +122,37 @@
           </div>
         </div>
 
-        <button type="submit" class="btn btn-primary btn-lg btn-full" style="margin-top:8px">
+        <button id="btn-biodata" type="submit" class="btn btn-primary btn-lg btn-full" style="margin-top:8px">
           Lanjut ke Kuesioner →
         </button>
       </form>
     </div>
   </div>
 
-  <!-- ── STEP 2: KUESIONER ── -->
+  <!-- 📖 STEP 2: PANDUAN 📖 -->
+  <div id="step-panduan" style="display:none">
+    <div class="card card-glass biodata-container" style="max-width: 700px; margin-top: 40px; text-align: left;">
+      <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 20px; text-align: center;">Panduan Pengisian</h2>
+      
+      <div style="margin-bottom: 24px; font-size: 16px; color: var(--text-secondary); line-height: 1.6;">
+        <p style="margin-bottom: 12px;">Selamat datang di <strong>Problem Checklist</strong>. Asesmen ini bertujuan untuk memahami potensi masalah atau tantangan yang sedang Anda hadapi, baik secara pribadi, sosial, belajar, maupun karir.</p>
+        
+        <p style="margin-bottom: 12px;"><strong>Penting untuk diperhatikan:</strong></p>
+        <ul style="padding-left: 20px; margin-bottom: 16px;">
+          <li style="margin-bottom: 8px;">Asesmen ini <strong>bukanlah ujian</strong>. Tidak ada jawaban benar atau salah.</li>
+          <li style="margin-bottom: 8px;">Jawaban Anda <strong>TIDAK akan mempengaruhi nilai akademik</strong> Anda di sekolah.</li>
+          <li style="margin-bottom: 8px;">Jawablah dengan <strong>jujur</strong> dan sesuai dengan apa yang benar-benar Anda rasakan saat ini.</li>
+          <li style="margin-bottom: 8px;">Kerahasiaan data Anda <strong>dijamin sepenuhnya</strong> dan hanya akan digunakan oleh Guru BK untuk membantu perkembangan Anda.</li>
+        </ul>
+        
+        <p>Silakan klik <strong>"Ya"</strong> jika pernyataan sesuai dengan kondisi Anda, dan <strong>"Tidak"</strong> jika tidak sesuai.</p>
+      </div>
+
+      <button class="btn btn-primary" style="width: 100%; font-size: 16px;" onclick="KuesionerApp.mulaiDariPanduan()">Saya Mengerti, Mulai Kuesioner</button>
+    </div>
+  </div>
+
+  <!-- 📝 STEP 3: KUESIONER 📝 -->
   <div id="step-soal" style="display:none">
     <div class="soal-container">
       <p id="soal-page-label" class="soal-page-label"></p>
@@ -179,12 +211,12 @@
 </div><!-- end page-kuesioner -->
 
 <!-- Scripts -->
-<script src="js/data-soal.js"></script>
-<script src="js/utils/storage.js?v=3"></script>
-<script src="js/utils/scoring.js"></script>
-<script src="js/utils/api.js?v=3"></script>
-<script src="js/components/ui.js"></script>
-<script src="js/pages/kuesioner.js?v=3"></script>
+<script src="js/data-soal.js?v=10"></script>
+<script src="js/utils/storage.js?v=10"></script>
+<script src="js/utils/scoring.js?v=10"></script>
+<script src="js/utils/api.js?v=10"></script>
+<script src="js/components/ui.js?v=10"></script>
+<script src="js/pages/kuesioner.js?v=10"></script>
 <script>
   // Boot
   window.addEventListener('DOMContentLoaded', () => {

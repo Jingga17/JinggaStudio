@@ -4,10 +4,20 @@ const { run, query, get } = require('../db');
 const { calculateStudentScores } = require('../services/scoring');
 
 // Check NISN (GET)
-router.get('/check-nisn/:nisn', async (req, res, next) => {
+router.get('/check-nisn/:token/:nisn', async (req, res, next) => {
     try {
-        const student = await get('SELECT id FROM students WHERE nisn = ?', [req.params.nisn]);
-        res.json({ status: 'success', data: { exists: !!student } });
+        const { token, nisn } = req.params;
+        const session = await get('SELECT id FROM sessions WHERE token = ?', [token]);
+        if (!session) {
+            return res.json({ status: 'error', message: 'Token tidak valid' });
+        }
+        
+        const student = await get('SELECT id, is_complete FROM students WHERE nisn = ? AND session_id = ?', [nisn, session.id]);
+        if (student) {
+            res.json({ status: 'success', data: { exists: true, is_complete: student.is_complete === 1 } });
+        } else {
+            res.json({ status: 'success', data: { exists: false } });
+        }
     } catch (err) { next(err); }
 });
 
@@ -28,44 +38,28 @@ router.post('/', async (req, res, next) => {
     try {
         const { nama, jenis_kelamin, kelas, ttl, nisn, token } = req.body;
         
-        // Find session using the token
+        if (!token) {
+            return res.status(400).json({ status: 'error', message: 'Token sesi (Link URL) tidak ditemukan.' });
+        }
+
         const session = await get('SELECT id, is_active FROM sessions WHERE token = ?', [token]);
-        if (!session || session.is_active === 0) {
-            return res.status(400).json({ status: 'error', message: 'Sesi asesmen tidak valid atau sudah ditutup' });
+        if (!session || !session.is_active) {
+            return res.status(400).json({ status: 'error', message: 'Link sesi asesmen tidak valid atau sudah ditutup.' });
         }
+        const sessionId = session.id;
 
-        const existing = await get('SELECT id FROM students WHERE nisn = ?', [nisn]);
+        const existing = await get('SELECT id, nama, ttl FROM students WHERE nisn = ? AND session_id = ?', [nisn, sessionId]);
         if (existing) {
-            return res.status(400).json({ status: 'error', message: 'NISN sudah terdaftar' });
+            // Allow resuming if nama and ttl match
+            if (existing.nama.toLowerCase() === nama.toLowerCase() && existing.ttl === ttl) {
+                return res.json({ status: 'success', data: { student_id: existing.id, resumed: true } });
+            }
+            return res.status(400).json({ status: 'error', message: 'NISN sudah terdaftar di sesi ini dengan data yang berbeda' });
         }
 
         const result = await run(
             'INSERT INTO students (nama, jenis_kelamin, kelas, ttl, nisn, session_id, is_valid) VALUES (?, ?, ?, ?, ?, ?, 1)',
-            [nama, jenis_kelamin, kelas, ttl, nisn, session.id]
-        );
-
-        res.json({ status: 'success', data: { student_id: result.lastID } });
-    } catch (err) { next(err); }
-});
-
-// Register student biodata (POST to /register - legacy/compatibility)
-router.post('/register', async (req, res, next) => {
-    try {
-        const { nama, jenis_kelamin, kelas, ttl, nisn, session_token } = req.body;
-        
-        const session = await get('SELECT id, is_active FROM sessions WHERE token = ?', [session_token]);
-        if (!session || session.is_active === 0) {
-            return res.status(400).json({ status: 'error', message: 'Sesi asesmen tidak valid atau sudah ditutup' });
-        }
-
-        const existing = await get('SELECT id FROM students WHERE nisn = ?', [nisn]);
-        if (existing) {
-            return res.status(400).json({ status: 'error', message: 'NISN sudah terdaftar' });
-        }
-
-        const result = await run(
-            'INSERT INTO students (nama, jenis_kelamin, kelas, ttl, nisn, session_id, is_valid) VALUES (?, ?, ?, ?, ?, ?, 1)',
-            [nama, jenis_kelamin, kelas, ttl, nisn, session.id]
+            [nama, jenis_kelamin, kelas, ttl, nisn, sessionId]
         );
 
         res.json({ status: 'success', data: { student_id: result.lastID } });

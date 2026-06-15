@@ -56,7 +56,9 @@ function isInRentang(val, rentangStr) {
 router.get('/class/:kelas', auth, async (req, res, next) => {
 	try {
 		const kelas = req.params.kelas;
-		const students = await query('SELECT * FROM students WHERE kelas = ?', [kelas]);
+        let sql = 'SELECT * FROM students WHERE kelas = ?';
+        const params = [kelas];
+		const students = await query(sql, params);
 		const rows = [];
 		for (const s of students) {
 			const scores = await calculateStudentScores(s.id);
@@ -135,14 +137,16 @@ router.get('/excel', auth, async (req, res, next) => {
 		});
 
 		// Fetch all students
-		const students = await query('SELECT * FROM students ORDER BY kelas, nama');
+        let sql = 'SELECT * FROM students ORDER BY kelas, nama';
+        const params = [];
+		const students = await query(sql, params);
 		
 		// Fetch all answers mapped by student_id
 		const allAnswers = await query('SELECT * FROM answers');
 		const answerMap = {};
 		for (const a of allAnswers) {
 			if (!answerMap[a.student_id]) answerMap[a.student_id] = {};
-			answerMap[a.student_id][a.question_id] = a.answer;
+			answerMap[a.student_id][a.question_id] = a.jawaban === 'Ya' ? 1 : (a.jawaban === 'Tidak' ? 0 : null);
 		}
 
 		for (const s of students) {
@@ -190,7 +194,9 @@ router.get('/excel', auth, async (req, res, next) => {
 router.get('/zip/class/:kelas', auth, async (req, res, next) => {
 	try {
 		const kelas = req.params.kelas;
-		const students = await query('SELECT id, nama, kelas FROM students WHERE kelas = ? AND is_complete = 1 AND is_valid = 1', [kelas]);
+        let sql = 'SELECT id, nama, kelas FROM students WHERE kelas = ? AND is_complete = 1 AND is_valid = 1';
+        const params = [kelas];
+		const students = await query(sql, params);
 
 		res.setHeader('Content-Type', 'application/zip');
 		res.setHeader('Content-Disposition', `attachment; filename="Bulk_LAI_${kelas.replace(/[^a-zA-Z0-9_\-\.]/g, '_')}.zip"`);
@@ -208,9 +214,9 @@ router.get('/zip/class/:kelas', auth, async (req, res, next) => {
 		for (const s of students) {
 			try {
 				const pdfBuffer = await generatePDFBuffer(s.id, 'individu');
-                const safeClassName = s.kelas.replace(/[^a-zA-Z0-9_\-\.]/g, '_');
+                const safeClassName = s.kelas.replace(/[^a-zA-Z0-9_\\-\\.]/g, '_');
                 const safeStudentName = s.nama.replace(/[^a-zA-Z0-9_\-\.]/g, '_');
-                archive.append(pdfBuffer, { name: `LAI_${safeClassName}_${safeStudentName}.pdf` });
+                archive.append(Buffer.from(pdfBuffer), { name: `LAI_${safeClassName}_${safeStudentName}.pdf` });
 			} catch (e) {
 				console.error('Failed to generate PDF for student', s.id, e && e.message);
 			}
@@ -223,7 +229,9 @@ router.get('/zip/class/:kelas', auth, async (req, res, next) => {
 // ZIP endpoint: generate PDFs for all valid students across all classes and stream as a ZIP file
 router.get('/zip/all', auth, async (req, res, next) => {
 	try {
-		const students = await query('SELECT id, nama, kelas FROM students WHERE is_complete = 1 AND is_valid = 1');
+        let sql = 'SELECT id, nama, kelas FROM students WHERE is_complete = 1 AND is_valid = 1';
+        const params = [];
+		const students = await query(sql, params);
 
 		res.setHeader('Content-Type', 'application/zip');
 		res.setHeader('Content-Disposition', `attachment; filename="Bulk_Semua_LAI.zip"`);
@@ -241,9 +249,9 @@ router.get('/zip/all', auth, async (req, res, next) => {
 		for (const s of students) {
 			try {
 				const pdfBuffer = await generatePDFBuffer(s.id, 'individu');
-                const safeClassName = s.kelas.replace(/[^a-zA-Z0-9_\-\.]/g, '_');
+                const safeClassName = s.kelas.replace(/[^a-zA-Z0-9_\\-\\.]/g, '_');
                 const safeStudentName = s.nama.replace(/[^a-zA-Z0-9_\-\.]/g, '_');
-                archive.append(pdfBuffer, { name: `LAI_${safeClassName}_${safeStudentName}.pdf` });
+                archive.append(Buffer.from(pdfBuffer), { name: `LAI_${safeClassName}_${safeStudentName}.pdf` });
 			} catch (e) {
 				console.error('Failed to generate PDF for student', s.id, e && e.message);
 			}
@@ -257,7 +265,9 @@ router.get('/zip/all', auth, async (req, res, next) => {
 router.get('/zip/kelas/all', auth, async (req, res, next) => {
 	try {
 		// Get distinct classes that have valid students
-		const classes = await query('SELECT DISTINCT kelas FROM students WHERE is_complete = 1 AND is_valid = 1');
+        let sql = 'SELECT DISTINCT kelas FROM students WHERE is_complete = 1 AND is_valid = 1';
+        const params = [];
+		const classes = await query(sql, params);
 
 		res.setHeader('Content-Type', 'application/zip');
 		res.setHeader('Content-Disposition', `attachment; filename="Bulk_Semua_LAK.zip"`);
@@ -276,7 +286,7 @@ router.get('/zip/kelas/all', auth, async (req, res, next) => {
 			try {
 				const pdfBuffer = await generatePDFBuffer(row.kelas, 'kelas');
                 const safeClassName = row.kelas.replace(/[^a-zA-Z0-9_\-\.]/g, '_');
-                archive.append(pdfBuffer, { name: `${safeClassName}_LAK.pdf` });
+                archive.append(Buffer.from(pdfBuffer), { name: `${safeClassName}_LAK.pdf` });
 			} catch (e) {
 				console.error('Failed to generate PDF for class', row.kelas, e && e.message);
 			}

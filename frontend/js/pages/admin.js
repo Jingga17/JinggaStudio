@@ -38,8 +38,8 @@ const AdminApp = {
     if (!token) { this.showLogin(); return; }
 
     this.setupSidebar();
-    this.showAdminShell();
-    await this.navigateTo('home');
+    await this.showAdminShell();
+    await this.navigateTo('dashboard-global');
     this.checkYearlyNotif();
   },
 
@@ -74,8 +74,8 @@ const AdminApp = {
       _('login-btn').disabled = false;
       _('login-btn').innerHTML = 'Masuk';
       this.setupSidebar();
-      this.showAdminShell();
-      await this.navigateTo('home');
+      await this.showAdminShell();
+      await this.navigateTo('dashboard-global');
       this.checkYearlyNotif();
       Toast.success(`Selamat datang, ${res.user.nama}!`);
     } catch(e) {
@@ -95,7 +95,7 @@ const AdminApp = {
     Toast.info('Berhasil keluar');
   },
 
-  showAdminShell() {
+  async showAdminShell() {
     _('admin-login').style.display  = 'none';
     _('admin-shell').style.display  = 'flex';
     const user = Storage.getAdminUser();
@@ -133,26 +133,48 @@ const AdminApp = {
     _('sidebar-overlay').style.display = 'none';
   },
 
+  toggleNavGroup(titleEl) {
+    const groupEl = titleEl.closest('.nav-group');
+    if (groupEl) {
+      groupEl.classList.toggle('expanded');
+    }
+  },
+
   async navigateTo(page) {
     this.currentPage = page;
     // Update nav
     document.querySelectorAll('.nav-item[data-page]').forEach(el => {
       el.classList.toggle('active', el.dataset.page === page);
+      // Jika aktif, pastikan parent nav-group terbuka
+      if (el.dataset.page === page) {
+        const parentGroup = el.closest('.nav-group');
+        if (parentGroup) parentGroup.classList.add('expanded');
+      }
     });
     // Update topbar title
-    const titles = { home:'🏠 Dashboard', laporan:'🖨️ Cetak Laporan', pengaturan:'⚙️ Pengaturan' };
-    _('topbar-title').textContent = titles[page] || 'Dashboard';
+    const titles = { 
+      'dashboard-global': '🏠 Dashboard Utama',
+      'home': '📋 Dashboard Problem Checklist', 
+      'dummy-sosiogram': '🔗 Dashboard Sosiogram',
+      'dummy-ikms': '📊 Dashboard IKMS',
+      'laporan': '🖨️ Pusat Cetak Laporan', 
+      'pengaturan': '⚙️ Pengaturan Global' 
+    };
+    _('topbar-title').textContent = titles[page] || titles['dashboard-global'];
 
     // Show/hide content
-    ['home','laporan','pengaturan'].forEach(p => {
+    const allPages = ['dashboard-global', 'home', 'dummy-sosiogram', 'dummy-ikms', 'laporan', 'pengaturan'];
+    allPages.forEach(p => {
       const el = _(`page-${p}`);
       if (el) el.style.display = p === page ? 'block' : 'none';
     });
+
 
     // Load content
     if (page === 'home')        await this.loadHome();
     if (page === 'laporan')     await this.loadLaporan();
     if (page === 'pengaturan')  await this.loadPengaturan();
+
   },
 
   // ─────────────────────────────────────
@@ -161,14 +183,13 @@ const AdminApp = {
   async loadHome() {
     Spinner.show();
     try {
-      const [summary, assessmentStatus, kelas] = await Promise.all([
+      const [summary, kelas] = await Promise.all([
         API.getSummary(),
-        API.getAssessmentStatus(),
         API.getKelas(),
       ]);
       this.renderSummaryCards(summary);
-      this.renderAssessmentStatus(assessmentStatus.active);
       this.populateFilterDropdowns(kelas);
+      await this.loadSessions();
       await this.loadChartAndTable();
     } catch(e) {
       Toast.error('Gagal memuat data: ' + e.message);
@@ -182,45 +203,124 @@ const AdminApp = {
     _('stat-pct').textContent       = (summary.persentase_pengisian ?? 0) + '%';
   },
 
-  renderAssessmentStatus(isActive) {
-    this.currentAssessmentStatus = isActive;
-    const label = _('assessment-status-label');
-    const btn = _('btn-toggle-assessment');
-    if (!label || !btn) return;
-
-    if (isActive) {
-      label.innerHTML = 'Status: <span style="color:var(--success)">Dibuka</span>';
-      btn.className = 'btn btn-danger';
-      btn.textContent = 'Tutup Akses';
-    } else {
-      label.innerHTML = 'Status: <span style="color:var(--danger)">Ditutup</span>';
-      btn.className = 'btn btn-success';
-      btn.textContent = 'Buka Akses';
+  async loadSessions() {
+    try {
+      const sessions = await API.getSessions();
+      const tbody = _('tbody-sessions');
+      if (!tbody) return;
+      if (sessions.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted)">Belum ada sesi yang dibuat.</td></tr>';
+        return;
+      }
+      
+      tbody.innerHTML = sessions.map(s => {
+        const link = `${window.location.origin}/index.html?token=${s.token}`;
+        return `
+          <tr>
+            <td style="font-weight:bold">${s.name}</td>
+            <td>
+              <a href="${link}" target="_blank" style="color:var(--primary)">${s.token}</a>
+              <button class="btn btn-ghost btn-sm" onclick="copyToClipboard('${link}')" title="Salin link">📋</button>
+            </td>
+            <td style="text-align:center">${s.student_count || 0}</td>
+            <td style="text-align:center">
+              <label class="toggle-switch">
+                <input type="checkbox" ${s.is_active ? 'checked' : ''} onchange="AdminApp.toggleSession(${s.id}, this.checked)">
+                <span class="toggle-slider"></span>
+              </label>
+            </td>
+            <td style="text-align:center">
+              <button class="btn btn-outline btn-sm" onclick="AdminApp.showEditSessionModal(${s.id}, '${s.name}')">✏️ Edit</button>
+              <button class="btn btn-outline btn-sm" style="color:var(--danger); border-color:var(--danger)" onclick="AdminApp.deleteSession(${s.id})">🗑️</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    } catch (e) {
+      console.error(e);
+      Toast.error('Gagal memuat sesi kuesioner: ' + e.message);
     }
   },
 
-  async toggleAssessmentStatus() {
-    const newState = !this.currentAssessmentStatus;
-    const actionText = newState ? 'Membuka' : 'Menutup';
+  async toggleSession(id, isActive) {
+    try {
+      await API.updateSession(id, { is_active: isActive });
+      Toast.success(`Status sesi berhasil diperbarui`);
+    } catch (e) {
+      Toast.error(e.message);
+      await this.loadSessions(); // reload to revert toggle
+    }
+  },
+
+  async deleteSession(id) {
     const ok = await Modal.confirm({
-      title: newState ? 'Buka Akses Kuesioner?' : 'Tutup Akses Kuesioner?',
-      body: newState 
-        ? 'Siswa akan dapat mengisi kuesioner melalui link yang tersedia.'
-        : 'Siswa tidak akan dapat lagi mengisi kuesioner sampai akses dibuka kembali.',
-      confirmText: newState ? 'Buka Akses' : 'Tutup Akses',
-      danger: !newState
+      title: 'Hapus Sesi?',
+      body: 'Peringatan: Semua data kuesioner siswa untuk sesi ini juga akan ikut terhapus permanen!',
+      confirmText: 'Hapus Sesi',
+      danger: true
     });
-    
     if (!ok) return;
     
     Spinner.show();
     try {
-      await API.toggleAssessmentStatus(newState);
-      await this.loadHome();
-      Toast.success(`Akses asesmen berhasil ${newState ? 'dibuka' : 'ditutup'}!`);
+      await API.deleteSession(id);
+      Toast.success('Sesi berhasil dihapus');
+      await this.loadHome(); // reload summary & sessions
     } catch(e) {
       Spinner.hide();
       Toast.error(e.message);
+    }
+  },
+
+  showCreateSessionModal() {
+    _('session-id').value = '';
+    _('session-name').value = '';
+    _('modal-session-title').textContent = 'Buat Sesi Baru';
+    const modal = _('modal-session');
+    modal.style.display = 'flex';
+    setTimeout(() => modal.classList.add('show'), 10);
+  },
+
+  showEditSessionModal(id, currentName) {
+    _('session-id').value = id;
+    _('session-name').value = currentName;
+    _('modal-session-title').textContent = 'Edit Nama Sesi';
+    const modal = _('modal-session');
+    modal.style.display = 'flex';
+    setTimeout(() => modal.classList.add('show'), 10);
+  },
+
+  closeSessionModal() {
+    const modal = _('modal-session');
+    modal.classList.remove('show');
+    setTimeout(() => modal.style.display = 'none', 300);
+  },
+
+  async submitSession(e) {
+    e.preventDefault();
+    const id = _('session-id').value;
+    const name = _('session-name').value.trim();
+    if (!name) return Toast.error('Nama sesi wajib diisi');
+
+    const btn = _('btn-submit-session');
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner spinner-sm"></div>';
+
+    try {
+      if (id) {
+        await API.updateSession(id, { name });
+        Toast.success('Nama sesi diperbarui');
+      } else {
+        await API.createSession(name);
+        Toast.success('Sesi baru dibuat');
+      }
+      this.closeSessionModal();
+      await this.loadHome();
+    } catch(err) {
+      Toast.error(err.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = 'Simpan';
     }
   },
 
@@ -688,6 +788,8 @@ const AdminApp = {
     Spinner.hide();
   },
 
+
+
   exportExcel() {
     const token = Storage.getAdminToken();
     if (!token) {
@@ -713,3 +815,5 @@ const AdminApp = {
     _('yearly-notif').style.display = 'none';
   },
 };
+
+window.AdminApp = AdminApp;

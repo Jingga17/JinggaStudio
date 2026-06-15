@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin — Counselor Connect Psikometri</title>
-  <meta name="description" content="Panel admin Psikometri Problem Checklist Counselor Connect">
+  <title>Admin — Resilien · Platform Asesmen BK</title>
+  <meta name="description" content="Panel admin Resilien - Platform Asesmen Bimbingan dan Konseling">
   <meta name="robots" content="noindex,nofollow">
   <link rel="stylesheet" href="css/style.css">
   
@@ -46,9 +46,9 @@
 <div id="admin-login" class="login-page" style="display:none">
   <div class="login-card fade-in">
     <div class="login-logo">
-      <div class="login-logo-icon">📊</div>
-      <h1 class="login-title">Panel Admin</h1>
-      <p class="login-sub">Psikometri Problem Checklist — Counselor Connect</p>
+      <div class="login-logo-icon" style="background:none; width:160px; height:160px; margin:0 auto 20px; box-shadow:none; border-radius:0;">
+        <img src="img/logo-full.svg" alt="Resilien Logo" style="width:100%; height:100%; object-fit:contain;">
+      </div>
     </div>
 
     <form id="login-form" class="login-form" novalidate>
@@ -86,20 +86,45 @@
 
   <!-- ── SIDEBAR ── -->
   <nav id="sidebar" class="sidebar">
-    <div class="sidebar-logo">
-      <div class="sidebar-logo-text">📊 Counselor Connect</div>
-      <div class="sidebar-logo-sub">Psikometri Problem Checklist</div>
+    <div class="sidebar-logo" style="display:flex; justify-content:center; align-items:center; padding: 20px 10px;">
+      <div style="width: 140px; height: auto;">
+        <img src="img/logo-full.svg" alt="Resilien" style="width:100%; height:auto; object-fit:contain;">
+      </div>
     </div>
 
     <div class="sidebar-nav">
-      <div class="nav-item active" data-page="home">
+      <div class="nav-item active" data-page="dashboard-global">
         <span class="nav-icon">🏠</span>
-        <span>Home</span>
+        <span>Dashboard Utama</span>
       </div>
+
+      <div class="nav-group expanded">
+        <div class="nav-group-title" onclick="AdminApp.toggleNavGroup(this)">
+          <span class="nav-icon">📝</span>
+          <span>Asesmen</span>
+          <span class="nav-group-caret">▼</span>
+        </div>
+        <div class="nav-group-items">
+          <div class="nav-item" data-page="home">
+            <span class="nav-icon">📋</span>
+            <span>Problem Checklist</span>
+          </div>
+          <div class="nav-item" data-page="dummy-sosiogram">
+            <span class="nav-icon">🔗</span>
+            <span>Sosiogram</span>
+          </div>
+          <div class="nav-item" data-page="dummy-ikms">
+            <span class="nav-icon">📊</span>
+            <span>IKMS</span>
+          </div>
+        </div>
+      </div>
+
       <div class="nav-item" data-page="laporan">
         <span class="nav-icon">🖨️</span>
         <span>Cetak Laporan</span>
       </div>
+
       <div class="nav-item" data-page="pengaturan">
         <span class="nav-icon">⚙️</span>
         <span>Pengaturan</span>
@@ -128,16 +153,50 @@
       <button id="hamburger" class="topbar-hamburger" onclick="AdminApp.toggleSidebar()">☰</button>
       <h2 id="topbar-title" class="topbar-title">🏠 Dashboard</h2>
       <div class="topbar-actions">
-        <!-- topbar actions -->
+
       </div>
     </div>
 
     <!-- Page Content -->
     <div class="page-content">
 
-      <!-- ═══════════════════════════════════
-           PAGE: HOME
-      ═══════════════════════════════════ -->
+        <!-- ════════════════════════════════════════════════════════════════
+             PAGE: DASHBOARD GLOBAL
+        ════════════════════════════════════════════════════════════════ -->
+        <div id="page-dashboard-global" style="display:none">
+          <div class="card" style="text-align:center; padding: 40px 20px;">
+            <div style="font-size:48px; margin-bottom:16px;">🌍</div>
+            <h2 style="margin:0 0 8px 0; color:var(--text-primary);">Dashboard Utama (Global)</h2>
+            <p style="color:var(--text-muted); max-width:500px; margin:0 auto; line-height:1.5;">
+              Halaman ini akan menjadi pusat komando yang menampilkan rangkuman statistik gabungan dari seluruh asesmen yang ada di Counselor Connect. 
+              <br><br>
+              <em>Segera hadir seiring bertambahnya modul asesmen baru!</em>
+            </p>
+          </div>
+        </div>
+      
+      <!-- ════════════════════════════════════════════════════════════════
+           PAGE: DUMMY (Sosiogram / IKMS)
+      ════════════════════════════════════════════════════════════════ -->
+      <div id="page-dummy-sosiogram" style="display:none">
+        <div class="card" style="text-align:center; padding: 40px 20px;">
+          <div style="font-size:48px; margin-bottom:16px;">🔗</div>
+          <h2 style="margin:0 0 8px 0; color:var(--text-primary);">Sosiogram</h2>
+          <p style="color:var(--text-muted); max-width:500px; margin:0 auto; line-height:1.5;">Modul asesmen hubungan sosial antar siswa. <em>Dalam pengembangan.</em></p>
+        </div>
+      </div>
+
+      <div id="page-dummy-ikms" style="display:none">
+        <div class="card" style="text-align:center; padding: 40px 20px;">
+          <div style="font-size:48px; margin-bottom:16px;">📊</div>
+          <h2 style="margin:0 0 8px 0; color:var(--text-primary);">IKMS</h2>
+          <p style="color:var(--text-muted); max-width:500px; margin:0 auto; line-height:1.5;">Identifikasi Kebutuhan dan Masalah Siswa. <em>Dalam pengembangan.</em></p>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════════════════════════════
+           PAGE: HOME (DCM)
+        ════════════════════════════════════════════════════════════════ -->
       <div id="page-home" style="display:none">
 
         <!-- Notifikasi Tahunan -->
@@ -199,24 +258,32 @@
           </div>
         </div>
 
-        <!-- Sesi Asesmen -->
-        <div class="card" style="margin-bottom:20px; display:flex; align-items:center; justify-content:space-between;">
-          <div>
-            <div class="section-title">🔗 Akses Kuesioner Siswa</div>
-            <div class="section-sub" style="margin-bottom: 8px;">
-              Link pengerjaan: <a href="/index.html" target="_blank" style="font-weight:bold; color:var(--primary); text-decoration:none;">http://localhost:8080/index.html</a>
-              <button class="btn btn-outline btn-sm" style="margin-left: 10px; padding: 2px 8px; font-size: 12px;" onclick="copyToClipboard(window.location.origin + '/index.html')" title="Salin link">📋 Salin Link</button>
+        <!-- Manajemen Sesi -->
+        <div class="card" style="margin-bottom:20px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <div>
+              <div class="section-title">🗂️ Manajemen Sesi (Link Kuesioner)</div>
+              <div class="section-sub">Buat link baru untuk kelas/angkatan tertentu.</div>
             </div>
-            <div style="font-size:13px; color:var(--text-muted);">Siswa hanya dapat mengakses kuesioner jika status akses <b>Dibuka</b>.</div>
+            <button class="btn btn-primary btn-sm" onclick="AdminApp.showCreateSessionModal()">+ Buat Sesi Baru</button>
           </div>
-          <div style="text-align:center;">
-            <div id="assessment-status-label" style="font-size:14px; font-weight:bold; margin-bottom:8px;">Status: Memuat...</div>
-            <button id="btn-toggle-assessment" class="btn" style="min-width:140px; font-weight:bold;" onclick="AdminApp.toggleAssessmentStatus()">
-              Memuat...
-            </button>
+          <div class="table-container">
+            <table class="table" style="font-size: 13px;">
+              <thead>
+                <tr>
+                  <th>Nama Sesi</th>
+                  <th>Link Pengerjaan</th>
+                  <th style="text-align:center;">Responden</th>
+                  <th style="text-align:center;">Status</th>
+                  <th style="text-align:center;">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-sessions">
+                <tr><td colspan="5" style="text-align:center;color:var(--text-muted)">Memuat data sesi...</td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
-
         <!-- Filter Bar -->
         <div class="filter-bar">
           <div class="filter-group">
@@ -300,8 +367,20 @@
            PAGE: CETAK LAPORAN
       ═══════════════════════════════════ -->
       <div id="page-laporan" style="display:none">
+          
+          <div style="margin-bottom:20px;">
+            <h3 style="margin:0 0 12px 0; color:var(--text-primary);">Pusat Cetak Laporan Asesmen</h3>
+            
+            <div style="display:flex; gap:8px; margin-bottom:16px;">
+              <button class="btn btn-primary btn-sm">📋 Problem Checklist</button>
+              <button class="btn btn-outline btn-sm" style="color:var(--text-muted); cursor:not-allowed;">🔗 Sosiogram</button>
+              <button class="btn btn-outline btn-sm" style="color:var(--text-muted); cursor:not-allowed;">📊 IKMS</button>
+            </div>
 
-        <!-- Sub-menu toggle -->
+            <p style="margin:4px 0 0 0; font-size:13px; color:var(--text-muted);">Pilih submenu di bawah untuk mencetak jenis laporan <b>Problem Checklist</b>.</p>
+          </div>
+
+          <!-- Sub-menu toggle -->
         <div class="laporan-submenu">
           <div class="laporan-sub-card active" id="lap-sub-kelas" onclick="AdminApp.switchLapSubMenu('kelas')">
             <div class="laporan-sub-icon">🏫</div>
@@ -556,18 +635,39 @@
 
       </div><!-- end page-pengaturan -->
 
+
+
     </div><!-- end page-content -->
   </div><!-- end main-content -->
+
+  <!-- Modal Buat/Edit Sesi -->
+  <div id="modal-session" class="modal-overlay" style="display:none; align-items:center; justify-content:center; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:9999;">
+    <div class="modal-content card" style="width: 100%; max-width: 400px; padding: 24px; animation: slideUp 0.3s ease;">
+      <h3 id="modal-session-title" style="margin-top:0; margin-bottom: 20px;">Buat Sesi Baru</h3>
+      <form id="form-session" onsubmit="AdminApp.submitSession(event)">
+        <input type="hidden" id="session-id">
+        <div class="form-group" style="margin-bottom: 20px;">
+          <label>Nama Sesi (Misal: XII 2 - 2025/2026)</label>
+          <input type="text" id="session-name" class="form-control" placeholder="Nama Sesi / Kelas" required autocomplete="off">
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:10px;">
+          <button type="button" class="btn btn-outline" onclick="AdminApp.closeSessionModal()">Batal</button>
+          <button type="submit" class="btn btn-primary" id="btn-submit-session">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
 </div><!-- end admin-shell -->
 
 <!-- Scripts -->
-<script src="js/data-soal.js"></script>
-<script src="js/utils/storage.js?v=6"></script>
-<script src="js/utils/scoring.js"></script>
-<script src="js/utils/api.js?v=6"></script>
-<script src="js/components/ui.js"></script>
-<script src="js/pages/admin.js?v=6"></script>
+<script src="js/data-soal.js?v=12"></script>
+<script src="js/utils/storage.js?v=12"></script>
+<script src="js/utils/scoring.js?v=12"></script>
+<script src="js/utils/api.js?v=12"></script>
+<script src="js/components/ui.js?v=12"></script>
+<script src="js/pages/admin.js?v=12"></script>
+<script src="js/pages/export.js?v=12"></script>
 <script>
 window.addEventListener('DOMContentLoaded', () => {
   AdminApp.init();

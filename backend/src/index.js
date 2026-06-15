@@ -46,6 +46,7 @@ app.get('/api', (req, res) => {
 // Import Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/sessions', require('./routes/sessions'));
+
 app.use('/api/students', require('./routes/students'));
 app.use('/api/questions', require('./routes/questions'));
 app.use('/api/answers', require('./routes/answers'));

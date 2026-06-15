@@ -17,11 +17,22 @@ const KuesionerApp = {
 
   async init() {
     Spinner.show();
+    
+    // Parse Token dari URL
+    const urlParams = new URLSearchParams(window.location.search);
+    this.token = urlParams.get('token');
+
+    if (!this.token) {
+      Spinner.hide();
+      this.showError('Link Tidak Valid', 'Silakan gunakan link resmi yang diberikan oleh Guru Bimbingan dan Konseling Anda.');
+      return;
+    }
+
     try {
-      const sesi = await API.cekSesiAktif();
-      if (!sesi.active) {
+      const check = await API.cekSession(this.token);
+      if (!check.valid || !check.active) {
         Spinner.hide();
-        this.showError('Asesmen Ditutup', 'Saat ini pengisian kuesioner sedang ditutup oleh guru/konselor. Silakan cek kembali nanti atau hubungi guru Bimbingan dan Konseling Anda.');
+        this.showError('Asesmen Ditutup', 'Sesi asesmen untuk link ini tidak valid atau sudah ditutup. Hubungi konselor Anda.');
         return;
       }
     } catch(e) {
@@ -65,12 +76,12 @@ const KuesionerApp = {
   },
 
   showStep(step) {
-    ['biodata','soal','selesai'].forEach(s => {
+    ['biodata','panduan','soal','selesai'].forEach(s => {
       const el = _(`step-${s}`);
       if (el) el.style.display = s === step ? 'block' : 'none';
     });
     const header = _('kuis-header');
-    if (header) header.style.display = step === 'selesai' || step === 'biodata' ? 'none' : 'flex';
+    if (header) header.style.display = step === 'soal' ? 'flex' : 'none';
   },
 
   // ─── BIODATA ───────────────────────────
@@ -94,61 +105,75 @@ const KuesionerApp = {
 
   async submitBiodata() {
     const jkRadio = document.querySelector('input[name="b-jk"]:checked');
+    const nisnStr = _('b-nisn')?.value.trim();
     const fields = {
       nama:          _('b-nama')?.value.trim(),
       jenis_kelamin: jkRadio ? jkRadio.value : '',
       kelas:         _('b-kelas')?.value,
       ttl:           _('b-ttl')?.value,
-      nisn:          _('b-nisn')?.value.trim(),
+      nisn:          nisnStr
     };
-
-    // Validasi client
     if (!fields.nama || !fields.jenis_kelamin || !fields.kelas || !fields.ttl || !fields.nisn) {
-      Toast.error('Harap isi semua data dengan lengkap');
+      Toast.error('Mohon lengkapi semua isian biodata.');
       return;
     }
     if (!/^\d{8,10}$/.test(fields.nisn)) {
-      this.showFieldError('nisn', 'NISN harus berupa 8-10 digit angka');
+      Toast.error('NISN harus berupa 8-10 digit angka');
       return;
     }
 
-    Spinner.show();
+    _('btn-biodata').disabled = true;
+    _('btn-biodata').innerHTML = '<div class="spinner spinner-sm"></div> Memproses...';
+    
     try {
-      // Cek NISN
-      const nisnCheck = await API.cekNISN(fields.nisn);
-      if (nisnCheck.exists) {
-        Spinner.hide();
-        await Modal.alert({
-          title: '⚠️ NISN Sudah Terdaftar',
-          body: `<p>NISN <strong>${fields.nisn}</strong> sudah pernah digunakan untuk mengisi kuesioner ini.</p>
-                 <p style="margin-top:8px;color:var(--text-muted)">Jika Anda merasa ini adalah kesalahan, hubungi guru/konselor Anda.</p>`,
-          btnText: 'Mengerti'
-        });
-        return;
+      // 1. Cek NISN
+      const check = await API.cekNISN(this.token, fields.nisn);
+      if (check.exists && check.is_complete) {
+        _('btn-biodata').disabled = false;
+        _('btn-biodata').innerHTML = 'Lanjut ke Kuesioner &rarr;';
+        return Modal.alert({ title: 'Kuesioner Selesai', body: 'Anda sudah menyelesaikan kuesioner di sesi ini dengan NISN tersebut. Tidak dapat mengulang.' });
       }
 
-      // Simpan biodata
       const result = await API.simpanBiodata({ ...fields, token: this.token });
-      this.student   = { ...fields, student_id: result.student_id, token: this.token };
+      this.student   = { ...fields, student_id: result.student_id };
       this.studentId = result.student_id;
 
       // Inisiasi sesi kuesioner
       Storage.saveStudentDraft(this.student);
-      this.soalOrder  = this.generateOrder();
-      this.currentPage = 0;
-      this.timerStart  = Date.now();
-      Storage.saveShuffledOrder(this.studentId, this.soalOrder);
-      Storage.saveCurrentPage(this.studentId, 0);
-      Storage.saveTimerStart(this.studentId, this.timerStart);
-
-      Spinner.hide();
-      this.showStep('soal');
-      this.renderSoal();
-      this.startTimer();
+      
+      if (result.resumed) {
+        Toast.success('Sesi sebelumnya dilanjutkan.');
+        this.soalOrder   = Storage.getShuffledOrder(this.studentId) || this.generateOrder();
+        this.currentPage = Storage.getCurrentPage(this.studentId) || 0;
+        this.timerStart  = Storage.getTimerStart(this.studentId) || Date.now();
+        this.answers     = Storage.getAnswers(this.studentId) || {};
+        Spinner.hide();
+        this.showStep('soal');
+        this.renderSoal();
+        this.startTimer();
+      } else {
+        this.soalOrder   = this.generateOrder();
+        this.currentPage = 0;
+        this.answers     = {};
+        Storage.saveShuffledOrder(this.studentId, this.soalOrder);
+        Storage.saveCurrentPage(this.studentId, 0);
+        Spinner.hide();
+        this.showStep('panduan');
+      }
     } catch(e) {
       Spinner.hide();
       Toast.error(e.message);
+      _('btn-biodata').disabled = false;
+      _('btn-biodata').innerHTML = 'Lanjut ke Kuesioner &rarr;';
     }
+  },
+
+  mulaiDariPanduan() {
+    this.timerStart = Date.now();
+    Storage.saveTimerStart(this.studentId, this.timerStart);
+    this.showStep('soal');
+    this.renderSoal();
+    this.startTimer();
   },
 
   showFieldError(field, msg) {
@@ -246,18 +271,44 @@ const KuesionerApp = {
     this.renderSoal();
   },
 
+  handleAnswer(e) {
+    const btn = e.target.closest('.btn-ya, .btn-tidak');
+    if (!btn) return;
+    const qidStr = btn.getAttribute('data-id');
+    if (!qidStr) return;
+    const qid = parseInt(qidStr, 10);
+    const q = this.soalOrder.find(item => item.id === qid);
+    if (!q) return;
+
+    const val = btn.classList.contains('btn-ya') ? 'Ya' : 'Tidak';
+    if (typeof this.answers[q.id] !== 'undefined') {
+      this.answers[q.id] = (this.answers[q.id] === val) ? null : val;
+    } else {
+      this.answers[q.id] = val;
+    }
+    Storage.saveAnswer(this.studentId, q.id, this.answers[q.id]);
+    this.renderSoal();
+  },
+
+  gantiSiswa() {
+    Modal.confirm({
+      title: 'Ganti Siswa?',
+      body: 'Apakah Anda yakin ingin mengganti siswa? Sesi Anda saat ini akan tersimpan dan dapat dilanjutkan nanti dengan memasukkan NISN yang sama.',
+      okText: 'Ya, Ganti',
+      onOk: () => {
+        Storage.clearStudentDraft();
+        location.reload();
+      }
+    });
+  },
+
   async nextPage() {
     const soalPage = this.getSoalForPage(this.currentPage);
     const belumJawab = soalPage.filter(s => !this.answers[s.id]);
 
     if (belumJawab.length > 0) {
-      const ok = await Modal.confirm({
-        title: `${belumJawab.length} Soal Belum Dijawab`,
-        body: `Masih ada <strong>${belumJawab.length} soal</strong> di halaman ini yang belum dijawab. Yakin ingin melanjutkan? (bisa kembali lagi nanti)`,
-        confirmText: 'Lanjutkan',
-        cancelText: 'Isi dulu'
-      });
-      if (!ok) return;
+      Toast.error(`Harap selesaikan ${belumJawab.length} soal yang belum dijawab di halaman ini sebelum melanjutkan.`);
+      return;
     }
 
     if (this.currentPage === this.TOTAL_HAL - 1) {

@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS schools (
 CREATE TABLE IF NOT EXISTS sessions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     token TEXT UNIQUE NOT NULL,
+    name TEXT DEFAULT 'Sesi Default',
     created_by INTEGER,
     is_active BOOLEAN DEFAULT 1,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -38,7 +39,7 @@ CREATE TABLE IF NOT EXISTS students (
     jenis_kelamin TEXT,
     kelas TEXT,
     ttl TEXT,
-    nisn TEXT UNIQUE NOT NULL,
+    nisn TEXT NOT NULL,
     session_id INTEGER,
     is_valid BOOLEAN,
     validation_note TEXT,
@@ -47,7 +48,8 @@ CREATE TABLE IF NOT EXISTS students (
     durasi_pengisian INTEGER,
     is_complete BOOLEAN DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY(session_id) REFERENCES sessions(id)
+    FOREIGN KEY(session_id) REFERENCES sessions(id),
+    UNIQUE(nisn, session_id)
 );
 
 CREATE TABLE IF NOT EXISTS questions (

@@ -1,4 +1,4 @@
-const puppeteer = require('puppeteer-core');
+const puppeteer = require('puppeteer');
 
 class PDFGenerator {
     constructor() {
@@ -8,8 +8,7 @@ class PDFGenerator {
     async init() {
         if (!this.browser) {
             console.log("Initializing Puppeteer...");
-            this.browser = await puppeteer.launch({
-                executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium-browser',
+            const launchOptions = {
                 args: [
                     '--no-sandbox',
                     '--disable-setuid-sandbox',
@@ -17,7 +16,11 @@ class PDFGenerator {
                     '--disable-gpu'
                 ],
                 headless: 'new'
-            });
+            };
+            if (process.env.PUPPETEER_EXECUTABLE_PATH) {
+                launchOptions.executablePath = process.env.PUPPETEER_EXECUTABLE_PATH;
+            }
+            this.browser = await puppeteer.launch(launchOptions);
             console.log("Puppeteer initialized.");
         }
     }
@@ -33,7 +36,8 @@ class PDFGenerator {
         const page = await this.browser.newPage();
         try {
             const encodedId = encodeURIComponent(id);
-            const url = `http://frontend/report.html?type=${type}&id=${encodedId}`;
+            const port = process.env.PORT || 3000;
+            const url = `http://localhost:${port}/report.html?type=${type}&id=${encodedId}`;
             console.log(`Navigating to ${url}...`);
 
             await page.goto(url, { waitUntil: 'networkidle0', timeout: 60000 });

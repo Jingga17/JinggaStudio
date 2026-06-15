@@ -3,12 +3,15 @@ const router = express.Router();
 const { query, get } = require('../db');
 const { calculateStudentScores } = require('../services/scoring');
 
+// Helper for session filtering
+const getSessionFilter = (session_id, prefix = 'AND') => session_id ? ` ${prefix} session_id = ?` : '';
+
 // GET Summary stats
 router.get('/summary', async (req, res, next) => {
     try {
-        const totalResponden = await get('SELECT COUNT(*) as count FROM students');
-        const totalSelesai = await get('SELECT COUNT(*) as count FROM students WHERE is_complete = 1');
-        const totalKelas = await get('SELECT COUNT(DISTINCT kelas) as count FROM students WHERE kelas IS NOT NULL AND kelas != ""');
+        const totalResponden = await get(`SELECT COUNT(*) as count FROM students`);
+        const totalSelesai = await get(`SELECT COUNT(*) as count FROM students WHERE is_complete = 1`);
+        const totalKelas = await get(`SELECT COUNT(DISTINCT kelas) as count FROM students WHERE kelas IS NOT NULL AND kelas != ""`);
         
         let persentase = 0;
         if (totalResponden.count > 0) {
@@ -197,7 +200,9 @@ router.get('/deskripsi', async (req, res, next) => {
 // GET distinct registered classes
 router.get('/kelas', async (req, res, next) => {
     try {
-        const result = await query('SELECT DISTINCT kelas FROM students WHERE kelas IS NOT NULL AND kelas != ""');
+        let sql = 'SELECT DISTINCT kelas FROM students WHERE kelas IS NOT NULL AND kelas != ""';
+        const params = [];
+        const result = await query(sql, params);
         const kelas = result.map(r => r.kelas);
         res.json({ status: 'success', data: kelas });
     } catch (err) { next(err); }
@@ -207,9 +212,11 @@ router.get('/kelas', async (req, res, next) => {
 router.get('/class-report/:kelas', async (req, res, next) => {
     try {
         const kelas = req.params.kelas;
+        let sql = 'SELECT * FROM students WHERE kelas = ? AND is_complete = 1';
+        const params = [kelas];
         
         // Fetch all complete students in the class
-        const students = await query('SELECT * FROM students WHERE kelas = ? AND is_complete = 1', [kelas]);
+        const students = await query(sql, params);
         const validStudents = students.filter(s => s.is_valid === 1);
         
         if (students.length === 0) {
@@ -245,12 +252,13 @@ router.get('/class-report/:kelas', async (req, res, next) => {
         questions.forEach(q => questionsMap[q.id] = q);
 
         // Fetch all answers for valid students in this class
-        const allValidAnswers = await query(`
+        let sqlAns = `
             SELECT a.question_id, a.jawaban
             FROM answers a
             JOIN students s ON a.student_id = s.id
             WHERE s.kelas = ? AND s.is_complete = 1 AND s.is_valid = 1
-        `, [kelas]);
+        `;
+        const allValidAnswers = await query(sqlAns, [kelas]);
 
         allValidAnswers.forEach(a => {
             const q = questionsMap[a.question_id];

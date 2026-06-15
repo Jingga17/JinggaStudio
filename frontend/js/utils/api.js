@@ -70,10 +70,19 @@ async function http(method, path, body = null) {
     headers: { 'Content-Type': 'application/json', ...(token ? {'Authorization':`Bearer ${token}`} : {}) },
     ...(body ? { body: JSON.stringify(body) } : {})
   };
-  const res = await fetch(API_BASE + path, opts);
+  let finalPath = path;
+  if (method === 'GET') {
+    finalPath += (path.includes('?') ? '&' : '?') + '_t=' + Date.now();
+  }
+  const res = await fetch(API_BASE + finalPath, opts);
   if (!res.ok) {
+    if (res.status === 401) {
+      Storage.clearAdminToken();
+      window.location.reload();
+      throw new Error('Sesi login telah habis, silakan login kembali');
+    }
     const err = await res.json().catch(() => ({ message: res.statusText }));
-    throw new Error(err.message || 'Terjadi kesalahan server');
+    throw new Error(err.message || err.error || 'Terjadi kesalahan server');
   }
   return res.json();
 }
@@ -83,22 +92,23 @@ async function http(method, path, body = null) {
 // ──────────────────────────────────────────
 const API = {
   // Kuesioner (publik)
-  async cekSesiAktif() {
+  async cekSession(token) {
+    if (!token) return { valid: false, message: 'Token tidak ditemukan' };
     if (MOCK_MODE) {
-      return { active: true };
+      const s = MOCK.sessions.find(x => x.token === token);
+      return s ? { valid: true, active: s.is_active, session: { id: s.id, name: s.name } } : { valid: false, message: 'Token tidak ditemukan' };
     }
-    const res = await http('GET', `/settings/assessment-status`);
-    return { active: res.data ? res.data.active : false };
+    return http('GET', `/sessions/check/${token}`);
   },
-  async cekNISN(nisn) {
-    if (MOCK_MODE) return { exists: nisn === '0012345678' };
-    const res = await http('GET', `/students/check-nisn/${nisn}`);
-    return { exists: res.data ? res.data.exists : false };
+  async cekNISN(token, nisn) {
+    if (MOCK_MODE) return { exists: nisn === '0012345678', is_complete: false };
+    const res = await http('GET', `/students/check-nisn/${token}/${nisn}`);
+    return res.data || { exists: false };
   },
   async simpanBiodata(data) {
     if (MOCK_MODE) return { student_id: 999, ...data };
     const res = await http('POST', '/students', data);
-    return { student_id: res.data ? res.data.student_id : null, ...data };
+    return { student_id: res.data ? res.data.student_id : null, resumed: res.data ? res.data.resumed : false, ...data };
   },
   async getSoal() {
     if (MOCK_MODE) return QUESTIONS_DATA;
@@ -140,10 +150,40 @@ const API = {
     return (await http('POST', '/settings/assessment-status', { active })).data;
   },
 
+
+  // Admin — Sessions
+  async getSessions() {
+    if (MOCK_MODE) return MOCK.sessions;
+    return http('GET', '/sessions');
+  },
+  async createSession(name) {
+    if (MOCK_MODE) {
+      const s = { id: Date.now(), token: Math.random().toString(36).substr(2,8), name, is_active: 1, student_count: 0, created_at: new Date().toISOString() };
+      MOCK.sessions.unshift(s);
+      return s;
+    }
+    return http('POST', '/sessions', { name });
+  },
+  async updateSession(id, data) {
+    if (MOCK_MODE) {
+      const s = MOCK.sessions.find(x => x.id === id);
+      if (s) Object.assign(s, data);
+      return { success: true };
+    }
+    return http('PUT', `/sessions/${id}`, data);
+  },
+  async deleteSession(id) {
+    if (MOCK_MODE) {
+      MOCK.sessions = MOCK.sessions.filter(x => x.id !== id);
+      return { success: true };
+    }
+    return http('DELETE', `/sessions/${id}`);
+  },
+
   // Admin — Dashboard
   async getSummary() {
     if (MOCK_MODE) return MOCK.summary;
-    const res = await http('GET', '/dashboard/summary');
+    const res = await http('GET', `/dashboard/summary`);
     return res.data;
   },
   async getChartData(kelas = '', nisn = '') {
@@ -212,7 +252,7 @@ const API = {
   },
   async getKelas() {
     if (MOCK_MODE) return MOCK.classes;
-    const res = await http('GET', '/dashboard/kelas');
+    const res = await http('GET', `/dashboard/kelas`);
     return res.data;
   },
   async getStudentsByKelas(kelas) {
