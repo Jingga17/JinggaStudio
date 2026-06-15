@@ -274,6 +274,7 @@ const AdminApp = {
       this.chartDataCache = chartData;
       this.renderCharts(chartData);
       this.renderTable(tableData);
+      this.renderPriorityTable(tableData);
       this.renderDeskripsi(deskripsi);
     } catch(e) {
       Toast.error('Gagal memuat data: ' + e.message);
@@ -349,6 +350,44 @@ const AdminApp = {
 
     // Search binding
     _('tabel-search')?.addEventListener('input', (e) => this.searchTable(e.target.value));
+  },
+
+  renderPriorityTable(data) {
+    const tbody = _('tbody-prioritas');
+    if (!tbody) return;
+
+    const priorityStudents = (data || []).map(s => {
+      const maxPct = Math.max(s.pribadi_pct || 0, s.belajar_pct || 0, s.sosial_pct || 0, s.karir_pct || 0);
+      return { ...s, maxPct };
+    }).filter(s => s.maxPct >= 50 && s.status === 'Valid')
+      .sort((a, b) => b.maxPct - a.maxPct);
+
+    if (!priorityStudents.length) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:15px;">🎉 Bagus! Saat ini tidak ada siswa yang terindikasi butuh penanganan segera.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = priorityStudents.map((s, i) => {
+      const isSangatBerat = s.maxPct >= 70;
+      const color = isSangatBerat ? '#b91c1c' : '#c2410c';
+      const bg = isSangatBerat ? '#fef2f2' : '#fff7ed';
+      const labelText = isSangatBerat ? 'SANGAT BERAT' : 'BERAT';
+      const actionLabel = isSangatBerat ? '🚨 Intervensi Segera' : '⚠️ Konseling Preventif';
+
+      return `
+      <tr style="background-color: ${bg};">
+        <td style="text-align:center; color:${color}; font-weight:bold;">${i+1}</td>
+        <td><strong style="color:${color}">${s.nama}</strong><br><span style="font-size:11px; opacity:0.8;">NISN: ${s.nisn}</span></td>
+        <td>${s.kelas}</td>
+        <td style="text-align:center;">
+          <span style="font-weight:bold; color:${color}">${s.maxPct.toFixed(1)}%</span><br>
+          <span style="font-size:11px; font-weight:600;">(${labelText})</span>
+        </td>
+        <td style="text-align:center;">
+          <span style="display:inline-block; padding:4px 8px; border-radius:4px; font-size:11px; font-weight:bold; border:1px solid ${color}; color:${color};">${actionLabel}</span>
+        </td>
+      </tr>
+    `}).join('');
   },
 
   searchTable(q) {
@@ -434,18 +473,27 @@ const AdminApp = {
       tbody.innerHTML = `<tr><td colspan="5" class="table-empty">Tidak ada siswa di kelas ini</td></tr>`;
       return;
     }
-    tbody.innerHTML = students.map((s, i) => `
+    tbody.innerHTML = students.map((s, i) => {
+      const maxPct = Math.max(s.pribadi_pct || 0, s.belajar_pct || 0, s.sosial_pct || 0, s.karir_pct || 0);
+      let konselingBadge = '';
+      if (maxPct >= 70 && s.status === 'Valid') {
+        konselingBadge = `<span style="margin-left:8px; font-size:10px; background:#fef2f2; color:#b91c1c; padding:2px 6px; border-radius:4px; border:1px solid #b91c1c; font-weight:bold;">🚨 Butuh Konseling Segera</span>`;
+      } else if (maxPct >= 50 && s.status === 'Valid') {
+        konselingBadge = `<span style="margin-left:8px; font-size:10px; background:#fff7ed; color:#c2410c; padding:2px 6px; border-radius:4px; border:1px solid #c2410c; font-weight:bold;">⚠️ Butuh Konseling</span>`;
+      }
+      return `
       <tr>
         <td>${i+1}</td>
-        <td><strong style="color:var(--text-primary)">${s.nama}</strong></td>
+        <td><strong style="color:var(--text-primary)">${s.nama}</strong>${konselingBadge}</td>
         <td>${s.jenis_kelamin === 'L' ? '🧑 Laki-laki' : '👩 Perempuan'}</td>
         <td>${badgeStatus(s.status)}</td>
         <td>
-          <button class="btn btn-primary btn-sm" onclick="AdminApp.downloadIndividu(${s.id},'${s.nama}')">
+          <button class="btn btn-primary btn-sm" onclick="AdminApp.downloadIndividu(${s.id},'${s.nama.replace(/'/g, "\\'")}')">
             ⬇️ Download PDF
           </button>
         </td>
-      </tr>`).join('');
+      </tr>`;
+    }).join('');
   },
 
   async downloadIndividu(id, nama) {

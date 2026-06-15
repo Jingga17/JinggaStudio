@@ -175,6 +175,30 @@
           </div>
         </div>
 
+        <!-- Daftar Siswa Prioritas -->
+        <div class="card" style="margin-top: 20px; margin-bottom: 20px;">
+          <h3 style="margin:0 0 15px 0; font-size:16px; color:#b91c1c; display:flex; align-items:center; gap:8px;">
+            🚨 Siswa Membutuhkan Penanganan Segera
+          </h3>
+          <p style="font-size:13px; color:var(--text-muted); margin-top:-10px; margin-bottom:15px;">Daftar siswa dengan intensitas masalah Berat (≥ 50%) atau Sangat Berat (≥ 70%).</p>
+          <div class="table-container">
+            <table class="table" id="table-prioritas" style="font-size: 13px;">
+              <thead>
+                <tr>
+                  <th style="width:40px; text-align:center;">No</th>
+                  <th>Nama Lengkap</th>
+                  <th>Kelas</th>
+                  <th style="text-align:center;">Intensitas Tertinggi</th>
+                  <th style="text-align:center;">Status Penanganan</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-prioritas">
+                <tr><td colspan="5" style="text-align:center;color:var(--text-muted)">Memuat data...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
         <!-- Sesi Asesmen -->
         <div class="card" style="margin-bottom:20px; display:flex; align-items:center; justify-content:space-between;">
           <div>

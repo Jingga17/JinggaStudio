@@ -111,9 +111,6 @@ const ReportApp = {
         TAHUN AJARAN ${s.tahun_ajaran || '2025/2026'}
       </div>
       <div class="kop-title">${title}</div>
-        <div style="text-align:justify; font-size:12.5px; font-weight:bold; color:#1e293b; margin: 0 0 20px 0; line-height: 1.5;">
-          Dokumen ini berisi laporan analisis komprehensif mengenai profil perkembangan dan indikasi hambatan siswa pada bidang Pribadi, Belajar, Sosial, dan Karir. Hasil analisis ini berfungsi sebagai instrumen deteksi dini bagi konselor untuk memberikan layanan intervensi dan konseling yang sesuai dengan kebutuhan prioritas siswa. Seluruh data dalam dokumen ini bersifat rahasia dan hanya diperuntukkan bagi pihak yang berkepentingan.
-        </div>
     `;
   },
 
@@ -124,6 +121,9 @@ const ReportApp = {
 
     return `
       <div class="avoid-break">
+        <div style="text-align:justify; font-size:12.5px; color:#1e293b; margin: 0 0 30px 0; line-height: 1.5;">
+          Dokumen ini berisi laporan analisis komprehensif mengenai profil perkembangan dan indikasi hambatan siswa pada bidang Pribadi, Belajar, Sosial, dan Karir. Hasil analisis ini berfungsi sebagai instrumen deteksi dini bagi konselor untuk memberikan layanan intervensi dan konseling yang sesuai dengan kebutuhan prioritas siswa. Seluruh data dalam dokumen ini bersifat rahasia dan hanya diperuntukkan bagi pihak yang berkepentingan.
+        </div>
         <div class="footer-ttd" style="display:flex;justify-content:flex-end;">
           <div class="ttd-box" style="position:relative;text-align:center;">
             ${capKonselor}
@@ -359,9 +359,44 @@ const ReportApp = {
       });
     }
 
+      let alertBanner = '';
+      const maxPct = Math.max(pPct, bPct, sPct, kPct);
+      if (student.status === 'Tidak Valid') {
+        alertBanner += `
+        <div style="background:#f1f5f9; border:1px solid #cbd5e1; border-left:4px solid #64748b; padding:12px 16px; margin-bottom:20px; border-radius:6px; page-break-inside: avoid;">
+          <h3 style="margin:0 0 4px 0; color:#334155; font-size:14px; font-weight:800; display:flex; align-items:center; gap:6px;">
+            ⚠️ STATUS PENGISIAN TIDAK VALID
+          </h3>
+          <p style="margin:0; font-size:12px; color:#475569; font-weight:600; line-height:1.4;">
+            Hasil instrumen siswa ini terdeteksi <b>TIDAK VALID</b> berdasarkan Skala Kebohongan (Lie Scale) atau Konsistensi. Disarankan untuk memanggil siswa dan melakukan asesmen ulang.
+          </p>
+        </div>`;
+      }
+      if (maxPct >= 70) {
+        alertBanner += `
+        <div style="background:#fef2f2; border:1px solid #fca5a5; border-left:4px solid #ef4444; padding:12px 16px; margin-bottom:20px; border-radius:6px; page-break-inside: avoid;">
+          <h3 style="margin:0 0 4px 0; color:#b91c1c; font-size:14px; font-weight:800; display:flex; align-items:center; gap:6px;">
+            🚨 BUTUH PENANGANAN SEGERA
+          </h3>
+          <p style="margin:0; font-size:12px; color:#991b1b; font-weight:600; line-height:1.4;">
+            Sangat disarankan untuk segera dijadwalkan sesi konseling.
+          </p>
+        </div>`;
+      } else if (maxPct >= 50) {
+        alertBanner += `
+        <div style="background:#fff7ed; border:1px solid #fdba74; border-left:4px solid #f97316; padding:12px 16px; margin-bottom:20px; border-radius:6px; page-break-inside: avoid;">
+          <h3 style="margin:0 0 4px 0; color:#c2410c; font-size:14px; font-weight:800; display:flex; align-items:center; gap:6px;">
+            ⚠️ BUTUH PENANGANAN
+          </h3>
+          <p style="margin:0; font-size:12px; color:#9a3412; font-weight:600; line-height:1.4;">
+            Disarankan untuk dijadwalkan sesi konseling preventif.
+          </p>
+        </div>`;
+      }
+
       let html = `
       ${this.getKopSurat('LAPORAN ANALISIS INDIVIDU')}
-      
+      ${alertBanner}
       <h2>IDENTITAS SISWA</h2>
       <table class="tbl-identitas">
         <tr><th>Nama Lengkap</th><td><b>${student.nama}</b></td></tr>
@@ -845,9 +880,44 @@ const ReportApp = {
         kekuatanAnsRows = `<tr><td colspan="5" style="text-align:center;color:var(--text-muted)">Tidak ditemukan pernyataan kekuatan.</td></tr>`;
       }
 
+      let alertBanner = '';
+      const maxPct = Math.max(student.pribadi_pct, student.belajar_pct, student.sosial_pct, student.karir_pct);
+      if (student.status === 'Tidak Valid') {
+        alertBanner += `
+        <div style="background:#f1f5f9; border:1px solid #cbd5e1; border-left:4px solid #64748b; padding:12px 16px; margin-bottom:20px; border-radius:6px; page-break-inside: avoid;">
+          <h3 style="margin:0 0 4px 0; color:#334155; font-size:14px; font-weight:800; display:flex; align-items:center; gap:6px;">
+            ⚠️ STATUS PENGISIAN TIDAK VALID
+          </h3>
+          <p style="margin:0; font-size:12px; color:#475569; font-weight:600; line-height:1.4;">
+            Hasil instrumen siswa ini terdeteksi <b>TIDAK VALID</b> berdasarkan Skala Kebohongan (Lie Scale) atau Konsistensi. Disarankan untuk memanggil siswa dan melakukan asesmen ulang.
+          </p>
+        </div>`;
+      }
+      if (maxPct >= 70) {
+        alertBanner += `
+        <div style="background:#fef2f2; border:1px solid #fca5a5; border-left:4px solid #ef4444; padding:12px 16px; margin-bottom:20px; border-radius:6px; page-break-inside: avoid;">
+          <h3 style="margin:0 0 4px 0; color:#b91c1c; font-size:14px; font-weight:800; display:flex; align-items:center; gap:6px;">
+            🚨 BUTUH PENANGANAN SEGERA
+          </h3>
+          <p style="margin:0; font-size:12px; color:#991b1b; font-weight:600; line-height:1.4;">
+            Sangat disarankan untuk segera dijadwalkan sesi konseling.
+          </p>
+        </div>`;
+      } else if (maxPct >= 50) {
+        alertBanner += `
+        <div style="background:#fff7ed; border:1px solid #fdba74; border-left:4px solid #f97316; padding:12px 16px; margin-bottom:20px; border-radius:6px; page-break-inside: avoid;">
+          <h3 style="margin:0 0 4px 0; color:#c2410c; font-size:14px; font-weight:800; display:flex; align-items:center; gap:6px;">
+            ⚠️ BUTUH PENANGANAN
+          </h3>
+          <p style="margin:0; font-size:12px; color:#9a3412; font-weight:600; line-height:1.4;">
+            Disarankan untuk dijadwalkan sesi konseling preventif.
+          </p>
+        </div>`;
+      }
+
       let html = `
       ${this.getKopSurat('LAPORAN ANALISIS INDIVIDU')}
-      
+      ${alertBanner}
       <h2>IDENTITAS SISWA</h2>
       <table class="tbl-identitas">
         <tr><th>Nama Lengkap</th><td><b>${student.nama}</b></td></tr>
