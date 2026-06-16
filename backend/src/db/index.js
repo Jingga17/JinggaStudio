@@ -38,6 +38,36 @@ const db = new sqlite3.Database(dbPath, (err) => {
         } catch (e) {
             // ignore
         }
+
+        // Create portfolio tables if not exist
+        db.exec(`
+            CREATE TABLE IF NOT EXISTS rapor (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                student_id INTEGER NOT NULL,
+                semester TEXT NOT NULL,
+                mata_pelajaran TEXT NOT NULL,
+                nilai REAL NOT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY(student_id) REFERENCES students(id) ON DELETE CASCADE
+            );
+            CREATE TABLE IF NOT EXISTS prestasi (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                student_id INTEGER NOT NULL,
+                nama_prestasi TEXT NOT NULL,
+                tingkat TEXT NOT NULL,
+                posisi TEXT,
+                tahun TEXT,
+                penyelenggara TEXT,
+                keterangan TEXT,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY(student_id) REFERENCES students(id) ON DELETE CASCADE
+            );
+        `, (err) => {
+            if (err) console.error('Error creating portfolio tables:', err.message);
+            else console.log('Portfolio tables ready.');
+        });
+
     }
 });
 

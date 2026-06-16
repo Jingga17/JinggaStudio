@@ -10,6 +10,39 @@ function getDb() {
   return new sqlite3.Database(dbPath);
 }
 
+// GET active sessions for student
+router.get('/active', requireAdmin, (req, res) => {
+  const db = getDb();
+  const nisn = req.user.nisn; // from JWT token payload
+
+  // Retrieve active sessions and the student's status for each
+  db.all(`
+    SELECT s.id, s.name, s.is_active,
+           st.is_complete, st.id as attempt_student_id
+    FROM sessions s
+    LEFT JOIN students st ON st.session_id = s.id AND st.nisn = ?
+    WHERE s.is_active = 1
+    ORDER BY s.created_at DESC
+  `, [nisn], (err, rows) => {
+    db.close();
+    if (err) return res.status(500).json({ error: 'Database error', details: err.message });
+    
+    // Map rows to determine status_pengisian
+    const result = rows.map(r => {
+      let status = 'belum';
+      if (r.attempt_student_id) {
+        status = r.is_complete ? 'selesai' : 'draft';
+      }
+      return {
+        id: r.id,
+        name: r.name,
+        status_pengisian: status
+      };
+    });
+    res.json(result);
+  });
+});
+
 // GET all sessions
 router.get('/', requireAdmin, (req, res) => {
   const db = getDb();

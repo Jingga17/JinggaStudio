@@ -15,42 +15,27 @@ const KuesionerApp = {
   timerInterval: null,
   timerStart: null,
 
-  async init() {
-    Spinner.show();
+  async start(attemptId, profile, sessionId) {
+    this.studentId = attemptId;
+    this.student = profile;
+    this.token = Storage.getStudentToken(); // Used for authentication in Kuesioner APIs
+
+    // Cek apakah ada draft yang tersimpan untuk attempt ini
+    const draftId = `draft_${attemptId}`;
+    const draft = Storage.get(draftId);
     
-    // Parse Token dari URL
-    const urlParams = new URLSearchParams(window.location.search);
-    this.token = urlParams.get('token');
-
-    if (!this.token) {
-      Spinner.hide();
-      this.showError('Link Tidak Valid', 'Silakan gunakan link resmi yang diberikan oleh Guru Bimbingan dan Konseling Anda.');
-      return;
-    }
-
-    try {
-      const check = await API.cekSession(this.token);
-      if (!check.valid || !check.active) {
-        Spinner.hide();
-        this.showError('Asesmen Ditutup', 'Sesi asesmen untuk link ini tidak valid atau sudah ditutup. Hubungi konselor Anda.');
-        return;
-      }
-    } catch(e) {
-      Spinner.hide();
-      this.showError('Gagal Terhubung', e.message);
-      return;
-    }
-    Spinner.hide();
-
-    // Cek apakah ada draft yang tersimpan
-    const draft = Storage.getStudentDraft();
     if (draft) {
-      this.student   = draft;
-      this.studentId = draft.student_id;
-      this.answers   = Storage.getAnswers(this.studentId);
+      this.answers   = Storage.getAnswers(this.studentId) || {};
       this.soalOrder = Storage.getShuffledOrder(this.studentId) || this.generateOrder();
-      this.currentPage = Storage.getCurrentPage(this.studentId);
-      this.timerStart  = Storage.getTimerStart(this.studentId) || Date.now();
+      this.currentPage = Storage.getCurrentPage(this.studentId) || 0;
+      
+      let savedTimer = Storage.getTimerStart(this.studentId);
+      if (!savedTimer) {
+        // Artinya mereka nge-refresh sebelum mulai dari panduan
+        savedTimer = Date.now();
+        Storage.saveTimerStart(this.studentId, savedTimer);
+      }
+      this.timerStart = savedTimer;
 
       // Langsung ke halaman soal
       this.showStep('soal');
@@ -59,9 +44,14 @@ const KuesionerApp = {
       return;
     }
 
-    // Step 1: Biodata
-    this.showStep('biodata');
-    this.initBiodataForm();
+    // Step 2: Panduan (langsung karena biodata sudah di dashboard)
+    this.soalOrder   = this.generateOrder();
+    this.currentPage = 0;
+    this.answers     = {};
+    Storage.set(draftId, true); // Tandai sudah mulai
+    Storage.saveShuffledOrder(this.studentId, this.soalOrder);
+    Storage.saveCurrentPage(this.studentId, 0);
+    this.showStep('panduan');
   },
 
   showError(title, msg) {
@@ -84,89 +74,7 @@ const KuesionerApp = {
     if (header) header.style.display = step === 'soal' ? 'flex' : 'none';
   },
 
-  // ─── BIODATA ───────────────────────────
-  async initBiodataForm() {
-    const form = _('biodata-form');
-    if (!form) return;
-    
-    try {
-      const classes = await API.getKelasOptions();
-      const select = _('b-kelas');
-      if (select) {
-        select.innerHTML = '<option value="">— Pilih Kelas —</option>' + classes.map(c => `<option value="${c}">${c}</option>`).join('');
-      }
-    } catch(e) { console.warn("Gagal memuat kelas", e); }
-
-    form.onsubmit = async (e) => {
-      e.preventDefault();
-      await this.submitBiodata();
-    };
-  },
-
-  async submitBiodata() {
-    const jkRadio = document.querySelector('input[name="b-jk"]:checked');
-    const nisnStr = _('b-nisn')?.value.trim();
-    const fields = {
-      nama:          _('b-nama')?.value.trim(),
-      jenis_kelamin: jkRadio ? jkRadio.value : '',
-      kelas:         _('b-kelas')?.value,
-      ttl:           _('b-ttl')?.value,
-      nisn:          nisnStr
-    };
-    if (!fields.nama || !fields.jenis_kelamin || !fields.kelas || !fields.ttl || !fields.nisn) {
-      Toast.error('Mohon lengkapi semua isian biodata.');
-      return;
-    }
-    if (!/^\d{8,10}$/.test(fields.nisn)) {
-      Toast.error('NISN harus berupa 8-10 digit angka');
-      return;
-    }
-
-    _('btn-biodata').disabled = true;
-    _('btn-biodata').innerHTML = '<div class="spinner spinner-sm"></div> Memproses...';
-    
-    try {
-      // 1. Cek NISN
-      const check = await API.cekNISN(this.token, fields.nisn);
-      if (check.exists && check.is_complete) {
-        _('btn-biodata').disabled = false;
-        _('btn-biodata').innerHTML = 'Lanjut ke Kuesioner &rarr;';
-        return Modal.alert({ title: 'Kuesioner Selesai', body: 'Anda sudah menyelesaikan kuesioner di sesi ini dengan NISN tersebut. Tidak dapat mengulang.' });
-      }
-
-      const result = await API.simpanBiodata({ ...fields, token: this.token });
-      this.student   = { ...fields, student_id: result.student_id };
-      this.studentId = result.student_id;
-
-      // Inisiasi sesi kuesioner
-      Storage.saveStudentDraft(this.student);
-      
-      if (result.resumed) {
-        Toast.success('Sesi sebelumnya dilanjutkan.');
-        this.soalOrder   = Storage.getShuffledOrder(this.studentId) || this.generateOrder();
-        this.currentPage = Storage.getCurrentPage(this.studentId) || 0;
-        this.timerStart  = Storage.getTimerStart(this.studentId) || Date.now();
-        this.answers     = Storage.getAnswers(this.studentId) || {};
-        Spinner.hide();
-        this.showStep('soal');
-        this.renderSoal();
-        this.startTimer();
-      } else {
-        this.soalOrder   = this.generateOrder();
-        this.currentPage = 0;
-        this.answers     = {};
-        Storage.saveShuffledOrder(this.studentId, this.soalOrder);
-        Storage.saveCurrentPage(this.studentId, 0);
-        Spinner.hide();
-        this.showStep('panduan');
-      }
-    } catch(e) {
-      Spinner.hide();
-      Toast.error(e.message);
-      _('btn-biodata').disabled = false;
-      _('btn-biodata').innerHTML = 'Lanjut ke Kuesioner &rarr;';
-    }
-  },
+  // (Fungsi Biodata dihapus karena sudah dipindah ke StudentApp / Dashboard)
 
   mulaiDariPanduan() {
     this.timerStart = Date.now();
@@ -224,10 +132,10 @@ const KuesionerApp = {
           <div class="soal-text">${soal.teks}</div>
           <div class="soal-actions">
             <button class="btn-ya ${yaSelected}" onclick="KuesionerApp.pilihJawaban(${soal.id}, 'ya')" id="ya-${soal.id}">
-              👍 Ya
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; vertical-align:-3px"><polyline points="20 6 9 17 4 12"/></svg> Ya, Sesuai
             </button>
             <button class="btn-tidak ${tidakSelected}" onclick="KuesionerApp.pilihJawaban(${soal.id}, 'tidak')" id="tidak-${soal.id}">
-              👎 Tidak
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; vertical-align:-3px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Tidak Sesuai
             </button>
           </div>
         </div>`;
@@ -292,12 +200,11 @@ const KuesionerApp = {
 
   gantiSiswa() {
     Modal.confirm({
-      title: 'Ganti Siswa?',
-      body: 'Apakah Anda yakin ingin mengganti siswa? Sesi Anda saat ini akan tersimpan dan dapat dilanjutkan nanti dengan memasukkan NISN yang sama.',
-      okText: 'Ya, Ganti',
+      title: 'Kembali ke Dashboard?',
+      body: 'Apakah Anda yakin ingin kembali ke Dashboard? Jawaban Anda akan otomatis tersimpan.',
+      okText: 'Ya, Kembali',
       onOk: () => {
-        Storage.clearStudentDraft();
-        location.reload();
+        StudentApp.loadDashboard();
       }
     });
   },
@@ -352,7 +259,7 @@ const KuesionerApp = {
       const durasi = Math.round((Date.now() - this.timerStart) / 1000);
       await API.selesaiKuesioner(this.studentId, durasi);
       this.stopTimer();
-      Storage.clearStudentDraft();
+      Storage.remove(`draft_${this.studentId}`);
       Spinner.hide();
       this.showSelesai(durasi, totalJawab);
     } catch(e) {

@@ -1,0 +1,183 @@
+<form id="student-akademik-form" onsubmit="event.preventDefault(); StudentApp.saveAkademik();">
+
+  <!-- Kelas Tabs -->
+  <div style="display:flex;gap:8px;margin-bottom:20px;border-bottom:2px solid var(--border);padding-bottom:0;overflow-x:auto;">
+    <button type="button" id="akademik-kelas-tab-10" onclick="StudentApp.switchAkademikKelas(10)" style="padding:10px 20px;background:none;border:none;border-bottom:2px solid var(--accent);margin-bottom:-2px;font-weight:700;font-size:14px;color:var(--accent);cursor:pointer;white-space:nowrap;">Kelas X (Fase E)</button>
+    <button type="button" id="akademik-kelas-tab-11" onclick="StudentApp.switchAkademikKelas(11)" style="padding:10px 20px;background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;font-weight:600;font-size:14px;color:var(--text-muted);cursor:pointer;white-space:nowrap;">Kelas XI (Fase F)</button>
+    <button type="button" id="akademik-kelas-tab-12" onclick="StudentApp.switchAkademikKelas(12)" style="padding:10px 20px;background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;font-weight:600;font-size:14px;color:var(--text-muted);cursor:pointer;white-space:nowrap;">Kelas XII (Fase F)</button>
+  </div>
+
+  <!-- Mapel Pilihan (Hanya untuk Kelas XI & XII) -->
+  <div class="card" id="akademik-mapel-pilihan-container" style="display:none; margin-bottom:20px; background:var(--bg-secondary);">
+    <h4 style="margin:0 0 12px 0; font-size:14px; display:flex; align-items:center; gap:6px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+      Mata Pelajaran Pilihan (Fase F - Kelas XI & XII)
+    </h4>
+    <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Pilih 4 mata pelajaran pilihan yang Anda ambil. Pilihan ini akan berlaku untuk Semester 3 sampai Semester 6.</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+      <div class="form-group"><label class="form-label">Pilihan 1</label><select class="form-control" id="akademik_pil_1" onchange="StudentApp.updateMapelPilihan()"><option value="">— Pilih Mapel —</option><option value="Fisika">Fisika</option><option value="Kimia">Kimia</option><option value="Biologi">Biologi</option><option value="Matematika Tingkat Lanjut">Matematika Tingkat Lanjut</option><option value="Sosiologi">Sosiologi</option><option value="Ekonomi">Ekonomi</option><option value="Geografi">Geografi</option><option value="Sejarah Tingkat Lanjut">Sejarah Tingkat Lanjut</option><option value="Bahasa Indonesia Tingkat Lanjut">Bahasa Indonesia Tingkat Lanjut</option><option value="Bahasa Inggris Tingkat Lanjut">Bahasa Inggris Tingkat Lanjut</option><option value="Bahasa & Sastra Prancis">Bahasa & Sastra Prancis</option><option value="Informatika Tingkat Lanjut">Informatika Tingkat Lanjut</option></select></div>
+      <div class="form-group"><label class="form-label">Pilihan 2</label><select class="form-control" id="akademik_pil_2" onchange="StudentApp.updateMapelPilihan()"><option value="">— Pilih Mapel —</option><option value="Fisika">Fisika</option><option value="Kimia">Kimia</option><option value="Biologi">Biologi</option><option value="Matematika Tingkat Lanjut">Matematika Tingkat Lanjut</option><option value="Sosiologi">Sosiologi</option><option value="Ekonomi">Ekonomi</option><option value="Geografi">Geografi</option><option value="Sejarah Tingkat Lanjut">Sejarah Tingkat Lanjut</option><option value="Bahasa Indonesia Tingkat Lanjut">Bahasa Indonesia Tingkat Lanjut</option><option value="Bahasa Inggris Tingkat Lanjut">Bahasa Inggris Tingkat Lanjut</option><option value="Bahasa & Sastra Prancis">Bahasa & Sastra Prancis</option><option value="Informatika Tingkat Lanjut">Informatika Tingkat Lanjut</option></select></div>
+      <div class="form-group"><label class="form-label">Pilihan 3</label><select class="form-control" id="akademik_pil_3" onchange="StudentApp.updateMapelPilihan()"><option value="">— Pilih Mapel —</option><option value="Fisika">Fisika</option><option value="Kimia">Kimia</option><option value="Biologi">Biologi</option><option value="Matematika Tingkat Lanjut">Matematika Tingkat Lanjut</option><option value="Sosiologi">Sosiologi</option><option value="Ekonomi">Ekonomi</option><option value="Geografi">Geografi</option><option value="Sejarah Tingkat Lanjut">Sejarah Tingkat Lanjut</option><option value="Bahasa Indonesia Tingkat Lanjut">Bahasa Indonesia Tingkat Lanjut</option><option value="Bahasa Inggris Tingkat Lanjut">Bahasa Inggris Tingkat Lanjut</option><option value="Bahasa & Sastra Prancis">Bahasa & Sastra Prancis</option><option value="Informatika Tingkat Lanjut">Informatika Tingkat Lanjut</option></select></div>
+      <div class="form-group"><label class="form-label">Pilihan 4</label><select class="form-control" id="akademik_pil_4" onchange="StudentApp.updateMapelPilihan()"><option value="">— Pilih Mapel —</option><option value="Fisika">Fisika</option><option value="Kimia">Kimia</option><option value="Biologi">Biologi</option><option value="Matematika Tingkat Lanjut">Matematika Tingkat Lanjut</option><option value="Sosiologi">Sosiologi</option><option value="Ekonomi">Ekonomi</option><option value="Geografi">Geografi</option><option value="Sejarah Tingkat Lanjut">Sejarah Tingkat Lanjut</option><option value="Bahasa Indonesia Tingkat Lanjut">Bahasa Indonesia Tingkat Lanjut</option><option value="Bahasa Inggris Tingkat Lanjut">Bahasa Inggris Tingkat Lanjut</option><option value="Bahasa & Sastra Prancis">Bahasa & Sastra Prancis</option><option value="Informatika Tingkat Lanjut">Informatika Tingkat Lanjut</option></select></div>
+    </div>
+  </div>
+
+  <div class="card">
+    
+    <!-- ==================== KELAS X ==================== -->
+    <div id="akademik-kelas-content-10" class="akademik-kelas-content">
+      
+      <!-- SEMESTER 1 -->
+      <div style="margin-bottom:30px;">
+        <h5 style="margin:0 0 12px 0; color:var(--text-primary); border-bottom:1px solid var(--border); padding-bottom:8px;">Semester 1</h5>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div class="form-group"><label class="form-label">1. Pendidikan Agama dan Budi Pekerti</label><input type="number" step="0.01" class="form-control" name="akademik_s1_0" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">2. Pendidikan Pancasila</label><input type="number" step="0.01" class="form-control" name="akademik_s1_1" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">3. Bahasa Indonesia</label><input type="number" step="0.01" class="form-control" name="akademik_s1_2" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">4. Matematika</label><input type="number" step="0.01" class="form-control" name="akademik_s1_3" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">5. Bahasa Inggris</label><input type="number" step="0.01" class="form-control" name="akademik_s1_4" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">6. Pend. Jasmani, Olahraga, dan Kesehatan</label><input type="number" step="0.01" class="form-control" name="akademik_s1_5" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">7. Seni Budaya</label><input type="number" step="0.01" class="form-control" name="akademik_s1_6" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">8. Ilmu Pengetahuan Alam (IPA)</label><input type="number" step="0.01" class="form-control" name="akademik_s1_7" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">9. Ilmu Pengetahuan Sosial (IPS)</label><input type="number" step="0.01" class="form-control" name="akademik_s1_8" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">10. Informatika</label><input type="number" step="0.01" class="form-control" name="akademik_s1_9" placeholder="0 - 100"></div>
+        </div>
+      </div>
+
+      <!-- SEMESTER 2 -->
+      <div>
+        <h5 style="margin:0 0 12px 0; color:var(--text-primary); border-bottom:1px solid var(--border); padding-bottom:8px;">Semester 2</h5>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div class="form-group"><label class="form-label">1. Pendidikan Agama dan Budi Pekerti</label><input type="number" step="0.01" class="form-control" name="akademik_s2_0" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">2. Pendidikan Pancasila</label><input type="number" step="0.01" class="form-control" name="akademik_s2_1" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">3. Bahasa Indonesia</label><input type="number" step="0.01" class="form-control" name="akademik_s2_2" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">4. Matematika</label><input type="number" step="0.01" class="form-control" name="akademik_s2_3" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">5. Bahasa Inggris</label><input type="number" step="0.01" class="form-control" name="akademik_s2_4" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">6. Pend. Jasmani, Olahraga, dan Kesehatan</label><input type="number" step="0.01" class="form-control" name="akademik_s2_5" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">7. Seni Budaya</label><input type="number" step="0.01" class="form-control" name="akademik_s2_6" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">8. Ilmu Pengetahuan Alam (IPA)</label><input type="number" step="0.01" class="form-control" name="akademik_s2_7" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">9. Ilmu Pengetahuan Sosial (IPS)</label><input type="number" step="0.01" class="form-control" name="akademik_s2_8" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">10. Informatika</label><input type="number" step="0.01" class="form-control" name="akademik_s2_9" placeholder="0 - 100"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ==================== KELAS XI ==================== -->
+    <div id="akademik-kelas-content-11" class="akademik-kelas-content" style="display:none;">
+      
+      <!-- SEMESTER 3 -->
+      <div style="margin-bottom:30px;">
+        <h5 style="margin:0 0 12px 0; color:var(--text-primary); border-bottom:1px solid var(--border); padding-bottom:8px;">Semester 3</h5>
+        <div style="font-weight:600; margin-bottom:12px; font-size:13px; color:var(--text-secondary);">Mata Pelajaran Wajib</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
+          <div class="form-group"><label class="form-label">1. Pendidikan Agama dan Budi Pekerti</label><input type="number" step="0.01" class="form-control" name="akademik_s3_w0" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">2. Pendidikan Pancasila</label><input type="number" step="0.01" class="form-control" name="akademik_s3_w1" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">3. Bahasa Indonesia</label><input type="number" step="0.01" class="form-control" name="akademik_s3_w2" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">4. Matematika</label><input type="number" step="0.01" class="form-control" name="akademik_s3_w3" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">5. Bahasa Inggris</label><input type="number" step="0.01" class="form-control" name="akademik_s3_w4" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">6. Pend. Jasmani, Olahraga, dan Kesehatan</label><input type="number" step="0.01" class="form-control" name="akademik_s3_w5" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">7. Seni Budaya</label><input type="number" step="0.01" class="form-control" name="akademik_s3_w6" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">8. Prakarya dan Kewirausahaan (PKWU)</label><input type="number" step="0.01" class="form-control" name="akademik_s3_w7" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">9. Sejarah</label><input type="number" step="0.01" class="form-control" name="akademik_s3_w8" placeholder="0 - 100"></div>
+        </div>
+        <div style="font-weight:600; margin-bottom:12px; font-size:13px; color:var(--text-secondary);">Mata Pelajaran Pilihan</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div class="form-group"><label class="form-label label-pil-1">Pilihan 1</label><input type="number" step="0.01" class="form-control" name="akademik_s3_p1" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label label-pil-2">Pilihan 2</label><input type="number" step="0.01" class="form-control" name="akademik_s3_p2" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label label-pil-3">Pilihan 3</label><input type="number" step="0.01" class="form-control" name="akademik_s3_p3" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label label-pil-4">Pilihan 4</label><input type="number" step="0.01" class="form-control" name="akademik_s3_p4" placeholder="0 - 100"></div>
+        </div>
+      </div>
+
+      <!-- SEMESTER 4 -->
+      <div>
+        <h5 style="margin:0 0 12px 0; color:var(--text-primary); border-bottom:1px solid var(--border); padding-bottom:8px;">Semester 4</h5>
+        <div style="font-weight:600; margin-bottom:12px; font-size:13px; color:var(--text-secondary);">Mata Pelajaran Wajib</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
+          <div class="form-group"><label class="form-label">1. Pendidikan Agama dan Budi Pekerti</label><input type="number" step="0.01" class="form-control" name="akademik_s4_w0" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">2. Pendidikan Pancasila</label><input type="number" step="0.01" class="form-control" name="akademik_s4_w1" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">3. Bahasa Indonesia</label><input type="number" step="0.01" class="form-control" name="akademik_s4_w2" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">4. Matematika</label><input type="number" step="0.01" class="form-control" name="akademik_s4_w3" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">5. Bahasa Inggris</label><input type="number" step="0.01" class="form-control" name="akademik_s4_w4" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">6. Pend. Jasmani, Olahraga, dan Kesehatan</label><input type="number" step="0.01" class="form-control" name="akademik_s4_w5" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">7. Seni Budaya</label><input type="number" step="0.01" class="form-control" name="akademik_s4_w6" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">8. Prakarya dan Kewirausahaan (PKWU)</label><input type="number" step="0.01" class="form-control" name="akademik_s4_w7" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">9. Sejarah</label><input type="number" step="0.01" class="form-control" name="akademik_s4_w8" placeholder="0 - 100"></div>
+        </div>
+        <div style="font-weight:600; margin-bottom:12px; font-size:13px; color:var(--text-secondary);">Mata Pelajaran Pilihan</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div class="form-group"><label class="form-label label-pil-1">Pilihan 1</label><input type="number" step="0.01" class="form-control" name="akademik_s4_p1" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label label-pil-2">Pilihan 2</label><input type="number" step="0.01" class="form-control" name="akademik_s4_p2" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label label-pil-3">Pilihan 3</label><input type="number" step="0.01" class="form-control" name="akademik_s4_p3" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label label-pil-4">Pilihan 4</label><input type="number" step="0.01" class="form-control" name="akademik_s4_p4" placeholder="0 - 100"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ==================== KELAS XII ==================== -->
+    <div id="akademik-kelas-content-12" class="akademik-kelas-content" style="display:none;">
+      
+      <!-- SEMESTER 5 -->
+      <div style="margin-bottom:30px;">
+        <h5 style="margin:0 0 12px 0; color:var(--text-primary); border-bottom:1px solid var(--border); padding-bottom:8px;">Semester 5</h5>
+        <div style="font-weight:600; margin-bottom:12px; font-size:13px; color:var(--text-secondary);">Mata Pelajaran Wajib</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
+          <div class="form-group"><label class="form-label">1. Pendidikan Agama dan Budi Pekerti</label><input type="number" step="0.01" class="form-control" name="akademik_s5_w0" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">2. Pendidikan Pancasila</label><input type="number" step="0.01" class="form-control" name="akademik_s5_w1" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">3. Bahasa Indonesia</label><input type="number" step="0.01" class="form-control" name="akademik_s5_w2" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">4. Matematika</label><input type="number" step="0.01" class="form-control" name="akademik_s5_w3" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">5. Bahasa Inggris</label><input type="number" step="0.01" class="form-control" name="akademik_s5_w4" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">6. Pend. Jasmani, Olahraga, dan Kesehatan</label><input type="number" step="0.01" class="form-control" name="akademik_s5_w5" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">7. Seni Budaya</label><input type="number" step="0.01" class="form-control" name="akademik_s5_w6" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">8. Prakarya dan Kewirausahaan (PKWU)</label><input type="number" step="0.01" class="form-control" name="akademik_s5_w7" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">9. Sejarah</label><input type="number" step="0.01" class="form-control" name="akademik_s5_w8" placeholder="0 - 100"></div>
+        </div>
+        <div style="font-weight:600; margin-bottom:12px; font-size:13px; color:var(--text-secondary);">Mata Pelajaran Pilihan</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div class="form-group"><label class="form-label label-pil-1">Pilihan 1</label><input type="number" step="0.01" class="form-control" name="akademik_s5_p1" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label label-pil-2">Pilihan 2</label><input type="number" step="0.01" class="form-control" name="akademik_s5_p2" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label label-pil-3">Pilihan 3</label><input type="number" step="0.01" class="form-control" name="akademik_s5_p3" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label label-pil-4">Pilihan 4</label><input type="number" step="0.01" class="form-control" name="akademik_s5_p4" placeholder="0 - 100"></div>
+        </div>
+      </div>
+
+      <!-- SEMESTER 6 -->
+      <div>
+        <h5 style="margin:0 0 12px 0; color:var(--text-primary); border-bottom:1px solid var(--border); padding-bottom:8px;">Semester 6</h5>
+        <div style="font-weight:600; margin-bottom:12px; font-size:13px; color:var(--text-secondary);">Mata Pelajaran Wajib</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
+          <div class="form-group"><label class="form-label">1. Pendidikan Agama dan Budi Pekerti</label><input type="number" step="0.01" class="form-control" name="akademik_s6_w0" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">2. Pendidikan Pancasila</label><input type="number" step="0.01" class="form-control" name="akademik_s6_w1" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">3. Bahasa Indonesia</label><input type="number" step="0.01" class="form-control" name="akademik_s6_w2" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">4. Matematika</label><input type="number" step="0.01" class="form-control" name="akademik_s6_w3" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">5. Bahasa Inggris</label><input type="number" step="0.01" class="form-control" name="akademik_s6_w4" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">6. Pend. Jasmani, Olahraga, dan Kesehatan</label><input type="number" step="0.01" class="form-control" name="akademik_s6_w5" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">7. Seni Budaya</label><input type="number" step="0.01" class="form-control" name="akademik_s6_w6" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">8. Prakarya dan Kewirausahaan (PKWU)</label><input type="number" step="0.01" class="form-control" name="akademik_s6_w7" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">9. Sejarah</label><input type="number" step="0.01" class="form-control" name="akademik_s6_w8" placeholder="0 - 100"></div>
+        </div>
+        <div style="font-weight:600; margin-bottom:12px; font-size:13px; color:var(--text-secondary);">Mata Pelajaran Pilihan</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div class="form-group"><label class="form-label label-pil-1">Pilihan 1</label><input type="number" step="0.01" class="form-control" name="akademik_s6_p1" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label label-pil-2">Pilihan 2</label><input type="number" step="0.01" class="form-control" name="akademik_s6_p2" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label label-pil-3">Pilihan 3</label><input type="number" step="0.01" class="form-control" name="akademik_s6_p3" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label label-pil-4">Pilihan 4</label><input type="number" step="0.01" class="form-control" name="akademik_s6_p4" placeholder="0 - 100"></div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="card" style="margin-top:20px;">
+    <div style="display:flex;gap:10px;align-items:center;justify-content:flex-end;">
+      <span id="akademik-save-status" style="font-size:13px;color:var(--belajar);font-weight:600;margin-right:10px;"></span>
+      <button type="submit" class="btn btn-primary" style="padding:10px 24px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;vertical-align:-3px"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Simpan Nilai Akademik
+      </button>
+    </div>
+  </div>
+</form>

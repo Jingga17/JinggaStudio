@@ -1,0 +1,56 @@
+<div id="porto-content-ekskul" style="display:none;">
+    <!-- Form tambah ekskul -->
+    <div class="card" style="margin-bottom:16px;">
+        <div style="font-weight:700;font-size:15px;color:var(--text-primary);margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        Tambah Ekstrakurikuler / Organisasi
+        </div>
+        <form id="form-ekskul" onsubmit="event.preventDefault(); StudentApp.submitEkskul();">
+        <input type="hidden" id="ekskul-edit-id">
+        <div class="form-group" style="margin-bottom:12px;">
+            <label class="form-label">Nama Kegiatan / Ekstrakurikuler / Organisasi *</label>
+            <input type="text" id="ekskul-nama" class="form-control" placeholder="cth: Pramuka, OSIS, Paskibra" required>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+            <div class="form-group">
+            <label class="form-label">Jenis Kegiatan *</label>
+            <select id="ekskul-jenis" class="form-control" required>
+                <option value="">— Pilih —</option>
+                <option value="Ekstrakurikuler">Ekstrakurikuler</option>
+                <option value="Organisasi">Organisasi</option>
+                <option value="Kepanitiaan">Kepanitiaan</option>
+                <option value="Lainnya">Lainnya</option>
+            </select>
+            </div>
+            <div class="form-group">
+            <label class="form-label">Posisi / Jabatan</label>
+            <input type="text" id="ekskul-posisi" class="form-control" placeholder="cth: Anggota, Ketua, Sekretaris">
+            </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+            <div class="form-group">
+            <label class="form-label">Tahun</label>
+            <input type="text" id="ekskul-tahun" class="form-control" placeholder="cth: 2022-2023">
+            </div>
+            <div class="form-group">
+            <label class="form-label">Keterangan / Peran Utama</label>
+            <input type="text" id="ekskul-keterangan" class="form-control" placeholder="cth: Koordinator lapangan">
+            </div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;justify-content:flex-end;">
+            <span id="ekskul-save-status" style="font-size:13px;color:var(--belajar);font-weight:600;margin-right:10px;"></span>
+            <button type="button" class="btn btn-outline" id="btn-cancel-ekskul" style="display:none;" onclick="StudentApp.resetFormEkskul()">Batal</button>
+            <button type="submit" class="btn btn-primary">Simpan Data</button>
+        </div>
+        </form>
+    </div>
+
+    <!-- Daftar Ekskul -->
+    <div class="card">
+        <div style="font-weight:600;font-size:14px;color:var(--text-secondary);margin-bottom:12px;">Daftar Ekstrakurikuler & Organisasi</div>
+        <div id="ekskul-list">
+        <!-- Render from JS -->
+        <div style="text-align:center;padding:30px;color:var(--text-muted);font-size:13px;">Belum ada data Ekstrakurikuler / Organisasi yang ditambahkan.</div>
+        </div>
+    </div>
+</div>

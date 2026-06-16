@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { run, query, get } = require('../db');
 const { calculateStudentScores } = require('../services/scoring');
+const authMiddleware = require('../middleware/auth');
 
 // Check NISN (GET)
 router.get('/check-nisn/:token/:nisn', async (req, res, next) => {
@@ -18,6 +19,88 @@ router.get('/check-nisn/:token/:nisn', async (req, res, next) => {
         } else {
             res.json({ status: 'success', data: { exists: false } });
         }
+    } catch (err) { next(err); }
+});
+
+// Update Student Profile (PUT /profile) - Authenticated
+router.put('/profile', authMiddleware, async (req, res, next) => {
+    try {
+        if (!req.user || req.user.role !== 'student') {
+            return res.status(403).json({ status: 'error', message: 'Hanya siswa yang dapat mengubah profil' });
+        }
+        const studentId = req.user.id;
+        const { nama, jenis_kelamin, kelas, ttl, alamat, nama_ortu, pekerjaan_ortu, hobi, cita_cita, no_hp, data_pribadi } = req.body;
+        
+        await run(`
+            UPDATE students 
+            SET nama = COALESCE(?, nama), 
+                jenis_kelamin = COALESCE(?, jenis_kelamin), 
+                kelas = COALESCE(?, kelas), 
+                ttl = COALESCE(?, ttl), 
+                alamat = COALESCE(?, alamat), 
+                nama_ortu = COALESCE(?, nama_ortu), 
+                pekerjaan_ortu = COALESCE(?, pekerjaan_ortu), 
+                hobi = COALESCE(?, hobi), 
+                cita_cita = COALESCE(?, cita_cita), 
+                no_hp = COALESCE(?, no_hp),
+                data_pribadi = COALESCE(?, data_pribadi)
+            WHERE id = ?
+        `, [
+            nama, jenis_kelamin, kelas, ttl, alamat, 
+            nama_ortu, pekerjaan_ortu, hobi, cita_cita, no_hp, typeof data_pribadi === 'object' ? JSON.stringify(data_pribadi) : data_pribadi,
+            studentId
+        ]);
+
+        res.json({ status: 'success', message: 'Profil berhasil diperbarui' });
+    } catch (err) { next(err); }
+});
+
+// Start Assessment (POST /start-assessment) - Authenticated as student
+router.post('/start-assessment', authMiddleware, async (req, res, next) => {
+    try {
+        if (!req.user || req.user.role !== 'student') {
+            return res.status(403).json({ status: 'error', message: 'Hanya siswa yang dapat memulai asesmen' });
+        }
+
+        const masterId = req.user.id;
+        const nisn = req.user.nisn;
+        const { session_id } = req.body;
+
+        if (!session_id) {
+            return res.status(400).json({ status: 'error', message: 'Session ID diperlukan' });
+        }
+
+        // Check if session exists and is active
+        const session = await get('SELECT id, is_active FROM sessions WHERE id = ?', [session_id]);
+        if (!session || !session.is_active) {
+            return res.status(400).json({ status: 'error', message: 'Sesi asesmen tidak valid atau sudah ditutup.' });
+        }
+
+        // Check if attempt already exists
+        const existing = await get('SELECT id FROM students WHERE nisn = ? AND session_id = ?', [nisn, session_id]);
+        if (existing) {
+            return res.json({ status: 'success', data: { student_id: existing.id, resumed: true } });
+        }
+
+        // Fetch master profile to copy data
+        const masterProfile = await get('SELECT * FROM students WHERE id = ?', [masterId]);
+        if (!masterProfile) {
+            return res.status(404).json({ status: 'error', message: 'Profil master tidak ditemukan' });
+        }
+
+        // Create new attempt record
+        const result = await run(
+            `INSERT INTO students 
+             (nama, jenis_kelamin, kelas, ttl, nisn, alamat, nama_ortu, pekerjaan_ortu, hobi, cita_cita, no_hp, session_id, is_valid) 
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`,
+            [
+                masterProfile.nama, masterProfile.jenis_kelamin, masterProfile.kelas, masterProfile.ttl,
+                masterProfile.nisn, masterProfile.alamat, masterProfile.nama_ortu, masterProfile.pekerjaan_ortu,
+                masterProfile.hobi, masterProfile.cita_cita, masterProfile.no_hp, session_id
+            ]
+        );
+
+        res.json({ status: 'success', data: { student_id: result.lastID, resumed: false } });
     } catch (err) { next(err); }
 });
 
@@ -135,6 +218,107 @@ router.post('/:id/reset', async (req, res, next) => {
         await run('DELETE FROM answers WHERE student_id = ?', [req.params.id]);
         await run('DELETE FROM students WHERE id = ?', [req.params.id]);
         res.json({ status: 'success', message: 'Data siswa berhasil direset' });
+    } catch (err) { next(err); }
+});
+
+// ==========================================
+// DATA MASTER SISWA (Admin Only)
+// ==========================================
+
+// Get all master students
+router.get('/master', authMiddleware, async (req, res, next) => {
+    try {
+        // Must be admin
+        if (!req.admin) return res.status(403).json({ status: 'error', message: 'Akses ditolak. Khusus Admin.' });
+        
+        const students = await query('SELECT id, nama, kelas, nisn, password_hash FROM students ORDER BY kelas, nama');
+        res.json({ status: 'success', data: students });
+    } catch (err) { next(err); }
+});
+
+// Import students
+router.post('/import', authMiddleware, async (req, res, next) => {
+    try {
+        if (!req.admin) return res.status(403).json({ status: 'error', message: 'Akses ditolak. Khusus Admin.' });
+        
+        const { students } = req.body;
+        if (!Array.isArray(students) || students.length === 0) {
+            return res.status(400).json({ status: 'error', message: 'Data siswa kosong atau format tidak sesuai' });
+        }
+
+        const bcrypt = require('bcryptjs');
+        let imported = 0;
+
+        for (const s of students) {
+            if (!s.nama || !s.nisn) continue;
+            
+            // Check if exists
+            const exists = await get('SELECT id FROM students WHERE nisn = ?', [s.nisn]);
+            if (!exists) {
+                const defaultPass = await bcrypt.hash(s.nisn, 10);
+                await run(
+                    'INSERT INTO students (nama, kelas, nisn, password_hash, is_valid) VALUES (?, ?, ?, ?, 1)',
+                    [s.nama, s.kelas || '', s.nisn, defaultPass]
+                );
+                imported++;
+            } else {
+                // Optionally update existing student here if needed
+                // For now, skip if NISN exists
+            }
+        }
+
+        res.json({ status: 'success', data: { imported }, message: `${imported} data berhasil diimpor` });
+    } catch (err) { next(err); }
+});
+
+// Delete master student
+router.post('/master/:id/delete', authMiddleware, async (req, res, next) => {
+    try {
+        if (!req.admin) return res.status(403).json({ status: 'error', message: 'Akses ditolak. Khusus Admin.' });
+        
+        await run('DELETE FROM answers WHERE student_id = ?', [req.params.id]);
+        await run('DELETE FROM students WHERE id = ?', [req.params.id]);
+        
+        res.json({ status: 'success', message: 'Siswa berhasil dihapus dari sistem' });
+    } catch (err) { next(err); }
+});
+
+// Reset password to NISN
+router.post('/master/:id/reset-password', authMiddleware, async (req, res, next) => {
+    try {
+        if (!req.admin) return res.status(403).json({ status: 'error', message: 'Akses ditolak. Khusus Admin.' });
+        
+        const student = await get('SELECT id, nisn FROM students WHERE id = ?', [req.params.id]);
+        if (!student) return res.status(404).json({ status: 'error', message: 'Siswa tidak ditemukan' });
+
+        const bcrypt = require('bcryptjs');
+        const defaultPass = await bcrypt.hash(student.nisn, 10);
+        
+        await run('UPDATE students SET password_hash = ? WHERE id = ?', [defaultPass, req.params.id]);
+        
+        res.json({ status: 'success', message: 'Password berhasil direset (kembali menggunakan NISN)' });
+    } catch (err) { next(err); }
+});
+
+// Update Nilai Akademik (PUT /akademik) - Authenticated
+router.put('/akademik', authMiddleware, async (req, res, next) => {
+    try {
+        if (!req.user || req.user.role !== 'student') {
+            return res.status(403).json({ status: 'error', message: 'Hanya siswa yang dapat mengubah nilai akademik' });
+        }
+        const studentId = req.user.id;
+        const { nilai_akademik } = req.body;
+        
+        await run(`
+            UPDATE students 
+            SET nilai_akademik = ?
+            WHERE id = ?
+        `, [
+            typeof nilai_akademik === 'object' ? JSON.stringify(nilai_akademik) : nilai_akademik,
+            studentId
+        ]);
+
+        res.json({ status: 'success', message: 'Nilai Akademik berhasil diperbarui' });
     } catch (err) { next(err); }
 });
 

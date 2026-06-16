@@ -15,6 +15,8 @@ const AdminApp = {
   // INIT
   // ─────────────────────────────────────
   async init() {
+    this.initTheme();
+
     // Bind login form handler ONCE on page load (prevents double-submit bug)
     const loginForm = _('login-form');
     if (loginForm) {
@@ -43,6 +45,52 @@ const AdminApp = {
     await this.showAdminShell();
     await this.navigateTo('dashboard-global');
     this.checkYearlyNotif();
+  },
+
+  // ─────────────────────────────────────
+  // THEME MANAGEMENT
+  // ─────────────────────────────────────
+  initTheme() {
+    const savedTheme = localStorage.getItem('dcm_theme') || 'system';
+    this.applyTheme(savedTheme);
+
+    // Listen to system theme changes if using system mode
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+      if (localStorage.getItem('dcm_theme') === 'system') {
+        this.applyTheme('system');
+      }
+    });
+  },
+
+  toggleTheme() {
+    let currentTheme = localStorage.getItem('dcm_theme') || 'system';
+    if (currentTheme === 'system') {
+      currentTheme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('dcm_theme', newTheme);
+    this.applyTheme(newTheme);
+  },
+
+  applyTheme(theme) {
+    let isDark = false;
+    if (theme === 'system' || !theme) {
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        isDark = true;
+      }
+    } else if (theme === 'dark') {
+      isDark = true;
+    }
+    
+    if (isDark) {
+      document.body.classList.add('dark-theme');
+      document.getElementById('theme-icon-sun')?.setAttribute('style', 'display:block;');
+      document.getElementById('theme-icon-moon')?.setAttribute('style', 'display:none;');
+    } else {
+      document.body.classList.remove('dark-theme');
+      document.getElementById('theme-icon-sun')?.setAttribute('style', 'display:none;');
+      document.getElementById('theme-icon-moon')?.setAttribute('style', 'display:block;');
+    }
   },
 
   // ─────────────────────────────────────
@@ -103,7 +151,7 @@ const AdminApp = {
     const user = Storage.getAdminUser();
     if (user) {
       _('admin-name').textContent  = user.nama;
-      _('avatar-initials').textContent = user.nama?.charAt(0).toUpperCase() || 'A';
+      // Removed avatar-initials overwrite to keep the SVG icon
     }
   },
 
@@ -159,24 +207,31 @@ const AdminApp = {
       'home': '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; vertical-align:-4px;"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg> Dashboard Problem Checklist', 
       'dummy-sosiogram': '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; vertical-align:-4px;"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg> Dashboard Sosiogram',
       'dummy-ikms': '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; vertical-align:-4px;"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg> Dashboard IKMS',
+      'data-master': '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; vertical-align:-4px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Data Master Siswa',
       'laporan': '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; vertical-align:-4px;"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg> Pusat Cetak Laporan', 
       'pengaturan': '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; vertical-align:-4px;"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg> Pengaturan Global' 
     };
     _('topbar-title').innerHTML = titles[page] || titles['dashboard-global'];
 
     // Show/hide content
-    const allPages = ['dashboard-global', 'home', 'dummy-sosiogram', 'dummy-ikms', 'laporan', 'pengaturan'];
+    const allPages = ['dashboard-global', 'home', 'dummy-sosiogram', 'dummy-ikms', 'data-master', 'laporan', 'pengaturan'];
     allPages.forEach(p => {
       const el = _(`page-${p}`);
       if (el) el.style.display = p === page ? 'block' : 'none';
     });
 
-
-    // Load content
-    if (page === 'home')        await this.loadHome();
-    if (page === 'laporan')     await this.loadLaporan();
-    if (page === 'pengaturan')  await this.loadPengaturan();
-
+    // Fetch data khusus page tertentu
+    if (page === 'dashboard-global') {
+      await this.loadGlobalDashboard();
+    } else if (page === 'home') {
+      await this.loadDashboardData();
+    } else if (page === 'laporan') {
+      this.populateLaporanSesi();
+    } else if (page === 'data-master') {
+      await this.loadMasterSiswa();
+    } else if (page === 'pengaturan') {
+      await this.loadSettings();
+    }
   },
 
   // ─────────────────────────────────────
@@ -377,6 +432,7 @@ const AdminApp = {
       this.renderCharts(chartData);
       this.renderTable(tableData);
       this.renderPriorityTable(tableData);
+      this.renderTidakValidTable(tableData);
       this.renderDeskripsi(deskripsi);
     } catch(e) {
       Toast.error('Gagal memuat data: ' + e.message);
@@ -461,7 +517,7 @@ const AdminApp = {
     const priorityStudents = (data || []).map(s => {
       const maxPct = Math.max(s.pribadi_pct || 0, s.belajar_pct || 0, s.sosial_pct || 0, s.karir_pct || 0);
       return { ...s, maxPct };
-    }).filter(s => s.maxPct >= 50 && s.status === 'Valid')
+    }).filter(s => s.maxPct >= 50 && (s.status || '').toLowerCase() === 'valid')
       .sort((a, b) => b.maxPct - a.maxPct);
 
     if (!priorityStudents.length) {
@@ -471,8 +527,8 @@ const AdminApp = {
 
     tbody.innerHTML = priorityStudents.map((s, i) => {
       const isSangatBerat = s.maxPct >= 70;
-      const color = isSangatBerat ? '#b91c1c' : '#c2410c';
-      const bg = isSangatBerat ? '#fef2f2' : '#fff7ed';
+      const color = isSangatBerat ? 'var(--sangat-berat-text)' : 'var(--berat-text)';
+      const bg = isSangatBerat ? 'var(--sangat-berat-soft)' : 'var(--berat-soft)';
       const labelText = isSangatBerat ? 'SANGAT BERAT' : 'BERAT';
       const actionLabel = isSangatBerat ? '🚨 Intervensi Segera' : '⚠️ Konseling Preventif';
 
@@ -492,13 +548,40 @@ const AdminApp = {
     `}).join('');
   },
 
+  renderTidakValidTable(data) {
+    const tbody = _('tbody-tidak-valid');
+    if (!tbody) return;
+
+    const invalidStudents = (data || []).filter(s => (s.status || '').toLowerCase() === 'tidak valid');
+
+    if (!invalidStudents.length) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:15px;">✅ Tidak ada siswa dengan status Tidak Valid saat ini.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = invalidStudents.map((s, i) => `
+      <tr style="background-color: var(--sangat-berat-soft);">
+        <td style="text-align:center; color:var(--sangat-berat-text); font-weight:bold;">${i+1}</td>
+        <td><strong style="color:var(--sangat-berat-text)">${s.nama}</strong><br><span style="font-size:11px; opacity:0.8; color:var(--sangat-berat-text);">Alasan: ${s.is_valid === false ? 'Bohong / Inkonsisten' : 'Tidak Valid'}</span></td>
+        <td style="color:var(--sangat-berat-text);">${s.kelas}</td>
+        <td style="font-family:monospace;font-size:12px;color:var(--sangat-berat-text);">${s.nisn}</td>
+        <td style="text-align:center;">
+          <button class="btn btn-outline btn-sm" onclick="AdminApp.resetSesi(${s.id}, '${s.nama.replace(/'/g, "\\'")}')" title="Reset Sesi Siswa" style="border-color:var(--sangat-berat-text); color:var(--sangat-berat-text);">🔄 Reset</button>
+        </td>
+      </tr>
+    `).join('');
+  },
+
   searchTable(q) {
     const lower = q.toLowerCase();
-    const filtered = this.tableData.filter(s =>
-      s.nama.toLowerCase().includes(lower) ||
-      s.kelas.toLowerCase().includes(lower) ||
-      s.nisn.includes(lower)
-    );
+    const filterStatus = document.getElementById('tabel-filter-status')?.value || 'Semua';
+    const filtered = this.tableData.filter(s => {
+      const matchQuery = s.nama.toLowerCase().includes(lower) ||
+                         s.kelas.toLowerCase().includes(lower) ||
+                         s.nisn.includes(lower);
+      const matchStatus = filterStatus === 'Semua' || s.status === filterStatus;
+      return matchQuery && matchStatus;
+    });
     this.renderTable(filtered);
   },
 
@@ -578,10 +661,12 @@ const AdminApp = {
     tbody.innerHTML = students.map((s, i) => {
       const maxPct = Math.max(s.pribadi_pct || 0, s.belajar_pct || 0, s.sosial_pct || 0, s.karir_pct || 0);
       let konselingBadge = '';
-      if (maxPct >= 70 && s.status === 'Valid') {
-        konselingBadge = `<span style="margin-left:8px; font-size:10px; background:#fef2f2; color:#b91c1c; padding:2px 6px; border-radius:4px; border:1px solid #b91c1c; font-weight:bold;">🚨 Butuh Konseling Segera</span>`;
-      } else if (maxPct >= 50 && s.status === 'Valid') {
-        konselingBadge = `<span style="margin-left:8px; font-size:10px; background:#fff7ed; color:#c2410c; padding:2px 6px; border-radius:4px; border:1px solid #c2410c; font-weight:bold;">⚠️ Butuh Konseling</span>`;
+      const studentSangatBerat = maxPct >= 70 && s.status === 'Valid';
+      const studentBerat = maxPct >= 50 && s.status === 'Valid';
+      if (studentSangatBerat) {
+        konselingBadge = `<span style="margin-left:8px; font-size:10px; background:var(--sangat-berat-soft); color:var(--sangat-berat-text); padding:2px 6px; border-radius:4px; border:1px solid var(--sangat-berat-text); font-weight:bold;">🚨 Butuh Konseling Segera</span>`;
+      } else if (studentBerat) {
+        konselingBadge = `<span style="margin-left:8px; font-size:10px; background:var(--berat-soft); color:var(--berat-text); padding:2px 6px; border-radius:4px; border:1px solid var(--berat-text); font-weight:bold;">⚠️ Butuh Konseling</span>`;
       }
       return `
       <tr>
@@ -816,6 +901,207 @@ const AdminApp = {
   dismissYearlyNotif() {
     _('yearly-notif').style.display = 'none';
   },
+
+  // ─────────────────────────────────────
+  // DATA MASTER SISWA
+  // ─────────────────────────────────────
+  async loadMasterSiswa() {
+    this.showSpinner();
+    try {
+      const res = await API.get('/students/master');
+      this.masterSiswaData = res.data || [];
+      this.populateMasterKelasFilter();
+      this.renderMasterSiswa();
+    } catch (e) {
+      Toast.error('Gagal memuat Data Master Siswa: ' + e.message);
+    } finally {
+      this.hideSpinner();
+    }
+  },
+
+  populateMasterKelasFilter() {
+    const select = _('master-kelas-filter');
+    if (!select || !this.masterSiswaData) return;
+    const kelasSet = new Set(this.masterSiswaData.map(s => s.kelas));
+    const kelases = Array.from(kelasSet).sort();
+    
+    let html = '<option value="">Semua Kelas</option>';
+    kelases.forEach(k => {
+      html += `<option value="${k}">${k}</option>`;
+    });
+    select.innerHTML = html;
+  },
+
+  renderMasterSiswa() {
+    const tbody = _('tbody-master-siswa');
+    if (!tbody || !this.masterSiswaData) return;
+
+    const kelasFilter = _('master-kelas-filter').value;
+    const searchFilter = (_('master-search').value || '').toLowerCase();
+
+    const filtered = this.masterSiswaData.filter(s => {
+      const matchKelas = !kelasFilter || s.kelas === kelasFilter;
+      const matchSearch = !searchFilter || 
+                          s.nama.toLowerCase().includes(searchFilter) || 
+                          s.nisn.includes(searchFilter);
+      return matchKelas && matchSearch;
+    });
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:15px;">Data tidak ditemukan.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = filtered.map((s, i) => `
+      <tr>
+        <td style="text-align:center;">${i+1}</td>
+        <td style="font-family:monospace;font-size:12px;color:var(--primary);">${s.nisn}</td>
+        <td><strong>${s.nama}</strong></td>
+        <td>${s.kelas}</td>
+        <td style="text-align:center;">
+          <button class="btn btn-outline btn-sm" onclick="AdminApp.resetPasswordSiswa(${s.id}, '${s.nama.replace(/'/g, "\\'")}')" style="font-size:11px; padding:3px 8px;">🔑 Reset Sandi</button>
+        </td>
+        <td style="text-align:center;">
+          <button class="btn btn-outline btn-sm" onclick="AdminApp.deleteMasterSiswa(${s.id}, '${s.nama.replace(/'/g, "\\'")}')" style="font-size:11px; padding:3px 8px; color:var(--sangat-berat-text); border-color:var(--sangat-berat-text);">🗑️ Hapus</button>
+        </td>
+      </tr>
+    `).join('');
+  },
+
+  downloadTemplateExcel() {
+    // Basic Excel generator using SheetJS which is loaded globally as XLSX
+    if (typeof XLSX === 'undefined') {
+      Toast.error('Library Excel belum termuat.');
+      return;
+    }
+    const ws_data = [
+      ['nama', 'kelas', 'nisn'],
+      ['Budi Santoso', 'X IPA 1', '1234567890'],
+      ['Andi Irawan', 'X IPA 1', '0987654321']
+    ];
+    const ws = XLSX.utils.aoa_to_sheet(ws_data);
+    
+    // Auto size cols
+    ws['!cols'] = [{wch: 30}, {wch: 15}, {wch: 20}];
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "FormatSiswa");
+    XLSX.writeFile(wb, "Template_Import_Siswa.xlsx");
+  },
+
+  async handleImportExcel(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    if (typeof XLSX === 'undefined') {
+      Toast.error('Library Excel belum termuat.');
+      event.target.value = '';
+      return;
+    }
+
+    this.showSpinner();
+    try {
+      const data = await file.arrayBuffer();
+      const workbook = XLSX.read(data);
+      const firstSheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[firstSheetName];
+      const jsonRaw = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+
+      const payload = jsonRaw.map(row => {
+        // Cari header yg sesuai ignoring case
+        const getVal = (possibleKeys) => {
+          for (let k of Object.keys(row)) {
+            if (possibleKeys.includes(k.toLowerCase().trim())) {
+              return String(row[k]).trim();
+            }
+          }
+          return '';
+        };
+        return {
+          nama: getVal(['nama', 'name', 'nama lengkap']),
+          kelas: getVal(['kelas', 'class']),
+          nisn: getVal(['nisn', 'nis', 'no induk'])
+        };
+      }).filter(r => r.nama && r.nisn);
+
+      if (payload.length === 0) {
+        throw new Error("Tidak ada data valid yang ditemukan. Pastikan ada kolom nama, kelas, dan nisn.");
+      }
+
+      const res = await API.post('/students/import', { students: payload });
+      Toast.success(`Berhasil mengimpor ${res.data.imported} data siswa!`);
+      this.loadMasterSiswa();
+    } catch(e) {
+      Toast.error('Gagal mengimpor Excel: ' + e.message);
+    } finally {
+      this.hideSpinner();
+      event.target.value = ''; // reset file input
+    }
+  },
+
+  showAddSiswaModal() {
+    UI.showModal('Tambah Siswa Manual', `
+      <div class="form-group">
+        <label class="form-label">Nama Lengkap</label>
+        <input type="text" id="add-nama" class="form-control" placeholder="Cth: Siti Aminah">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Kelas</label>
+        <input type="text" id="add-kelas" class="form-control" placeholder="Cth: XI IPS 2">
+      </div>
+      <div class="form-group">
+        <label class="form-label">NISN (Untuk Login)</label>
+        <input type="text" id="add-nisn" class="form-control" placeholder="Cth: 0012345678">
+      </div>
+      <div style="font-size:12px; color:var(--text-secondary); margin-top:10px;">
+        *Password otomatis akan disamakan dengan NISN.
+      </div>
+    `, async () => {
+      const nama = _('add-nama').value.trim();
+      const kelas = _('add-kelas').value.trim();
+      const nisn = _('add-nisn').value.trim();
+      if(!nama || !kelas || !nisn) {
+        Toast.error('Semua kolom wajib diisi!');
+        return false;
+      }
+      try {
+        await API.post('/students/import', { students: [{ nama, kelas, nisn }] });
+        Toast.success('Siswa berhasil ditambahkan');
+        this.loadMasterSiswa();
+        return true;
+      } catch (e) {
+        Toast.error(e.message);
+        return false;
+      }
+    });
+  },
+
+  deleteMasterSiswa(id, nama) {
+    UI.showModal('Konfirmasi Hapus', `Yakin ingin menghapus seluruh data siswa <b>${nama}</b> secara permanen? Data asesmen siswa ini juga akan hilang jika sudah pernah mengerjakan.`, async () => {
+      try {
+        await API.post('/students/master/' + id + '/delete');
+        Toast.success('Siswa berhasil dihapus');
+        this.loadMasterSiswa();
+        return true;
+      } catch (e) {
+        Toast.error(e.message);
+        return false;
+      }
+    });
+  },
+
+  resetPasswordSiswa(id, nama) {
+    UI.showModal('Reset Password', `Yakin ingin mereset password <b>${nama}</b> menjadi sama dengan NISN-nya?`, async () => {
+      try {
+        await API.post('/students/master/' + id + '/reset-password');
+        Toast.success('Password berhasil direset');
+        return true;
+      } catch (e) {
+        Toast.error(e.message);
+        return false;
+      }
+    });
+  }
 };
 
 window.AdminApp = AdminApp;

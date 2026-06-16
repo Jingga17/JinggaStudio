@@ -3,14 +3,356 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Resilien · Asesmen Perkembangan Siswa</title>
-  <meta name="description" content="Resilien — Platform asesmen perkembangan siswa berbasis Problem Checklist untuk bimbingan dan konseling.">
+  <title>Resilien · Portal Siswa</title>
+  <meta name="description" content="Resilien — Portal Siswa untuk Asesmen Perkembangan Diri.">
   <meta name="robots" content="noindex,nofollow">
   <link rel="stylesheet" href="css/style.css">
   <style>
-    /* Kuesioner-specific overrides */
-    body { background: #f8fafc; }
-    #kuis-header { display: flex; flex-direction: column; }
+    /* ── Student Portal Shell ── */
+    .student-shell {
+      display: flex;
+      min-height: 100vh;
+      background: var(--bg-primary);
+    }
+
+    /* ── Sidebar ── */
+    .student-sidebar {
+      width: 260px;
+      flex-shrink: 0;
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 200;
+      transition: transform 0.3s ease;
+    }
+    .student-sidebar.mobile-hidden {
+      transform: translateX(-100%);
+    }
+    .student-sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 199;
+    }
+    .student-sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 20px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+    .student-sidebar-logo img {
+      width: 38px;
+      height: 38px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+    .student-sidebar-logo-text {
+      display: flex;
+      flex-direction: column;
+    }
+    .student-sidebar-logo-title {
+      color: var(--accent);
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+    .student-sidebar-logo-sub {
+      color: var(--text-muted);
+      font-size: 10px;
+      font-style: italic;
+      line-height: 1.2;
+    }
+    .student-sidebar-nav {
+      flex: 1;
+      padding: 12px 8px;
+      overflow-y: auto;
+    }
+    .student-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+      transition: background 0.15s, color 0.15s;
+      margin-bottom: 2px;
+    }
+    .student-nav-item:hover {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+    .student-nav-item.active {
+      background: var(--accent-soft, rgba(59,130,246,0.12));
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .student-nav-item svg {
+      flex-shrink: 0;
+    }
+    .student-sidebar-footer {
+      padding: 14px 16px;
+      border-top: 1px solid var(--border);
+    }
+    .student-avatar-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .student-avatar-circle {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-secondary, #818cf8));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .student-avatar-name {
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--text-primary);
+      line-height: 1.3;
+      max-width: 160px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .student-avatar-kelas {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* ── Main Content Area ── */
+    .student-main {
+      flex: 1;
+      margin-left: 260px;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      transition: margin-left 0.3s ease;
+    }
+
+    /* ── Topbar ── */
+    .student-topbar {
+      height: 56px;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-primary);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      gap: 12px;
+    }
+    .student-topbar-hamburger {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-secondary);
+      font-size: 20px;
+      display: none;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+    }
+    .student-topbar-hamburger:hover { background: var(--bg-secondary); }
+    .student-topbar-title {
+      flex: 1;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0;
+    }
+    .student-topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ── Page Content ── */
+    .student-page-content {
+      flex: 1;
+      padding: 24px;
+      max-width: 100%;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    /* ── Section Cards ── */
+    .student-welcome-banner {
+      background: linear-gradient(135deg, var(--accent), var(--accent-secondary, #818cf8));
+      border-radius: var(--radius-lg);
+      padding: 24px 28px;
+      color: white;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .student-welcome-banner::before {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 180px; height: 180px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+    }
+    .student-welcome-banner::after {
+      content: '';
+      position: absolute;
+      bottom: -30px; right: 60px;
+      width: 100px; height: 100px;
+      background: rgba(255,255,255,0.07);
+      border-radius: 50%;
+    }
+    .student-welcome-name {
+      font-size: 22px;
+      font-weight: 800;
+      margin: 0 0 4px 0;
+    }
+    .student-welcome-kelas {
+      font-size: 14px;
+      opacity: 0.85;
+    }
+    .student-welcome-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 12px;
+    }
+
+    /* ── Assessment Session Cards ── */
+    .session-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 12px;
+      background: var(--bg-primary);
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .session-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 2px 8px rgba(59,130,246,0.08);
+    }
+    .session-card-info { flex: 1; }
+    .session-card-name {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+    .session-card-status {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .session-card-done {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(34,197,94,0.1);
+      color: #16a34a;
+      border: 1px solid rgba(34,197,94,0.3);
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* ── Pengaturan Section ── */
+    .settings-section {
+      margin-bottom: 24px;
+    }
+    .settings-section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 12px;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .student-sidebar {
+        transform: translateX(-100%);
+      }
+      .student-sidebar.open {
+        transform: translateX(0);
+      }
+      .student-main {
+        margin-left: 0;
+      }
+      .student-topbar-hamburger {
+        display: flex;
+      }
+      .student-page-content {
+        padding: 16px;
+      }
+    }
+
+    /* ── Login Page ── */
+    .student-login-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-primary);
+      padding: 20px;
+    }
+    .student-login-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 40px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: var(--shadow-lg);
+    }
+    .student-login-logo {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .student-login-logo img {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      margin-bottom: 12px;
+    }
+    .student-login-title {
+      color: var(--accent);
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+    .student-login-sub {
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+
+    /* ── Kuesioner (fullpage override) ── */
+    .student-kuesioner-fullpage {
+      min-height: 100vh;
+      background: var(--bg-primary);
+    }
   </style>
 </head>
 <body>
@@ -21,11 +363,6 @@
 </div>
 <!-- ═══════════ TOAST ═══════════ -->
 <div id="toast-container" class="toast-container"></div>
-  
-<!-- Loading Spinner -->
-<div id="loading-spinner" class="spinner-overlay" style="display:none">
-  <div class="spinner"></div>
-</div>
 
 <!-- ═══════════ MODAL ═══════════ -->
 <div id="modal-overlay" class="modal-overlay">
@@ -39,106 +376,1095 @@
   </div>
 </div>
 
-<!-- ═══════════ HALAMAN KUESIONER ═══════════ -->
-<div id="page-kuesioner">
-
-  <!-- 🌟 HEADER PROGRESS 🌟 -->
-  <header id="kuis-header" class="kuis-header" style="display:none">
-    <div class="kuis-header-inner">
-      <div class="kuis-brand">
-        <span class="kuis-brand-name" style="display:flex; align-items:center; gap:6px;">
-          <img src="img/logo.svg" alt="Resilien" style="height:22px; width:auto; display:inline-block; vertical-align:middle;">
-          Resilien
-        </span>
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <div class="kuis-timer">
-            <span class="timer-dot"></span>
-            <span id="timer-display">00:00</span>
+<!-- ═══════════════════════════════════════
+     HALAMAN LOGIN SISWA
+════════════════════════════════════════ -->
+<div id="page-login" style="display:none">
+  <div class="student-login-page">
+    <div class="student-login-card fade-in">
+      <div class="student-login-logo">
+        <img src="img/logo-transparent.png" alt="Resilien Logo">
+        <div class="student-login-title">Portal Siswa</div>
+        <div class="student-login-sub">Masuk untuk memulai asesmen</div>
+      </div>
+      <form id="student-login-form" novalidate onsubmit="event.preventDefault(); StudentApp.login();">
+        <div class="form-group">
+          <label class="form-label" for="login-nisn">NISN</label>
+          <input id="login-nisn" type="text" class="form-control" placeholder="Masukkan NISN Anda" required inputmode="numeric">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="login-password">Password</label>
+          <div style="position:relative">
+            <input id="login-password" type="password" class="form-control" placeholder="Masukkan Password" required style="padding-right:44px">
+            <button type="button" id="student-pass-toggle" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
+            </button>
           </div>
         </div>
-      </div>
-      <div class="kuis-progress-row">
-        <span id="progress-label" class="kuis-progress-label">Memuat...</span>
-        <div class="progress-wrap" style="flex:1">
-          <div id="progress-bar" class="progress-bar" style="width:0%"></div>
-        </div>
-        <span id="progress-pct" class="kuis-pct">0%</span>
-      </div>
-      <div id="step-dots" class="step-indicators"></div>
-    </div>
-  </header>
-
-  <!-- 👤 STEP 1: BIODATA 👤 -->
-  <div id="step-biodata" style="display:none">
-    <div class="card card-glass biodata-container">
-      <div class="biodata-hero" style="text-align: center; margin-bottom: 32px;">
-        <div class="biodata-icon" id="student-logo-container" style="background:none; width:120px; height:120px; margin:0 auto 16px; box-shadow:none; border-radius:0;">
-          <img src="img/logo-full.svg" alt="Resilien" style="width:100%; height:100%; object-fit:contain;">
-        </div>
-        <div style="color: var(--accent); font-size:24px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 4px;">Problem Checklist</div>
-        <div style="color: var(--text-secondary); font-size:14px;">Daftar Cek Masalah (DCM) Siswa</div>
-      </div>
-
-      <form id="biodata-form" class="biodata-form" novalidate>
-        <div class="form-group" data-field="nama">
-          <label class="form-label" for="b-nama">Nama Lengkap</label>
-          <input id="b-nama" type="text" class="form-control" placeholder="Masukkan nama lengkap" autocomplete="name" required>
-        </div>
-
-        <div class="form-group" data-field="jk">
-          <label class="form-label">Jenis Kelamin</label>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-            <label style="display:flex;align-items:center;gap:8px;padding:11px 14px;background:var(--bg-input);border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all var(--transition)" id="jk-l-label">
-              <input type="radio" name="b-jk" id="b-jk" value="L" style="accent-color:var(--accent-secondary)" onchange="document.getElementById('jk-l-label').style.borderColor='var(--accent-secondary)';document.getElementById('jk-p-label').style.borderColor='var(--border)'">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Laki-laki
-            </label>
-            <label style="display:flex;align-items:center;gap:8px;padding:11px 14px;background:var(--bg-input);border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all var(--transition)" id="jk-p-label">
-              <input type="radio" name="b-jk" value="P" style="accent-color:var(--accent-secondary)" onchange="document.getElementById('jk-p-label').style.borderColor='var(--accent-secondary)';document.getElementById('jk-l-label').style.borderColor='var(--border)'">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Perempuan
-            </label>
-          </div>
-        </div>
-
-        <div class="form-group" data-field="kelas">
-          <label class="form-label" for="b-kelas">Kelas</label>
-          <select id="b-kelas" class="form-control" required>
-            <option value="">— Pilih Kelas —</option>
-            <option>X IPA 1</option><option>X IPA 2</option><option>X IPS 1</option><option>X IPS 2</option>
-            <option>XI IPA 1</option><option>XI IPA 2</option><option>XI IPS 1</option><option>XI IPS 2</option>
-            <option>XII IPA 1</option><option>XII IPA 2</option><option>XII IPS 1</option><option>XII IPS 2</option>
-            <option>XII Bahasa</option>
-          </select>
-        </div>
-
-        <div class="form-group" data-field="ttl">
-          <label class="form-label" for="b-ttl">Tanggal Lahir</label>
-          <input id="b-ttl" type="date" class="form-control" required>
-        </div>
-
-        <div class="form-group" data-field="nisn">
-          <label class="form-label" for="b-nisn">NISN <span style="color:var(--text-muted);font-weight:400;text-transform:none">(Nomor Induk Siswa Nasional)</span></label>
-          <input id="b-nisn" type="text" inputmode="numeric" pattern="[0-9]*" class="form-control" placeholder="Contoh: 0012345678" maxlength="10" required>
-          <span class="form-error" data-field="nisn"></span>
-          <div style="font-size:12px;color:var(--text-muted);margin-top:4px">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:-3px"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg> NISN digunakan sebagai identitas unik. Pastikan benar.
-          </div>
-        </div>
-
-        <button id="btn-biodata" type="submit" class="btn btn-primary btn-lg btn-full" style="margin-top:8px">
-          Lanjut ke Kuesioner →
-        </button>
+        <div id="student-login-error" style="display:none; padding:10px 14px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.25); border-radius:var(--radius-sm); font-size:13px; color:#FCA5A5; margin-bottom:12px;"></div>
+        <button type="submit" id="student-login-btn" class="btn btn-primary btn-full btn-lg" style="margin-top:4px">Masuk</button>
       </form>
     </div>
   </div>
+</div>
 
-  <!-- 📖 STEP 2: PANDUAN 📖 -->
-  <div id="step-panduan" style="display:none">
-    <div class="card card-glass biodata-container" style="max-width: 700px; margin-top: 40px; text-align: left;">
-      <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 20px; text-align: center;">Panduan Pengisian</h2>
+<!-- ═══════════════════════════════════════
+     DASHBOARD SHELL SISWA (dengan Sidebar)
+════════════════════════════════════════ -->
+<div id="page-dashboard" style="display:none">
+  <div class="student-shell">
+
+    <!-- Sidebar Overlay (mobile) -->
+    <div id="student-sidebar-overlay" class="student-sidebar-overlay" onclick="StudentApp.closeSidebar()"></div>
+
+    <!-- ── SIDEBAR ── -->
+    <nav id="student-sidebar" class="student-sidebar">
+      <div class="student-sidebar-logo">
+        <img src="img/logo-transparent.png" alt="Resilien Logo">
+        <div class="student-sidebar-logo-text">
+          <div class="student-sidebar-logo-title">Resilien</div>
+          <div class="student-sidebar-logo-sub">Portal Siswa</div>
+        </div>
+      </div>
+
+      <div class="student-sidebar-nav">
+        <div class="student-nav-item active" data-student-page="dashboard" onclick="StudentApp.navigateTo('dashboard')">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span>Dashboard</span>
+        </div>
+
+        <div class="student-nav-item" data-student-page="biodata" onclick="StudentApp.navigateTo('biodata')">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          </svg>
+          <span>Profil Siswa</span>
+        </div>
+
+
+        <div class="student-nav-item" data-student-page="asesmen" onclick="StudentApp.navigateTo('asesmen')">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><line x1="9" x2="15" y1="12" y2="12"/><line x1="12" x2="12" y1="9" y2="15"/></svg>
+          <span>Asesmen</span>
+        </div>
+
+        <div class="student-nav-item" data-student-page="portofolio" onclick="StudentApp.navigateTo('portofolio')">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="12" x2="12" y1="11" y2="17"/><line x1="9" x2="15" y1="14" y2="14"/></svg>
+          <span>Portofolio</span>
+        </div>
+
+        <div class="student-nav-item" data-student-page="pengaturan" onclick="StudentApp.navigateTo('pengaturan')">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+          <span>Pengaturan</span>
+        </div>
+
+      </div>
+
+      <div class="student-sidebar-footer">
+        <div class="student-avatar-row">
+          <div class="student-avatar-circle">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <div>
+            <div class="student-avatar-name" id="dash-student-name">Siswa</div>
+            <div class="student-avatar-kelas" id="dash-student-kelas">Kelas ...</div>
+          </div>
+        </div>
+        <button class="btn btn-ghost btn-sm btn-full" onclick="StudentApp.logout()" style="display:flex;align-items:center;justify-content:center;gap:6px">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+          Keluar
+        </button>
+      </div>
+    </nav>
+
+    <!-- ── MAIN CONTENT ── -->
+    <div class="student-main">
+
+      <!-- Topbar -->
+      <div class="student-topbar">
+        <button class="student-topbar-hamburger" onclick="StudentApp.toggleSidebar()">☰</button>
+        <h2 id="student-topbar-title" class="student-topbar-title">Dashboard</h2>
+        <div class="student-topbar-actions">
+          <!-- Dark Mode Toggle -->
+          <button id="student-theme-toggle" class="btn btn-ghost btn-sm" onclick="StudentApp.toggleTheme()" style="padding:8px;border-radius:50%;" title="Ubah Mode Tampilan">
+            <svg id="student-theme-icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+            <svg id="student-theme-icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Page Content -->
+      <div class="student-page-content">
+
+        <!-- ── PAGE: DASHBOARD ── -->
+        <div id="student-page-dashboard" style="display:none">
+          <div class="student-welcome-banner">
+            <div class="student-welcome-name">Halo, <span id="dash-student-name-banner">Siswa</span>! 👋</div>
+            <div class="student-welcome-kelas" id="dash-student-kelas-banner">Kelas ...</div>
+            <div class="student-welcome-badge">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Akun Terverifikasi
+            </div>
+          </div>
+
+          <!-- Quick Stats -->
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:12px; margin-bottom:24px;">
+            <div class="card" style="text-align:center; padding:16px;">
+              <div style="font-size:28px;font-weight:800;color:var(--accent)" id="dash-stat-total">-</div>
+              <div style="font-size:12px;color:var(--text-muted);margin-top:4px">Total Asesmen</div>
+            </div>
+            <div class="card" style="text-align:center; padding:16px;">
+              <div style="font-size:28px;font-weight:800;color:var(--belajar)" id="dash-stat-selesai">-</div>
+              <div style="font-size:12px;color:var(--text-muted);margin-top:4px">Selesai</div>
+            </div>
+            <div class="card" style="text-align:center; padding:16px;">
+              <div style="font-size:28px;font-weight:800;color:var(--karir)" id="dash-stat-tersedia">-</div>
+              <div style="font-size:12px;color:var(--text-muted);margin-top:4px">Tersedia</div>
+            </div>
+          </div>
+
+          <!-- Asesmen Aktif (Quick View) -->
+          <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+              <div style="font-size:16px;font-weight:700;color:var(--text-primary);">Asesmen Aktif</div>
+              <button class="btn btn-ghost btn-sm" onclick="StudentApp.navigateTo('asesmen')">Lihat Semua →</button>
+            </div>
+            <div id="dash-active-sessions-preview">
+              <p style="color:var(--text-muted);text-align:center;padding:12px 0;">Memuat...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── PAGE: ASESMEN ── -->
+        <div id="student-page-asesmen" style="display:none">
+          <div style="margin-bottom:20px;">
+            <h2 style="margin:0 0 4px 0;font-size:20px;font-weight:800;color:var(--text-primary);">Daftar Asesmen</h2>
+            <p style="margin:0;font-size:13px;color:var(--text-muted);">Pilih asesmen yang tersedia untuk mulai dikerjakan.</p>
+          </div>
+          <div id="active-sessions-list">
+            <p style="color:var(--text-muted);text-align:center;">Memuat...</p>
+          </div>
+        </div>
+
+        <!-- ── PAGE: PROFIL SISWA ── -->
+        <div id="student-page-biodata" style="display:none">
+          <div style="margin-bottom:20px;">
+            <h2 style="margin:0 0 4px 0;font-size:20px;font-weight:800;color:var(--text-primary);">Profil Siswa</h2>
+            <p style="margin:0;font-size:13px;color:var(--text-muted);">Lengkapi data pribadi BK Anda secara lengkap di bawah ini.</p>
+          </div>
+          
+          <form id="student-profile-form" onsubmit="event.preventDefault(); StudentApp.updateProfile();">
+            
+            <!-- 1. IDENTITAS PRIBADI -->
+            <details class="profile-accordion card" open>
+              <summary>1. Identitas Siswa</summary>
+              <div class="accordion-content">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                  <div class="form-group"><label class="form-label">Nama Lengkap</label><input type="text" id="prof-nama-lengkap" class="form-control" readonly style="background:var(--bg-primary);cursor:not-allowed"></div>
+                  <div class="form-group"><label class="form-label">NISN</label><input type="text" id="prof-nisn" class="form-control" readonly style="background:var(--bg-primary);cursor:not-allowed"></div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                  <div class="form-group"><label class="form-label">Nama Panggilan</label><input type="text" id="prof-nama-panggilan" class="form-control"></div>
+                  <div class="form-group">
+                    <label class="form-label">Jenis Kelamin *</label>
+                    <select id="prof-jk" class="form-control" required>
+                      <option value="">— Pilih —</option>
+                      <option value="L">Laki-laki</option>
+                      <option value="P">Perempuan</option>
+                    </select>
+                  </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+                  <div class="form-group"><label class="form-label">Tempat & Tanggal Lahir *</label><input type="text" id="prof-ttl" class="form-control" placeholder="Kota, DD-MM-YYYY" required></div>
+                  <div class="form-group"><label class="form-label">Agama</label><input type="text" id="prof-agama" class="form-control"></div>
+                  <div class="form-group"><label class="form-label">Kewarganegaraan</label><input type="text" id="prof-kewarganegaraan" class="form-control" value="Indonesia"></div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Alamat Lengkap</label>
+                  <textarea id="prof-alamat" class="form-control" rows="2" placeholder="Jl. ... RT/RW ... Kec ... Kab/Kota ..."></textarea>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                  <div class="form-group"><label class="form-label">Nomor WhatsApp / HP</label><input type="text" id="prof-nohp" class="form-control"></div>
+                  <div class="form-group"><label class="form-label">Alamat Email</label><input type="email" id="prof-email" class="form-control"></div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                  <div class="form-group"><label class="form-label">Anak Ke-</label><input type="number" id="prof-anak-ke" class="form-control" min="1"></div>
+                  <div class="form-group"><label class="form-label">Jumlah Saudara</label><input type="number" id="prof-dari-bersaudara" class="form-control" min="1"></div>
+                </div>
+              </div>
+            </details>
+
+            <!-- 2. KELUARGA -->
+            <details class="profile-accordion card">
+              <summary>2. Latar Belakang</summary>
+              <div class="accordion-content">
+                <div style="margin-bottom:12px;font-weight:700;color:var(--text-primary);">A. Ayah Kandung</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                  <div class="form-group"><label class="form-label">Nama Lengkap</label><input type="text" id="prof-ayah-nama" class="form-control"></div>
+                  <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select id="prof-ayah-status" class="form-control">
+                      <option value="">— Pilih —</option><option value="Masih Hidup">Masih Hidup</option><option value="Meninggal Dunia">Meninggal Dunia</option>
+                    </select>
+                  </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                  <div class="form-group"><label class="form-label">Pendidikan Terakhir</label><input type="text" id="prof-ayah-pendidikan" class="form-control"></div>
+                  <div class="form-group">
+                    <label class="form-label">Pekerjaan</label>
+                    <select id="prof-ayah-pekerjaan" class="form-control">
+                      <option value="">— Pilih —</option>
+                      <option value="Tidak Bekerja / Di Rumah">Tidak Bekerja / Di Rumah</option>
+                      <option value="PNS / TNI / POLRI">PNS / TNI / POLRI</option>
+                      <option value="Karyawan Swasta / BUMN">Karyawan Swasta / BUMN</option>
+                      <option value="Wirausaha / Pedagang">Wirausaha / Pedagang</option>
+                      <option value="Petani / Peternak / Nelayan">Petani / Peternak / Nelayan</option>
+                      <option value="Buruh / Pekerja Harian / Sopir">Buruh / Pekerja Harian / Sopir</option>
+                      <option value="Pensiunan">Pensiunan</option>
+                      <option value="Lainnya">Lainnya</option>
+                    </select>
+                  </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                  <div class="form-group">
+                    <label class="form-label">Penghasilan Bulanan</label>
+                    <select id="prof-ayah-penghasilan" class="form-control">
+                      <option value="">— Pilih —</option>
+                      <option value="Tidak Berpenghasilan / Rp 0">Tidak Berpenghasilan / Rp 0</option>
+                      <option value="< Rp 3.000.000">&lt; Rp 3.000.000</option>
+                      <option value="Rp 3.000.000 - Rp 5.000.000">Rp 3.000.000 - Rp 5.000.000</option>
+                      <option value="Rp 5.000.000 - Rp 10.000.000">Rp 5.000.000 - Rp 10.000.000</option>
+                      <option value="Rp 10.000.000 - Rp 20.000.000">Rp 10.000.000 - Rp 20.000.000</option>
+                      <option value="> Rp 20.000.000">&gt; Rp 20.000.000</option>
+                    </select>
+                  </div>
+                  <div class="form-group"><label class="form-label">Nomor WhatsApp / HP</label><input type="text" id="prof-ayah-nohp" class="form-control"></div>
+                </div>
+
+                <div style="margin:20px 0 12px;font-weight:700;color:var(--text-primary);border-top:1px solid var(--border);padding-top:16px;">B. Ibu Kandung</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                  <div class="form-group"><label class="form-label">Nama Lengkap</label><input type="text" id="prof-ibu-nama" class="form-control"></div>
+                  <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select id="prof-ibu-status" class="form-control">
+                      <option value="">— Pilih —</option><option value="Masih Hidup">Masih Hidup</option><option value="Meninggal Dunia">Meninggal Dunia</option>
+                    </select>
+                  </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                  <div class="form-group"><label class="form-label">Pendidikan Terakhir</label><input type="text" id="prof-ibu-pendidikan" class="form-control"></div>
+                  <div class="form-group">
+                    <label class="form-label">Pekerjaan</label>
+                    <select id="prof-ibu-pekerjaan" class="form-control">
+                      <option value="">— Pilih —</option>
+                      <option value="Tidak Bekerja / Mengurus Rumah Tangga">Tidak Bekerja / Mengurus Rumah Tangga</option>
+                      <option value="PNS / TNI / POLRI">PNS / TNI / POLRI</option>
+                      <option value="Karyawan Swasta / BUMN">Karyawan Swasta / BUMN</option>
+                      <option value="Wirausaha / Pedagang">Wirausaha / Pedagang</option>
+                      <option value="Petani / Peternak / Nelayan">Petani / Peternak / Nelayan</option>
+                      <option value="Buruh / Pekerja Harian / Sopir">Buruh / Pekerja Harian / Sopir</option>
+                      <option value="Pensiunan">Pensiunan</option>
+                      <option value="Lainnya">Lainnya</option>
+                    </select>
+                  </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                  <div class="form-group">
+                    <label class="form-label">Penghasilan Bulanan</label>
+                    <select id="prof-ibu-penghasilan" class="form-control">
+                      <option value="">— Pilih —</option>
+                      <option value="Tidak Berpenghasilan / Rp 0">Tidak Berpenghasilan / Rp 0</option>
+                      <option value="< Rp 3.000.000">&lt; Rp 3.000.000</option>
+                      <option value="Rp 3.000.000 - Rp 5.000.000">Rp 3.000.000 - Rp 5.000.000</option>
+                      <option value="Rp 5.000.000 - Rp 10.000.000">Rp 5.000.000 - Rp 10.000.000</option>
+                      <option value="Rp 10.000.000 - Rp 20.000.000">Rp 10.000.000 - Rp 20.000.000</option>
+                      <option value="> Rp 20.000.000">&gt; Rp 20.000.000</option>
+                    </select>
+                  </div>
+                  <div class="form-group"><label class="form-label">Nomor WhatsApp / HP</label><input type="text" id="prof-ibu-nohp" class="form-control"></div>
+                </div>
+
+                <div style="margin:20px 0 12px;font-weight:700;color:var(--text-primary);border-top:1px solid var(--border);padding-top:16px;">C. Data Wali (Jika Ada)</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                  <div class="form-group"><label class="form-label">Nama Wali</label><input type="text" id="prof-wali-nama" class="form-control"></div>
+                  <div class="form-group"><label class="form-label">Hubungan dengan Siswa</label><input type="text" id="prof-wali-hubungan" class="form-control" placeholder="Contoh: Paman / Kakek"></div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                  <div class="form-group">
+                    <label class="form-label">Pekerjaan</label>
+                    <select id="prof-wali-pekerjaan" class="form-control">
+                      <option value="">— Pilih —</option>
+                      <option value="Tidak Bekerja / Mengurus Rumah Tangga">Tidak Bekerja / Mengurus Rumah Tangga</option>
+                      <option value="PNS / TNI / POLRI">PNS / TNI / POLRI</option>
+                      <option value="Karyawan Swasta / BUMN">Karyawan Swasta / BUMN</option>
+                      <option value="Wirausaha / Pedagang">Wirausaha / Pedagang</option>
+                      <option value="Petani / Peternak / Nelayan">Petani / Peternak / Nelayan</option>
+                      <option value="Buruh / Pekerja Harian / Sopir">Buruh / Pekerja Harian / Sopir</option>
+                      <option value="Pensiunan">Pensiunan</option>
+                      <option value="Lainnya">Lainnya</option>
+                    </select>
+                  </div>
+                  <div class="form-group"><label class="form-label">Nomor WhatsApp / HP</label><input type="text" id="prof-wali-nohp" class="form-control"></div>
+                </div>
+
+                <div style="margin:20px 0 12px;font-weight:700;color:var(--text-primary);border-top:1px solid var(--border);padding-top:16px;">D. Status Pernikahan Orang Tua</div>
+                <div class="form-group">
+                  <select id="prof-ortu-nikah" class="form-control">
+                    <option value="">— Pilih —</option>
+                    <option value="Menikah / Utuh">Menikah / Utuh</option>
+                    <option value="Bercerai">Bercerai</option>
+                    <option value="Pisah Rumah">Pisah Rumah</option>
+                  </select>
+                </div>
+              </div>
+            </details>
+
+            <!-- 3. KESEHATAN -->
+            <details class="profile-accordion card">
+              <summary>3. Riwayat Kesehatan</summary>
+              <div class="accordion-content">
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+                  <div class="form-group">
+                    <label class="form-label">Golongan Darah</label>
+                    <select id="prof-goldarah" class="form-control">
+                      <option value="">— Pilih —</option><option value="A">A</option><option value="B">B</option><option value="AB">AB</option><option value="O">O</option>
+                    </select>
+                  </div>
+                  <div class="form-group"><label class="form-label">Tinggi (cm)</label><input type="number" id="prof-tinggi" class="form-control"></div>
+                  <div class="form-group"><label class="form-label">Berat (kg)</label><input type="number" id="prof-berat" class="form-control"></div>
+                </div>
+                <div class="form-group"><label class="form-label">Riwayat Penyakit Berat</label><input type="text" id="prof-penyakit" class="form-control" placeholder="Contoh: Asma (2020)"></div>
+                <div class="form-group"><label class="form-label">Kondisi Disabilitas</label><input type="text" id="prof-disabilitas" class="form-control"></div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                  <div class="form-group"><label class="form-label">Kacamata / Alat Bantu Dengar</label>
+                    <select id="prof-kacamata" class="form-control">
+                      <option value="Tidak">Tidak</option><option value="Kacamata">Kacamata</option><option value="Alat Bantu Dengar">Alat Bantu Dengar</option><option value="Keduanya">Keduanya</option>
+                    </select>
+                  </div>
+                  <div class="form-group"><label class="form-label">Riwayat Alergi</label><input type="text" id="prof-alergi" class="form-control" placeholder="Kosongkan jika tidak ada"></div>
+                </div>
+              </div>
+            </details>
+
+            <!-- 4. PENDIDIKAN & MINAT -->
+            <details class="profile-accordion card">
+              <summary>4. Minat, Cita-Cita & Kebiasaan Belajar</summary>
+              <div class="accordion-content">
+                <div style="margin:0 0 12px;font-weight:700;color:var(--text-primary);">Riwayat Pendidikan</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                  <div class="form-group"><label class="form-label">Asal Sekolah (SMP/Sederajat)</label><input type="text" id="prof-asal-sekolah" class="form-control"></div>
+                  <div class="form-group"><label class="form-label">Status Siswa</label>
+                    <select id="prof-status-siswa" class="form-control">
+                      <option value="Baru / Reguler">Baru / Reguler</option>
+                      <option value="Pindahan">Pindahan</option>
+                    </select>
+                  </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                  <div class="form-group"><label class="form-label">Riwayat Tinggal Kelas</label>
+                    <select id="prof-tinggal-kelas" class="form-control">
+                      <option value="Tidak Pernah">Tidak Pernah</option>
+                      <option value="Pernah di SD">Pernah di SD</option>
+                      <option value="Pernah di SMP">Pernah di SMP</option>
+                    </select>
+                  </div>
+                  <div class="form-group"><label class="form-label">Ikut Bimbingan Belajar (Bimbel)?</label>
+                    <select id="prof-ikut-bimbel" class="form-control" onchange="document.getElementById('bimbel-details').style.display = this.value === 'Ya' ? 'block' : 'none'">
+                      <option value="Tidak">Tidak</option>
+                      <option value="Ya">Ya</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div id="bimbel-details" style="display:none; background:var(--bg-primary); padding:16px; border-radius:8px; margin-top:16px; border:1px solid var(--border);">
+                  <div style="font-weight:600; margin-bottom:12px; font-size:13px; color:var(--text-primary);">Detail Bimbingan Belajar</div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+                    <div class="form-group">
+                      <label class="form-label">Jenis Bimbel</label>
+                      <select id="prof-jenis-bimbel" class="form-control">
+                        <option value="">— Pilih —</option>
+                        <option value="Tatap Muka (Lembaga)">Tatap Muka (Lembaga)</option>
+                        <option value="Online">Online</option>
+                        <option value="Privat (Guru ke Rumah)">Privat (Guru ke Rumah)</option>
+                      </select>
+                    </div>
+                    <div class="form-group"><label class="form-label">Nama Tempat / Aplikasi Bimbel</label><input type="text" id="prof-nama-bimbel" class="form-control"></div>
+                    <div class="form-group"><label class="form-label">Lama Mengikuti</label><input type="text" id="prof-lama-bimbel" class="form-control" placeholder="Contoh: 6 Bulan"></div>
+                  </div>
+                </div>
+
+                <div style="margin:20px 0 12px;font-weight:700;color:var(--text-primary);border-top:1px solid var(--border);padding-top:16px;">Minat & Cita-Cita</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                  <div class="form-group"><label class="form-label">Mata Pelajaran Favorit</label><input type="text" id="prof-mapel-suka" class="form-control"></div>
+                  <div class="form-group"><label class="form-label">Mata Pelajaran Kurang Disukai</label><input type="text" id="prof-mapel-tidaksuka" class="form-control"></div>
+                </div>
+                <div class="form-group"><label class="form-label">Hobi / Kegemaran</label><input type="text" id="prof-hobi" class="form-control"></div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                  <div class="form-group"><label class="form-label">Cita-Cita / Rencana Karier</label><input type="text" id="prof-citacita" class="form-control"></div>
+                  <div class="form-group">
+                    <label class="form-label">Gaya Belajar Dominan</label>
+                    <select id="prof-gaya-belajar" class="form-control">
+                      <option value="">— Pilih —</option>
+                      <option value="Visual">Visual (Lebih mudah paham dengan melihat/gambar)</option>
+                      <option value="Auditori">Auditori (Lebih mudah paham dengan mendengar/diskusi)</option>
+                      <option value="Kinestetik">Kinestetik (Lebih mudah paham dengan praktik/gerak)</option>
+                      <option value="Belum Tahu">Belum Mengetahui</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Rencana Pasca Lulus</label>
+                  <select id="prof-rencana-lulus" class="form-control">
+                    <option value="">— Pilih —</option><option value="Kuliah">Kuliah</option><option value="Kerja">Kerja</option><option value="Wirausaha">Wirausaha</option><option value="Kursus">Kursus</option>
+                  </select>
+                </div>
+                
+                <div style="margin:20px 0 12px;font-weight:700;color:var(--text-primary);border-top:1px solid var(--border);padding-top:16px;">Kebiasaan Belajar</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                  <div class="form-group">
+                    <label class="form-label">Waktu Belajar Efektif di Rumah</label>
+                    <select id="prof-waktu-belajar" class="form-control">
+                      <option value="">— Pilih —</option><option value="Pagi">Pagi Hari</option><option value="Siang / Sore">Siang / Sore Hari</option><option value="Malam">Malam Hari</option><option value="Tidak Menentu">Tidak Menentu</option>
+                    </select>
+                  </div>
+                  <div class="form-group"><label class="form-label">Kendala Belajar yang Sering Dialami</label><input type="text" id="prof-kendala-belajar" class="form-control" placeholder="Contoh: Sulit fokus, rumah berisik, dll"></div>
+                </div>
+              </div>
+            </details>
+
+            <!-- 5. LINGKUNGAN -->
+            <details class="profile-accordion card">
+              <summary>5. Fasilitas & Lingkungan Rumah</summary>
+              <div class="accordion-content">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                  <div class="form-group">
+                    <label class="form-label">Tinggal Bersama Siapa?</label>
+                    <select id="prof-tinggal" class="form-control">
+                      <option value="">— Pilih —</option>
+                      <option value="Orang Tua Kandung">Orang Tua Kandung</option>
+                      <option value="Wali / Kerabat">Wali / Kerabat</option>
+                      <option value="Kos / Kontrakan Sendiri">Kos / Kontrakan Sendiri</option>
+                      <option value="Asrama / Panti">Asrama / Panti Asuhan</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Status Kepemilikan Rumah</label>
+                    <select id="prof-status-rumah" class="form-control">
+                      <option value="">— Pilih —</option>
+                      <option value="Milik Sendiri (Orang Tua)">Milik Sendiri (Orang Tua)</option>
+                      <option value="Kontrak / Sewa">Kontrak / Sewa</option>
+                      <option value="Rumah Dinas">Rumah Dinas</option>
+                      <option value="Menumpang">Menumpang / Numpang</option>
+                    </select>
+                  </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                  <div class="form-group">
+                    <label class="form-label">Akses Internet di Rumah</label>
+                    <div class="checkbox-chip-group">
+                      <label class="checkbox-chip"><div class="chip-icon"></div><input type="checkbox" name="internet" value="WiFi Rumah"> WiFi Rumah</label>
+                      <label class="checkbox-chip"><div class="chip-icon"></div><input type="checkbox" name="internet" value="Kuota Seluler"> Kuota Seluler</label>
+                      <label class="checkbox-chip"><div class="chip-icon"></div><input type="checkbox" name="internet" value="Tidak Ada Akses"> Tidak Ada Akses</label>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Kepemilikan Gadget / Elektronik</label>
+                    <style>
+                      .checkbox-chip-group { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+                      .checkbox-chip {
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 8px;
+                        padding: 8px 16px;
+                        background: var(--bg-input);
+                        border: 1px solid var(--border);
+                        border-radius: 30px;
+                        cursor: pointer;
+                        font-size: 13px;
+                        color: var(--text-secondary);
+                        transition: all 0.2s ease;
+                        user-select: none;
+                      }
+                      .checkbox-chip:hover {
+                        border-color: var(--pribadi);
+                        background: var(--pribadi-soft);
+                      }
+                      .checkbox-chip input[type="checkbox"] { display: none; }
+                      .checkbox-chip:has(input:checked) {
+                        background: var(--pribadi-soft);
+                        border-color: var(--pribadi);
+                        color: var(--pribadi);
+                        font-weight: 600;
+                      }
+                      .checkbox-chip .chip-icon {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 16px;
+                        height: 16px;
+                        border-radius: 4px;
+                        border: 1.5px solid var(--text-muted);
+                        transition: all 0.2s;
+                      }
+                      .checkbox-chip:has(input:checked) .chip-icon {
+                        background: var(--pribadi);
+                        border-color: var(--pribadi);
+                      }
+                      .checkbox-chip:has(input:checked) .chip-icon::after {
+                        content: "✓";
+                        color: #fff;
+                        font-size: 10px;
+                        font-weight: bold;
+                      }
+                    </style>
+                    <div class="checkbox-chip-group">
+                      <label class="checkbox-chip"><div class="chip-icon"></div><input type="checkbox" name="gadget" value="Laptop"> Laptop</label>
+                      <label class="checkbox-chip"><div class="chip-icon"></div><input type="checkbox" name="gadget" value="Komputer PC"> Komputer PC / Desktop</label>
+                      <label class="checkbox-chip"><div class="chip-icon"></div><input type="checkbox" name="gadget" value="Tablet"> Tablet / iPad</label>
+                      <label class="checkbox-chip"><div class="chip-icon"></div><input type="checkbox" name="gadget" value="Smartphone"> Smartphone / HP</label>
+                      <label class="checkbox-chip"><div class="chip-icon"></div><input type="checkbox" name="gadget" value="Tidak Punya"> Tidak Punya</label>
+                    </div>
+                  </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                  <div class="form-group"><label class="form-label">Kepemilikan Sepeda Motor</label>
+                    <select id="prof-motor" class="form-control">
+                      <option value="">— Pilih —</option>
+                      <option value="Tidak Punya">Tidak Punya</option>
+                      <option value="1 Unit">1 Unit</option>
+                      <option value="2 Unit">2 Unit</option>
+                      <option value="Lebih dari 2 Unit">Lebih dari 2 Unit</option>
+                    </select>
+                  </div>
+                  <div class="form-group"><label class="form-label">Kepemilikan Mobil Pribadi</label>
+                    <select id="prof-mobil" class="form-control">
+                      <option value="">— Pilih —</option>
+                      <option value="Tidak Punya">Tidak Punya</option>
+                      <option value="1 Unit">1 Unit</option>
+                      <option value="2 Unit">2 Unit</option>
+                      <option value="Lebih dari 2 Unit">Lebih dari 2 Unit</option>
+                    </select>
+                  </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                  <div class="form-group">
+                    <label class="form-label">Transportasi Utama ke Sekolah</label>
+                    <select id="prof-transportasi" class="form-control">
+                      <option value="">— Pilih —</option>
+                      <option value="Jalan Kaki">Jalan Kaki</option><option value="Diantar">Diantar</option><option value="Angkutan Umum / Ojol">Angkutan Umum / Ojol</option><option value="Membawa Kendaraan Sendiri">Membawa Kendaraan Sendiri</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Jarak Rumah ke Sekolah</label>
+                    <select id="prof-jarak" class="form-control">
+                      <option value="">— Pilih —</option>
+                      <option value="< 1 km">&lt; 1 km</option>
+                      <option value="1 - 3 km">1 - 3 km</option>
+                      <option value="3 - 5 km">3 - 5 km</option>
+                      <option value="5 - 10 km">5 - 10 km</option>
+                      <option value="10 - 15 km">10 - 15 km</option>
+                      <option value="> 15 km">&gt; 15 km</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </details>
+
+            <!-- 6. SOSIAL -->
+            <details class="profile-accordion card">
+              <summary>6. Hubungan Pertemanan</summary>
+              <div class="accordion-content">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                  <div class="form-group" style="grid-column: 1 / -1;"><label class="form-label">Sahabat Terdekat di Sekolah</label><input type="text" id="prof-teman-sekolah" class="form-control"></div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                  <div class="form-group">
+                    <label class="form-label">Karakter Bersosialisasi</label>
+                    <select id="prof-bergaul" class="form-control">
+                      <option value="">— Pilih —</option>
+                      <option value="Sangat Mudah">Sangat Mudah</option><option value="Cukup Mudah">Cukup Mudah</option><option value="Sulit">Sulit</option><option value="Suka Menyendiri">Suka Menyendiri</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Hubungan dengan Teman Sekelas</label>
+                    <select id="prof-hub-sekelas" class="form-control">
+                      <option value="">— Pilih —</option>
+                      <option value="Sangat Akrab">Sangat Akrab</option><option value="Biasa Saja">Biasa Saja</option><option value="Sering Konflik">Sering Konflik</option><option value="Merasa Dikucilkan">Merasa Dikucilkan</option>
+                    </select>
+                  </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                  <div class="form-group">
+                    <label class="form-label">Pengalaman Perundungan (Bullying)</label>
+                    <select id="prof-bullying" class="form-control">
+                      <option value="">— Pilih —</option>
+                      <option value="Tidak Pernah">Tidak Pernah</option><option value="Pernah (Korban)">Pernah (Korban)</option><option value="Pernah (Pelaku)">Pernah (Pelaku)</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Teman Berbagi Cerita (Curhat)</label>
+                    <select id="prof-curhat" class="form-control">
+                      <option value="">— Pilih —</option>
+                      <option value="Orang Tua">Orang Tua</option><option value="Saudara">Saudara</option><option value="Teman Sekolah">Teman Sekolah</option><option value="Teman Luar Sekolah">Teman Luar Sekolah</option><option value="Guru">Guru</option><option value="Tidak Ada">Tidak Ada</option>
+                    </select>
+                  </div>
+                </div>
+                  <div class="form-group" style="grid-column: 1 / -1;">
+                    <label class="form-label">Media Sosial Paling Sering Digunakan</label>
+                    <div class="checkbox-chip-group">
+                      <label class="checkbox-chip"><div class="chip-icon"></div><input type="checkbox" name="medsos" value="Instagram"> Instagram</label>
+                      <label class="checkbox-chip"><div class="chip-icon"></div><input type="checkbox" name="medsos" value="TikTok"> TikTok</label>
+                      <label class="checkbox-chip"><div class="chip-icon"></div><input type="checkbox" name="medsos" value="WhatsApp"> WhatsApp</label>
+                      <label class="checkbox-chip"><div class="chip-icon"></div><input type="checkbox" name="medsos" value="X / Twitter"> X / Twitter</label>
+                      <label class="checkbox-chip"><div class="chip-icon"></div><input type="checkbox" name="medsos" value="Facebook"> Facebook</label>
+                      <label class="checkbox-chip"><div class="chip-icon"></div><input type="checkbox" name="medsos" value="YouTube"> YouTube</label>
+                      <label class="checkbox-chip"><div class="chip-icon"></div><input type="checkbox" name="medsos" value="Lainnya"> Lainnya</label>
+                    </div>
+                    <input type="text" id="prof-medsos-lainnya" class="form-control" style="display:none; margin-top:8px;" placeholder="Sebutkan medsos lainnya (opsional)">
+                  </div>
+              </div>
+            </details>
+
+            <div class="card" style="margin-top:20px;">
+              <div style="display:flex;gap:10px;align-items:center;justify-content:flex-end;">
+                <span id="prof-save-status" style="font-size:13px;color:var(--belajar);font-weight:600;margin-right:10px;"></span>
+                <button type="submit" class="btn btn-primary" style="padding:10px 24px;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;vertical-align:-3px"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                  Simpan Profil Siswa
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        
+        <!-- ── PAGE: PENGATURAN ── -->
+        <div id="student-page-pengaturan" style="display:none">
+          <div style="margin-bottom:20px;">
+            <h2 style="margin:0 0 4px 0;font-size:20px;font-weight:800;color:var(--text-primary);">Pengaturan</h2>
+            <p style="margin:0;font-size:13px;color:var(--text-muted);">Atur preferensi tampilan dan akun Anda.</p>
+          </div>
+
+          <!-- Tampilan -->
+          <div class="card" style="margin-bottom:16px;">
+            <div class="settings-section-title">Tampilan</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);">
+              <div>
+                <div style="font-weight:600;font-size:14px;color:var(--text-primary);">Mode Gelap</div>
+                <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Ubah tampilan menjadi mode gelap atau terang</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="student-dark-mode-toggle" onchange="StudentApp.toggleThemeFromSwitch(this.checked)">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Akun -->
+          <div class="card" style="margin-bottom:16px;">
+            <div class="settings-section-title">Akun</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;">
+              <div>
+                <div style="font-weight:600;font-size:14px;color:var(--text-primary);">Keluar dari Akun</div>
+                <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Anda harus login kembali setelah keluar</div>
+              </div>
+              <button class="btn btn-outline btn-sm" onclick="StudentApp.logout()" style="color:var(--danger);border-color:var(--danger);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;vertical-align:-2px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+                Keluar
+              </button>
+            </div>
+          </div>
+
+          <!-- Info -->
+          <div class="card" style="background:rgba(59,130,246,0.04);border-color:rgba(59,130,246,0.2);">
+            <div style="font-size:13px;color:var(--text-muted);line-height:1.7;">
+              <strong style="color:var(--accent)">Resilien</strong> — Platform Asesmen Perkembangan Siswa<br>
+              Dikembangkan untuk mendukung program Bimbingan dan Konseling.
+            </div>
+          </div>
+        </div>
+
+        <!-- ── PAGE: PORTOFOLIO ── -->
+        <div id="student-page-portofolio" style="display:none">
+          <div style="margin-bottom:20px;">
+            <h2 style="margin:0 0 4px 0;font-size:20px;font-weight:800;color:var(--text-primary);">Portofolio Akademik</h2>
+            <p style="margin:0;font-size:13px;color:var(--text-muted);">Catat nilai rapor dan prestasi yang pernah Anda raih.</p>
+          </div>
+
+          <!-- Tab Switcher -->
+          <div style="display:flex;gap:8px;margin-bottom:20px;border-bottom:2px solid var(--border);padding-bottom:0;">
+            <button id="porto-tab-rapor" onclick="StudentApp.switchPortoTab('rapor')" style="padding:10px 20px;background:none;border:none;border-bottom:2px solid var(--accent);margin-bottom:-2px;font-weight:700;font-size:14px;color:var(--accent);cursor:pointer;display:flex;align-items:center;gap:6px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              Nilai Rapor
+            </button>
+            
+            <button id="porto-tab-ekskul" onclick="StudentApp.switchPortoTab('ekskul')" style="padding:10px 20px;background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;font-weight:600;font-size:14px;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;gap:6px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              Ekstrakurikuler
+            </button>
+<button id="porto-tab-prestasi" onclick="StudentApp.switchPortoTab('prestasi')" style="padding:10px 20px;background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;font-weight:600;font-size:14px;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;gap:6px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+              Prestasi
+            </button>
+          </div>
+
+          <!-- TAB: RAPOR -->
+          <div id="porto-content-rapor">
+<form id="student-akademik-form" onsubmit="event.preventDefault(); StudentApp.saveAkademik();">
+
+  <!-- Kelas Tabs -->
+  <div style="display:flex;gap:8px;margin-bottom:20px;border-bottom:2px solid var(--border);padding-bottom:0;overflow-x:auto;">
+    <button type="button" id="akademik-kelas-tab-10" onclick="StudentApp.switchAkademikKelas(10)" style="padding:10px 20px;background:none;border:none;border-bottom:2px solid var(--accent);margin-bottom:-2px;font-weight:700;font-size:14px;color:var(--accent);cursor:pointer;white-space:nowrap;">Kelas X (Fase E)</button>
+    <button type="button" id="akademik-kelas-tab-11" onclick="StudentApp.switchAkademikKelas(11)" style="padding:10px 20px;background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;font-weight:600;font-size:14px;color:var(--text-muted);cursor:pointer;white-space:nowrap;">Kelas XI (Fase F)</button>
+    <button type="button" id="akademik-kelas-tab-12" onclick="StudentApp.switchAkademikKelas(12)" style="padding:10px 20px;background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;font-weight:600;font-size:14px;color:var(--text-muted);cursor:pointer;white-space:nowrap;">Kelas XII (Fase F)</button>
+  </div>
+
+  <!-- Mapel Pilihan (Hanya untuk Kelas XI & XII) -->
+  <div class="card" id="akademik-mapel-pilihan-container" style="display:none; margin-bottom:20px; background:var(--bg-secondary);">
+    <h4 style="margin:0 0 12px 0; font-size:14px; display:flex; align-items:center; gap:6px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+      Mata Pelajaran Pilihan (Fase F - Kelas XI & XII)
+    </h4>
+    <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Pilih 4 mata pelajaran pilihan yang Anda ambil. Pilihan ini akan berlaku untuk Semester 3 sampai Semester 6.</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+      <div class="form-group"><label class="form-label">Pilihan 1</label><select class="form-control" id="akademik_pil_1" onchange="StudentApp.updateMapelPilihan()"><option value="">— Pilih Mapel —</option><option value="Fisika">Fisika</option><option value="Kimia">Kimia</option><option value="Biologi">Biologi</option><option value="Matematika Tingkat Lanjut">Matematika Tingkat Lanjut</option><option value="Sosiologi">Sosiologi</option><option value="Ekonomi">Ekonomi</option><option value="Geografi">Geografi</option><option value="Sejarah Tingkat Lanjut">Sejarah Tingkat Lanjut</option><option value="Bahasa Indonesia Tingkat Lanjut">Bahasa Indonesia Tingkat Lanjut</option><option value="Bahasa Inggris Tingkat Lanjut">Bahasa Inggris Tingkat Lanjut</option><option value="Bahasa & Sastra Prancis">Bahasa & Sastra Prancis</option><option value="Informatika Tingkat Lanjut">Informatika Tingkat Lanjut</option></select></div>
+      <div class="form-group"><label class="form-label">Pilihan 2</label><select class="form-control" id="akademik_pil_2" onchange="StudentApp.updateMapelPilihan()"><option value="">— Pilih Mapel —</option><option value="Fisika">Fisika</option><option value="Kimia">Kimia</option><option value="Biologi">Biologi</option><option value="Matematika Tingkat Lanjut">Matematika Tingkat Lanjut</option><option value="Sosiologi">Sosiologi</option><option value="Ekonomi">Ekonomi</option><option value="Geografi">Geografi</option><option value="Sejarah Tingkat Lanjut">Sejarah Tingkat Lanjut</option><option value="Bahasa Indonesia Tingkat Lanjut">Bahasa Indonesia Tingkat Lanjut</option><option value="Bahasa Inggris Tingkat Lanjut">Bahasa Inggris Tingkat Lanjut</option><option value="Bahasa & Sastra Prancis">Bahasa & Sastra Prancis</option><option value="Informatika Tingkat Lanjut">Informatika Tingkat Lanjut</option></select></div>
+      <div class="form-group"><label class="form-label">Pilihan 3</label><select class="form-control" id="akademik_pil_3" onchange="StudentApp.updateMapelPilihan()"><option value="">— Pilih Mapel —</option><option value="Fisika">Fisika</option><option value="Kimia">Kimia</option><option value="Biologi">Biologi</option><option value="Matematika Tingkat Lanjut">Matematika Tingkat Lanjut</option><option value="Sosiologi">Sosiologi</option><option value="Ekonomi">Ekonomi</option><option value="Geografi">Geografi</option><option value="Sejarah Tingkat Lanjut">Sejarah Tingkat Lanjut</option><option value="Bahasa Indonesia Tingkat Lanjut">Bahasa Indonesia Tingkat Lanjut</option><option value="Bahasa Inggris Tingkat Lanjut">Bahasa Inggris Tingkat Lanjut</option><option value="Bahasa & Sastra Prancis">Bahasa & Sastra Prancis</option><option value="Informatika Tingkat Lanjut">Informatika Tingkat Lanjut</option></select></div>
+      <div class="form-group"><label class="form-label">Pilihan 4</label><select class="form-control" id="akademik_pil_4" onchange="StudentApp.updateMapelPilihan()"><option value="">— Pilih Mapel —</option><option value="Fisika">Fisika</option><option value="Kimia">Kimia</option><option value="Biologi">Biologi</option><option value="Matematika Tingkat Lanjut">Matematika Tingkat Lanjut</option><option value="Sosiologi">Sosiologi</option><option value="Ekonomi">Ekonomi</option><option value="Geografi">Geografi</option><option value="Sejarah Tingkat Lanjut">Sejarah Tingkat Lanjut</option><option value="Bahasa Indonesia Tingkat Lanjut">Bahasa Indonesia Tingkat Lanjut</option><option value="Bahasa Inggris Tingkat Lanjut">Bahasa Inggris Tingkat Lanjut</option><option value="Bahasa & Sastra Prancis">Bahasa & Sastra Prancis</option><option value="Informatika Tingkat Lanjut">Informatika Tingkat Lanjut</option></select></div>
+    </div>
+  </div>
+
+  <div class="card">
+    
+    <!-- ==================== KELAS X ==================== -->
+    <div id="akademik-kelas-content-10" class="akademik-kelas-content">
       
+      <!-- Sub-Tabs Semester -->
+      <div style="display:flex;gap:8px;margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:0;">
+        <button type="button" id="akademik-sem-tab-1" onclick="StudentApp.switchAkademikSemester(1)" style="padding:8px 16px;background:none;border:none;border-bottom:2px solid var(--accent);margin-bottom:-1px;font-weight:600;font-size:13px;color:var(--accent);cursor:pointer;">Semester 1</button>
+        <button type="button" id="akademik-sem-tab-2" onclick="StudentApp.switchAkademikSemester(2)" style="padding:8px 16px;background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;font-weight:500;font-size:13px;color:var(--text-muted);cursor:pointer;">Semester 2</button>
+      </div>
+
+      <!-- SEMESTER 1 -->
+      <div id="akademik-sem-content-1" class="akademik-sem-content">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div class="form-group"><label class="form-label">1. Pendidikan Agama dan Budi Pekerti</label><input type="number" step="0.01" class="form-control" name="akademik_s1_0" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">2. Pendidikan Pancasila</label><input type="number" step="0.01" class="form-control" name="akademik_s1_1" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">3. Bahasa Indonesia</label><input type="number" step="0.01" class="form-control" name="akademik_s1_2" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">4. Matematika</label><input type="number" step="0.01" class="form-control" name="akademik_s1_3" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">5. Bahasa Inggris</label><input type="number" step="0.01" class="form-control" name="akademik_s1_4" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">6. Pend. Jasmani, Olahraga, dan Kesehatan</label><input type="number" step="0.01" class="form-control" name="akademik_s1_5" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">7. Seni Budaya</label><input type="number" step="0.01" class="form-control" name="akademik_s1_6" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">8. Ilmu Pengetahuan Alam (IPA)</label><input type="number" step="0.01" class="form-control" name="akademik_s1_7" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">9. Ilmu Pengetahuan Sosial (IPS)</label><input type="number" step="0.01" class="form-control" name="akademik_s1_8" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">10. Informatika</label><input type="number" step="0.01" class="form-control" name="akademik_s1_9" placeholder="0 - 100"></div>
+        </div>
+      </div>
+
+      <!-- SEMESTER 2 -->
+      <div id="akademik-sem-content-2" class="akademik-sem-content" style="display:none;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div class="form-group"><label class="form-label">1. Pendidikan Agama dan Budi Pekerti</label><input type="number" step="0.01" class="form-control" name="akademik_s2_0" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">2. Pendidikan Pancasila</label><input type="number" step="0.01" class="form-control" name="akademik_s2_1" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">3. Bahasa Indonesia</label><input type="number" step="0.01" class="form-control" name="akademik_s2_2" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">4. Matematika</label><input type="number" step="0.01" class="form-control" name="akademik_s2_3" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">5. Bahasa Inggris</label><input type="number" step="0.01" class="form-control" name="akademik_s2_4" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">6. Pend. Jasmani, Olahraga, dan Kesehatan</label><input type="number" step="0.01" class="form-control" name="akademik_s2_5" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">7. Seni Budaya</label><input type="number" step="0.01" class="form-control" name="akademik_s2_6" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">8. Ilmu Pengetahuan Alam (IPA)</label><input type="number" step="0.01" class="form-control" name="akademik_s2_7" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">9. Ilmu Pengetahuan Sosial (IPS)</label><input type="number" step="0.01" class="form-control" name="akademik_s2_8" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">10. Informatika</label><input type="number" step="0.01" class="form-control" name="akademik_s2_9" placeholder="0 - 100"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ==================== KELAS XI ==================== -->
+    <div id="akademik-kelas-content-11" class="akademik-kelas-content" style="display:none;">
+      
+      <!-- Sub-Tabs Semester -->
+      <div style="display:flex;gap:8px;margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:0;">
+        <button type="button" id="akademik-sem-tab-3" onclick="StudentApp.switchAkademikSemester(3)" style="padding:8px 16px;background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;font-weight:500;font-size:13px;color:var(--text-muted);cursor:pointer;">Semester 3</button>
+        <button type="button" id="akademik-sem-tab-4" onclick="StudentApp.switchAkademikSemester(4)" style="padding:8px 16px;background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;font-weight:500;font-size:13px;color:var(--text-muted);cursor:pointer;">Semester 4</button>
+      </div>
+
+      <!-- SEMESTER 3 -->
+      <div id="akademik-sem-content-3" class="akademik-sem-content" style="display:none;">
+        <div style="font-weight:600; margin-bottom:12px; font-size:13px; color:var(--text-secondary);">Mata Pelajaran Wajib</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
+          <div class="form-group"><label class="form-label">1. Pendidikan Agama dan Budi Pekerti</label><input type="number" step="0.01" class="form-control" name="akademik_s3_w0" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">2. Pendidikan Pancasila</label><input type="number" step="0.01" class="form-control" name="akademik_s3_w1" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">3. Bahasa Indonesia</label><input type="number" step="0.01" class="form-control" name="akademik_s3_w2" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">4. Matematika</label><input type="number" step="0.01" class="form-control" name="akademik_s3_w3" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">5. Bahasa Inggris</label><input type="number" step="0.01" class="form-control" name="akademik_s3_w4" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">6. Pend. Jasmani, Olahraga, dan Kesehatan</label><input type="number" step="0.01" class="form-control" name="akademik_s3_w5" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">7. Seni Budaya</label><input type="number" step="0.01" class="form-control" name="akademik_s3_w6" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">8. Prakarya dan Kewirausahaan (PKWU)</label><input type="number" step="0.01" class="form-control" name="akademik_s3_w7" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">9. Sejarah</label><input type="number" step="0.01" class="form-control" name="akademik_s3_w8" placeholder="0 - 100"></div>
+        </div>
+        <div style="font-weight:600; margin-bottom:12px; font-size:13px; color:var(--text-secondary);">Mata Pelajaran Pilihan</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div class="form-group"><label class="form-label label-pil-1">Pilihan 1</label><input type="number" step="0.01" class="form-control" name="akademik_s3_p1" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label label-pil-2">Pilihan 2</label><input type="number" step="0.01" class="form-control" name="akademik_s3_p2" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label label-pil-3">Pilihan 3</label><input type="number" step="0.01" class="form-control" name="akademik_s3_p3" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label label-pil-4">Pilihan 4</label><input type="number" step="0.01" class="form-control" name="akademik_s3_p4" placeholder="0 - 100"></div>
+        </div>
+      </div>
+
+      <!-- SEMESTER 4 -->
+      <div id="akademik-sem-content-4" class="akademik-sem-content" style="display:none;">
+        <div style="font-weight:600; margin-bottom:12px; font-size:13px; color:var(--text-secondary);">Mata Pelajaran Wajib</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
+          <div class="form-group"><label class="form-label">1. Pendidikan Agama dan Budi Pekerti</label><input type="number" step="0.01" class="form-control" name="akademik_s4_w0" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">2. Pendidikan Pancasila</label><input type="number" step="0.01" class="form-control" name="akademik_s4_w1" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">3. Bahasa Indonesia</label><input type="number" step="0.01" class="form-control" name="akademik_s4_w2" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">4. Matematika</label><input type="number" step="0.01" class="form-control" name="akademik_s4_w3" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">5. Bahasa Inggris</label><input type="number" step="0.01" class="form-control" name="akademik_s4_w4" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">6. Pend. Jasmani, Olahraga, dan Kesehatan</label><input type="number" step="0.01" class="form-control" name="akademik_s4_w5" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">7. Seni Budaya</label><input type="number" step="0.01" class="form-control" name="akademik_s4_w6" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">8. Prakarya dan Kewirausahaan (PKWU)</label><input type="number" step="0.01" class="form-control" name="akademik_s4_w7" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">9. Sejarah</label><input type="number" step="0.01" class="form-control" name="akademik_s4_w8" placeholder="0 - 100"></div>
+        </div>
+        <div style="font-weight:600; margin-bottom:12px; font-size:13px; color:var(--text-secondary);">Mata Pelajaran Pilihan</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div class="form-group"><label class="form-label label-pil-1">Pilihan 1</label><input type="number" step="0.01" class="form-control" name="akademik_s4_p1" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label label-pil-2">Pilihan 2</label><input type="number" step="0.01" class="form-control" name="akademik_s4_p2" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label label-pil-3">Pilihan 3</label><input type="number" step="0.01" class="form-control" name="akademik_s4_p3" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label label-pil-4">Pilihan 4</label><input type="number" step="0.01" class="form-control" name="akademik_s4_p4" placeholder="0 - 100"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ==================== KELAS XII ==================== -->
+    <div id="akademik-kelas-content-12" class="akademik-kelas-content" style="display:none;">
+      
+      <!-- Sub-Tabs Semester -->
+      <div style="display:flex;gap:8px;margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:0;">
+        <button type="button" id="akademik-sem-tab-5" onclick="StudentApp.switchAkademikSemester(5)" style="padding:8px 16px;background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;font-weight:500;font-size:13px;color:var(--text-muted);cursor:pointer;">Semester 5</button>
+        <button type="button" id="akademik-sem-tab-6" onclick="StudentApp.switchAkademikSemester(6)" style="padding:8px 16px;background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;font-weight:500;font-size:13px;color:var(--text-muted);cursor:pointer;">Semester 6</button>
+      </div>
+
+      <!-- SEMESTER 5 -->
+      <div id="akademik-sem-content-5" class="akademik-sem-content" style="display:none;">
+        <div style="font-weight:600; margin-bottom:12px; font-size:13px; color:var(--text-secondary);">Mata Pelajaran Wajib</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
+          <div class="form-group"><label class="form-label">1. Pendidikan Agama dan Budi Pekerti</label><input type="number" step="0.01" class="form-control" name="akademik_s5_w0" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">2. Pendidikan Pancasila</label><input type="number" step="0.01" class="form-control" name="akademik_s5_w1" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">3. Bahasa Indonesia</label><input type="number" step="0.01" class="form-control" name="akademik_s5_w2" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">4. Matematika</label><input type="number" step="0.01" class="form-control" name="akademik_s5_w3" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">5. Bahasa Inggris</label><input type="number" step="0.01" class="form-control" name="akademik_s5_w4" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">6. Pend. Jasmani, Olahraga, dan Kesehatan</label><input type="number" step="0.01" class="form-control" name="akademik_s5_w5" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">7. Seni Budaya</label><input type="number" step="0.01" class="form-control" name="akademik_s5_w6" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">8. Prakarya dan Kewirausahaan (PKWU)</label><input type="number" step="0.01" class="form-control" name="akademik_s5_w7" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">9. Sejarah</label><input type="number" step="0.01" class="form-control" name="akademik_s5_w8" placeholder="0 - 100"></div>
+        </div>
+        <div style="font-weight:600; margin-bottom:12px; font-size:13px; color:var(--text-secondary);">Mata Pelajaran Pilihan</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div class="form-group"><label class="form-label label-pil-1">Pilihan 1</label><input type="number" step="0.01" class="form-control" name="akademik_s5_p1" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label label-pil-2">Pilihan 2</label><input type="number" step="0.01" class="form-control" name="akademik_s5_p2" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label label-pil-3">Pilihan 3</label><input type="number" step="0.01" class="form-control" name="akademik_s5_p3" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label label-pil-4">Pilihan 4</label><input type="number" step="0.01" class="form-control" name="akademik_s5_p4" placeholder="0 - 100"></div>
+        </div>
+      </div>
+
+      <!-- SEMESTER 6 -->
+      <div id="akademik-sem-content-6" class="akademik-sem-content" style="display:none;">
+        <div style="font-weight:600; margin-bottom:12px; font-size:13px; color:var(--text-secondary);">Mata Pelajaran Wajib</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
+          <div class="form-group"><label class="form-label">1. Pendidikan Agama dan Budi Pekerti</label><input type="number" step="0.01" class="form-control" name="akademik_s6_w0" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">2. Pendidikan Pancasila</label><input type="number" step="0.01" class="form-control" name="akademik_s6_w1" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">3. Bahasa Indonesia</label><input type="number" step="0.01" class="form-control" name="akademik_s6_w2" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">4. Matematika</label><input type="number" step="0.01" class="form-control" name="akademik_s6_w3" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">5. Bahasa Inggris</label><input type="number" step="0.01" class="form-control" name="akademik_s6_w4" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">6. Pend. Jasmani, Olahraga, dan Kesehatan</label><input type="number" step="0.01" class="form-control" name="akademik_s6_w5" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">7. Seni Budaya</label><input type="number" step="0.01" class="form-control" name="akademik_s6_w6" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">8. Prakarya dan Kewirausahaan (PKWU)</label><input type="number" step="0.01" class="form-control" name="akademik_s6_w7" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label">9. Sejarah</label><input type="number" step="0.01" class="form-control" name="akademik_s6_w8" placeholder="0 - 100"></div>
+        </div>
+        <div style="font-weight:600; margin-bottom:12px; font-size:13px; color:var(--text-secondary);">Mata Pelajaran Pilihan</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div class="form-group"><label class="form-label label-pil-1">Pilihan 1</label><input type="number" step="0.01" class="form-control" name="akademik_s6_p1" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label label-pil-2">Pilihan 2</label><input type="number" step="0.01" class="form-control" name="akademik_s6_p2" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label label-pil-3">Pilihan 3</label><input type="number" step="0.01" class="form-control" name="akademik_s6_p3" placeholder="0 - 100"></div>
+          <div class="form-group"><label class="form-label label-pil-4">Pilihan 4</label><input type="number" step="0.01" class="form-control" name="akademik_s6_p4" placeholder="0 - 100"></div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="card" style="margin-top:20px;">
+    <div style="display:flex;gap:10px;align-items:center;justify-content:flex-end;">
+      <span id="akademik-save-status" style="font-size:13px;color:var(--belajar);font-weight:600;margin-right:10px;"></span>
+      <button type="submit" class="btn btn-primary" style="padding:10px 24px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;vertical-align:-3px"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1-2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Simpan Nilai Akademik
+      </button>
+    </div>
+  </div>
+</form>
+
+          </div>
+
+          <!-- TAB: PRESTASI -->
+          <div id="porto-content-prestasi" style="display:none;">
+            <!-- Form tambah prestasi -->
+            <div class="card" style="margin-bottom:16px;">
+              <div style="font-weight:700;font-size:15px;color:var(--text-primary);margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Tambah Prestasi
+              </div>
+              <form id="form-prestasi" onsubmit="event.preventDefault(); StudentApp.submitPrestasi();">
+                <input type="hidden" id="prestasi-edit-id">
+                <div class="form-group" style="margin-bottom:12px;">
+                  <label class="form-label">Nama Prestasi / Penghargaan *</label>
+                  <input type="text" id="prestasi-nama" class="form-control" placeholder="cth: Juara 1 Olimpiade Matematika Tingkat Kota" required>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+                  <div class="form-group">
+                    <label class="form-label">Tingkat *</label>
+                    <select id="prestasi-tingkat" class="form-control" required>
+                      <option value="">— Pilih —</option>
+                      <option value="Sekolah">Sekolah</option>
+                      <option value="Kecamatan">Kecamatan</option>
+                      <option value="Kota/Kabupaten">Kota / Kabupaten</option>
+                      <option value="Provinsi">Provinsi</option>
+                      <option value="Nasional">Nasional</option>
+                      <option value="Internasional">Internasional</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Posisi / Peringkat</label>
+                    <input type="text" id="prestasi-posisi" class="form-control" placeholder="cth: Juara 1, Finalis, Peserta">
+                  </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+                  <div class="form-group">
+                    <label class="form-label">Tahun</label>
+                    <input type="text" id="prestasi-tahun" class="form-control" placeholder="cth: 2024" maxlength="4" inputmode="numeric">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Penyelenggara</label>
+                    <input type="text" id="prestasi-penyelenggara" class="form-control" placeholder="cth: Kemendikbud, Dinas Pendidikan">
+                  </div>
+                </div>
+                <div class="form-group" style="margin-bottom:14px;">
+                  <label class="form-label">Keterangan Tambahan</label>
+                  <textarea id="prestasi-keterangan" class="form-control" rows="2" placeholder="Ceritakan prestasi ini secara singkat..."></textarea>
+                </div>
+                <div style="display:flex;gap:8px;">
+                  <button type="submit" class="btn btn-primary btn-sm" id="btn-submit-prestasi">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    Simpan Prestasi
+                  </button>
+                  <button type="button" id="btn-cancel-prestasi" class="btn btn-outline btn-sm" style="display:none;" onclick="StudentApp.cancelEditPrestasi()">Batal</button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Daftar prestasi -->
+            <div class="card">
+              <div style="font-weight:700;font-size:15px;color:var(--text-primary);margin-bottom:14px;">Daftar Prestasi</div>
+              <div id="prestasi-list-container">
+                <p style="color:var(--text-muted);text-align:center;padding:20px 0;">Memuat data prestasi...</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB: EKSKUL -->
+          <div id="porto-content-ekskul" style="display:none;">
+            <!-- Form tambah ekskul -->
+            <div class="card" style="margin-bottom:16px;">
+              <div style="font-weight:700;font-size:15px;color:var(--text-primary);margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                Tambah Ekstrakurikuler / Organisasi
+              </div>
+              <form id="form-ekskul" onsubmit="event.preventDefault(); StudentApp.submitEkskul();">
+                <input type="hidden" id="ekskul-edit-id">
+                <div class="form-group" style="margin-bottom:12px;">
+                  <label class="form-label">Nama Kegiatan / Ekstrakurikuler / Organisasi *</label>
+                  <input type="text" id="ekskul-nama" class="form-control" placeholder="cth: Pramuka, OSIS, Paskibra" required>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+                  <div class="form-group">
+                    <label class="form-label">Jenis Kegiatan *</label>
+                    <select id="ekskul-jenis" class="form-control" required>
+                      <option value="">— Pilih —</option>
+                      <option value="Ekstrakurikuler">Ekstrakurikuler</option>
+                      <option value="Organisasi">Organisasi</option>
+                      <option value="Kepanitiaan">Kepanitiaan</option>
+                      <option value="Lainnya">Lainnya</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Posisi / Jabatan</label>
+                    <input type="text" id="ekskul-posisi" class="form-control" placeholder="cth: Anggota, Ketua, Sekretaris">
+                  </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+                  <div class="form-group">
+                    <label class="form-label">Tahun</label>
+                    <input type="text" id="ekskul-tahun" class="form-control" placeholder="cth: 2022-2023">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Keterangan / Peran Utama</label>
+                    <input type="text" id="ekskul-keterangan" class="form-control" placeholder="cth: Koordinator lapangan">
+                  </div>
+                </div>
+                <div style="display:flex;gap:10px;align-items:center;justify-content:flex-end;">
+                  <span id="ekskul-save-status" style="font-size:13px;color:var(--belajar);font-weight:600;margin-right:10px;"></span>
+                  <button type="button" class="btn btn-outline" id="btn-cancel-ekskul" style="display:none;" onclick="StudentApp.resetFormEkskul()">Batal</button>
+                  <button type="submit" class="btn btn-primary btn-sm">Simpan Data</button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Daftar Ekskul -->
+            <div class="card">
+              <div style="font-weight:600;font-size:14px;color:var(--text-secondary);margin-bottom:12px;">Daftar Ekstrakurikuler & Organisasi</div>
+              <div id="ekskul-list">
+                <!-- Render from JS -->
+                <div style="text-align:center;padding:30px;color:var(--text-muted);font-size:13px;">Belum ada data Ekstrakurikuler / Organisasi yang ditambahkan.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- end student-page-content -->
+    </div><!-- end student-main -->
+  </div><!-- end student-shell -->
+</div>
+
+<!-- ═══════════════════════════════════════
+     HALAMAN KUESIONER (Fullpage)
+════════════════════════════════════════ -->
+<div id="page-kuesioner" style="display:none;" class="student-kuesioner-fullpage">
+
+  <!-- Kuesioner Header / Progress Bar & Timer -->
+  <div class="kuesioner-header" id="kuesioner-header" style="background:var(--card-bg); border-bottom:1px solid var(--border); padding:16px 24px; position:sticky; top:0; z-index:100; display:flex; gap:20px; align-items:center;">
+    
+    <div style="display:flex; align-items:center; gap:8px; padding-right:16px; border-right:1px solid var(--border);">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span id="timer-display" style="font-size:16px; font-weight:700; color:var(--text-primary); font-variant-numeric: tabular-nums;">00:00</span>
+    </div>
+
+    <div style="flex:1;">
+      <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:6px; color:var(--text-secondary);">
+        <span style="font-weight:600" id="progress-label">Halaman 1 dari 11</span>
+        <span id="progress-pct">0%</span>
+      </div>
+      <div style="height:8px; background:var(--bg-color); border-radius:4px; overflow:hidden;">
+        <div id="progress-bar" style="height:100%; width:0%; background:var(--primary); transition:width 0.3s ease;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 📖 PANDUAN 📖 -->
+  <div id="step-panduan" style="display:none">
+    <div class="card card-glass biodata-container" style="max-width: 700px; margin: 40px auto; text-align: left;">
+      <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 20px; text-align: center;">Panduan Pengisian</h2>
       <div style="margin-bottom: 24px; font-size: 16px; color: var(--text-secondary); line-height: 1.6;">
         <p style="margin-bottom: 12px;">Selamat datang di <strong>Problem Checklist</strong>. Asesmen ini bertujuan untuk memahami potensi masalah atau tantangan yang sedang Anda hadapi, baik secara pribadi, sosial, belajar, maupun karir.</p>
-        
         <p style="margin-bottom: 12px;"><strong>Penting untuk diperhatikan:</strong></p>
         <ul style="padding-left: 20px; margin-bottom: 16px;">
           <li style="margin-bottom: 8px;">Asesmen ini <strong>bukanlah ujian</strong>. Tidak ada jawaban benar atau salah.</li>
@@ -146,30 +1472,23 @@
           <li style="margin-bottom: 8px;">Jawablah dengan <strong>jujur</strong> dan sesuai dengan apa yang benar-benar Anda rasakan saat ini.</li>
           <li style="margin-bottom: 8px;">Kerahasiaan data Anda <strong>dijamin sepenuhnya</strong> dan hanya akan digunakan oleh Guru BK untuk membantu perkembangan Anda.</li>
         </ul>
-        
         <p>Silakan klik <strong>"Ya"</strong> jika pernyataan sesuai dengan kondisi Anda, dan <strong>"Tidak"</strong> jika tidak sesuai.</p>
       </div>
-
       <button class="btn btn-primary" style="width: 100%; font-size: 16px;" onclick="KuesionerApp.mulaiDariPanduan()">Saya Mengerti, Mulai Kuesioner</button>
     </div>
   </div>
 
-  <!-- 📝 STEP 3: KUESIONER 📝 -->
+  <!-- 📝 SOAL 📝 -->
   <div id="step-soal" style="display:none">
     <div class="soal-container">
       <p id="soal-page-label" class="soal-page-label"></p>
       <div id="soal-list" class="soal-list"></div>
-
       <div class="soal-nav">
-        <button id="nav-prev" class="btn btn-outline" onclick="KuesionerApp.prevPage()">
-          ← Sebelumnya
-        </button>
+        <button id="nav-prev" class="btn btn-outline" onclick="KuesionerApp.prevPage()">← Sebelumnya</button>
         <div class="soal-nav-info" id="soal-nav-info">
           Halaman <span id="hal-current">1</span> dari 11
         </div>
-        <button id="nav-next" class="btn btn-primary" onclick="KuesionerApp.nextPage()">
-          Selanjutnya →
-        </button>
+        <button id="nav-next" class="btn btn-primary" onclick="KuesionerApp.nextPage()">Selanjutnya →</button>
       </div>
     </div>
   </div>
@@ -185,7 +1504,6 @@
       <p style="color:var(--text-muted);font-size:14px;margin-bottom:32px">
         Konselor akan menganalisis hasil asesmen dan memberikan rekomendasi terbaik untukmu.
       </p>
-
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:32px">
         <div class="card" style="text-align:center">
           <div style="font-size:28px;font-weight:800;color:var(--belajar)" id="selesai-jawab">0</div>
@@ -196,33 +1514,33 @@
           <div style="font-size:12px;color:var(--text-muted);margin-top:4px">durasi pengisian</div>
         </div>
       </div>
-
       <div class="card" style="background:rgba(34,197,94,0.08);border-color:rgba(34,197,94,0.2);text-align:left">
-        <p style="font-size:13px;color:var(--belajar);font-weight:600;margin-bottom:6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:-3px"><polyline points="20 6 9 17 4 12"/></svg> Apa yang terjadi selanjutnya?</p>
+        <p style="font-size:13px;color:var(--belajar);font-weight:600;margin-bottom:6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;vertical-align:-3px"><polyline points="20 6 9 17 4 12"/></svg> Apa yang terjadi selanjutnya?</p>
         <ul style="font-size:13px;color:var(--text-secondary);padding-left:16px;line-height:2">
           <li>Konselor akan menganalisis hasilmu</li>
           <li>Laporan individual akan disiapkan</li>
           <li>Kamu akan mendapat bimbingan personal</li>
         </ul>
       </div>
-
-      <p style="margin-top:28px;font-size:13px;color:var(--text-muted)">Halaman ini dapat ditutup.</p>
+      <button class="btn btn-primary" style="margin-top:24px;width:100%" onclick="StudentApp.loadDashboard()">
+        ← Kembali ke Dashboard
+      </button>
     </div>
   </div>
 
 </div><!-- end page-kuesioner -->
 
 <!-- Scripts -->
-<script src="js/data-soal.js?v=10"></script>
-<script src="js/utils/storage.js?v=10"></script>
-<script src="js/utils/scoring.js?v=10"></script>
-<script src="js/utils/api.js?v=10"></script>
-<script src="js/components/ui.js?v=10"></script>
-<script src="js/pages/kuesioner.js?v=10"></script>
+<script src="js/data-soal.js?v=13"></script>
+<script src="js/utils/storage.js?v=13"></script>
+<script src="js/utils/scoring.js?v=13"></script>
+<script src="js/utils/api.js?v=13"></script>
+<script src="js/components/ui.js?v=13"></script>
+<script src="js/pages/student.js?v=13"></script>
+<script src="js/pages/kuesioner.js?v=13"></script>
 <script>
-  // Boot
   window.addEventListener('DOMContentLoaded', () => {
-    KuesionerApp.init();
+    StudentApp.init();
   });
 </script>
 </body>

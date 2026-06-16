@@ -134,4 +134,9 @@ const Storage = {
 
   saveAdminUser(user) { this.set('admin_user', user); },
   getAdminUser()      { return this.get('admin_user', null); },
+
+  // ── Student specific ──
+  setStudentToken(token) { this.set('student_token', token); },
+  getStudentToken()      { return this.get('student_token', null); },
+  clearStudentToken()    { this.remove('student_token'); },
 };

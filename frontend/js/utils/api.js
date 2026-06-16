@@ -63,8 +63,15 @@ const MOCK = {
 // ──────────────────────────────────────────
 // HTTP Helper
 // ──────────────────────────────────────────
-async function http(method, path, body = null) {
-  const token = Storage.getAdminToken();
+async function http(method, path, body = null, tokenOverride = null) {
+  // Cek apakah ada token secara eksplisit, jika tidak, gunakan default
+  let token = tokenOverride;
+  if (!token) {
+    // Jika path diawali '/auth/login/student' atau '/students' dll, gunakan student token?
+    // Lebih baik kita pakai tokenOverride dari fungsi pemanggil.
+    token = Storage.getAdminToken() || Storage.getStudentToken();
+  }
+
   const opts = {
     method,
     headers: { 'Content-Type': 'application/json', ...(token ? {'Authorization':`Bearer ${token}`} : {}) },
@@ -77,7 +84,11 @@ async function http(method, path, body = null) {
   const res = await fetch(API_BASE + finalPath, opts);
   if (!res.ok) {
     if (res.status === 401) {
-      Storage.clearAdminToken();
+      if (token === Storage.getAdminToken()) {
+        Storage.clearAdminToken();
+      } else {
+        Storage.clearStudentToken();
+      }
       window.location.reload();
       throw new Error('Sesi login telah habis, silakan login kembali');
     }
@@ -87,29 +98,40 @@ async function http(method, path, body = null) {
   return res.json();
 }
 
+// HTTP helper khusus siswa — selalu gunakan student token
+async function httpStudent(method, path, body = null, token = null) {
+  const studentToken = token || Storage.getStudentToken();
+  return http(method, path, body, studentToken);
+}
+
+
 // ──────────────────────────────────────────
 // API Functions
 // ──────────────────────────────────────────
 const API = {
-  // Kuesioner (publik)
-  async cekSession(token) {
-    if (!token) return { valid: false, message: 'Token tidak ditemukan' };
-    if (MOCK_MODE) {
-      const s = MOCK.sessions.find(x => x.token === token);
-      return s ? { valid: true, active: s.is_active, session: { id: s.id, name: s.name } } : { valid: false, message: 'Token tidak ditemukan' };
-    }
-    return http('GET', `/sessions/check/${token}`);
+  // ─── STUDENT API ─────────────────────────
+  async studentLogin(nisn, password) {
+    if (MOCK_MODE) return { token: 'student_token_123', user: { id:1, nisn, role:'student' } };
+    return http('POST', '/auth/login/student', { nisn, password });
   },
-  async cekNISN(token, nisn) {
-    if (MOCK_MODE) return { exists: nisn === '0012345678', is_complete: false };
-    const res = await http('GET', `/students/check-nisn/${token}/${nisn}`);
-    return res.data || { exists: false };
+  async getStudentProfile(token) {
+    if (MOCK_MODE) return { user: MOCK.students[0] };
+    return http('GET', '/auth/me', null, token);
   },
-  async simpanBiodata(data) {
-    if (MOCK_MODE) return { student_id: 999, ...data };
-    const res = await http('POST', '/students', data);
-    return { student_id: res.data ? res.data.student_id : null, resumed: res.data ? res.data.resumed : false, ...data };
+  async updateStudentProfile(data, token) {
+    if (MOCK_MODE) return { success: true };
+    return http('PUT', '/students/profile', data, token);
   },
+  async getActiveSessions(token) {
+    if (MOCK_MODE) return [{ id:1, name:'Sesi Ganjil 2025/2026' }];
+    return http('GET', '/sessions/active', null, token);
+  },
+  async startAssessment(sessionId, token) {
+    if (MOCK_MODE) return { student_id: 123 };
+    return http('POST', '/students/start-assessment', { session_id: sessionId }, token);
+  },
+
+  // ─── KUESIONER (PUBLIK & SISWA) ──────────
   async getSoal() {
     if (MOCK_MODE) return QUESTIONS_DATA;
     const res = await http('GET', '/questions/shuffled');
@@ -380,4 +402,65 @@ const API = {
     const res = await http('GET', `/dashboard/class-report/${encodeURIComponent(kelas)}`);
     return res.data;
   },
+
+  // ─────────────────────────────────
+  // PORTFOLIO — RAPOR
+  // ─────────────────────────────────
+  async getRapor(token) {
+    const res = await httpStudent('GET', '/portfolio/rapor', null, token);
+    return res.data || [];
+  },
+  async addRapor(data, token) {
+    const res = await httpStudent('POST', '/portfolio/rapor', data, token);
+    return res;
+  },
+  async updateRapor(id, data, token) {
+    const res = await httpStudent('PUT', `/portfolio/rapor/${id}`, data, token);
+    return res;
+  },
+  async deleteRapor(id, token) {
+    const res = await httpStudent('DELETE', `/portfolio/rapor/${id}`, null, token);
+    return res;
+  },
+
+  // ─────────────────────────────────
+  // PORTFOLIO — PRESTASI
+  // ─────────────────────────────────
+  async getPrestasi(token) {
+    const res = await httpStudent('GET', '/portfolio/prestasi', null, token);
+    return res.data || [];
+  },
+  async addPrestasi(data, token) {
+    const res = await httpStudent('POST', '/portfolio/prestasi', data, token);
+    return res;
+  },
+  async updatePrestasi(id, data, token) {
+    const res = await httpStudent('PUT', `/portfolio/prestasi/${id}`, data, token);
+    return res;
+  },
+  async deletePrestasi(id, token) {
+    const res = await httpStudent('DELETE', `/portfolio/prestasi/${id}`, null, token);
+    return res;
+  },
+
+  // ─────────────────────────────────
+  // PORTFOLIO — EKSKUL & ORGANISASI
+  // ─────────────────────────────────
+  async getEkskul(token) {
+    const res = await httpStudent('GET', '/portfolio/ekskul', null, token);
+    return res.data || [];
+  },
+  async addEkskul(data, token) {
+    const res = await httpStudent('POST', '/portfolio/ekskul', data, token);
+    return res;
+  },
+  async updateEkskul(id, data, token) {
+    const res = await httpStudent('PUT', `/portfolio/ekskul/${id}`, data, token);
+    return res;
+  },
+  async deleteEkskul(id, token) {
+    const res = await httpStudent('DELETE', `/portfolio/ekskul/${id}`, null, token);
+    return res;
+  },
 };
+

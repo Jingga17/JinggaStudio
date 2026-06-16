@@ -54,6 +54,8 @@ app.use('/api/dashboard', require('./routes/dashboard'));
 app.use('/api/reports', require('./routes/reports'));
 app.use('/api/settings', require('./routes/settings'));
 app.use('/api/export', require('./routes/export'));
+app.use('/api/portfolio', require('./routes/portfolio'));
+
 
 // Expose CSV data folder for dynamic narrative generation
 app.use('/api/csv', express.static(path.join(__dirname, '../../../SOAL DAN ANALISIS DCM')));

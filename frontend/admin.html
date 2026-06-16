@@ -46,10 +46,10 @@
 <div id="admin-login" class="login-page" style="display:none; padding:0; align-items: stretch; flex-wrap: wrap;">
   
   <!-- Sisi Kiri (Area Konten) -->
-  <div id="login-left-area" style="flex: 1 1 400px; display: flex; align-items: center; justify-content: center; padding: 40px; border-right: 1px solid var(--border); background: rgba(255,255,255,0.3);">
-    <div style="text-align: center; color: var(--text-muted); border: 2px dashed var(--border); padding: 40px; border-radius: var(--radius-lg); width: 100%; max-width: 500px;">
-      <h3 style="color: var(--text-primary); margin-bottom: 12px;">Area Konten Kiri</h3>
-      <p style="font-size: 14px; line-height: 1.6;">Ruang kosong ini sengaja disiapkan agar Anda bisa menambahkan ilustrasi gambar, logo instansi, atau teks sambutan kustom sesuai kebutuhan Anda.</p>
+  <div id="login-left-area" style="flex: 1 1 400px; display: flex; align-items: center; justify-content: center; padding: 40px; border-right: 1px solid var(--accent); background: var(--accent-secondary);">
+    <div style="text-align: center; color: var(--accent); border: 2px solid var(--accent); padding: 40px; border-radius: var(--radius-lg); width: 100%; max-width: 500px; background: rgba(255,255,255,0.9);">
+      <h3 style="color: var(--accent); margin-bottom: 12px; font-weight: 800;">Area Konten Kiri</h3>
+      <p style="font-size: 14px; line-height: 1.6; font-weight: 500;">Ruang kosong ini sengaja disiapkan agar Anda bisa menambahkan ilustrasi gambar, logo instansi, atau teks sambutan kustom sesuai kebutuhan Anda.</p>
     </div>
   </div>
 
@@ -58,7 +58,7 @@
     <div class="login-card fade-in">
     <div class="login-logo" style="text-align: center; margin-bottom: 32px;">
       <div class="login-logo-icon" style="background:none; width:120px; height:120px; margin:0 auto 16px; box-shadow:none; border-radius:0;">
-        <img src="img/logo-full.svg" alt="Resilien Logo" style="width:100%; height:100%; object-fit:contain;">
+        <img src="img/logo-transparent.png" alt="Resilien Logo" style="width:100%; height:100%; object-fit:contain;">
       </div>
       <div style="color: var(--accent); font-size:24px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 6px;">Resilien</div>
       <div style="color: var(--text-secondary); font-size:14px; font-style: italic;">"Unburdening the Resilient Counselor."</div>
@@ -102,7 +102,7 @@
   <nav id="sidebar" class="sidebar">
     <div class="sidebar-logo" style="display:flex; align-items:center; gap: 12px; padding: 16px 14px;">
       <div style="width: 44px; height: 44px; flex-shrink: 0;">
-        <img src="img/logo-full.svg" alt="Resilien Logo" style="width:100%; height:100%; object-fit:contain;">
+        <img src="img/logo-transparent.png" alt="Resilien Logo" style="width:100%; height:100%; object-fit:contain;">
       </div>
       <div style="display: flex; flex-direction: column; justify-content: center;">
         <div style="color: var(--accent); font-size:16px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.2;">Resilien</div>
@@ -155,17 +155,36 @@
         <span>Cetak Laporan</span>
       </div>
 
-      <div class="nav-item" data-page="pengaturan">
-        <span class="nav-icon" style="display:flex; align-items:center; justify-content:center;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
-        </span>
-        <span>Pengaturan</span>
+      <div class="nav-group">
+        <div class="nav-group-title" onclick="AdminApp.toggleNavGroup(this)">
+          <span class="nav-icon" style="display:flex; align-items:center; justify-content:center;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+          </span>
+          <span>Pengaturan</span>
+          <span class="nav-group-caret">▼</span>
+        </div>
+        <div class="nav-group-items">
+          <div class="nav-item" data-page="pengaturan">
+            <span class="nav-icon" style="display:flex; align-items:center; justify-content:center;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            </span>
+            <span>Identitas Sekolah</span>
+          </div>
+          <div class="nav-item" data-page="data-master">
+            <span class="nav-icon" style="display:flex; align-items:center; justify-content:center;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </span>
+            <span>Data Akun Siswa</span>
+          </div>
+        </div>
       </div>
     </div>
 
     <div class="sidebar-footer">
       <div class="admin-avatar">
-        <div class="avatar-circle" id="avatar-initials">A</div>
+        <div class="avatar-circle" id="avatar-initials">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
         <div>
           <div class="avatar-name" id="admin-name">Admin</div>
           <div style="font-size:11px;color:var(--text-muted)">Administrator</div>
@@ -185,7 +204,10 @@
       <button id="hamburger" class="topbar-hamburger" onclick="AdminApp.toggleSidebar()">☰</button>
       <h2 id="topbar-title" class="topbar-title"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; vertical-align:-3px"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Dashboard</h2>
       <div class="topbar-actions">
-
+        <button id="theme-toggle" class="btn btn-ghost btn-sm" onclick="AdminApp.toggleTheme()" style="padding: 8px; border-radius: 50%;" title="Ubah Mode Tampilan">
+          <svg id="theme-icon-sun" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+          <svg id="theme-icon-moon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
       </div>
     </div>
 
@@ -266,32 +288,8 @@
           </div>
         </div>
 
-        <!-- Daftar Siswa Prioritas -->
-        <div class="card" style="margin-top: 20px; margin-bottom: 20px;">
-          <h3 style="margin:0 0 15px 0; font-size:16px; color:#b91c1c; display:flex; align-items:center; gap:8px;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg> Siswa Membutuhkan Penanganan Segera
-          </h3>
-          <p style="font-size:13px; color:var(--text-muted); margin-top:-10px; margin-bottom:15px;">Daftar siswa dengan intensitas masalah Berat (≥ 50%) atau Sangat Berat (≥ 70%).</p>
-          <div class="table-container">
-            <table class="table" id="table-prioritas" style="font-size: 13px;">
-              <thead>
-                <tr>
-                  <th style="width:40px; text-align:center;">No</th>
-                  <th>Nama Lengkap</th>
-                  <th>Kelas</th>
-                  <th style="text-align:center;">Intensitas Tertinggi</th>
-                  <th style="text-align:center;">Status Penanganan</th>
-                </tr>
-              </thead>
-              <tbody id="tbody-prioritas">
-                <tr><td colspan="5" style="text-align:center;color:var(--text-muted)">Memuat data...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
         <!-- Manajemen Sesi -->
-        <div class="card" style="margin-bottom:20px;">
+        <div class="card" style="margin-top: 20px; margin-bottom:20px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
             <div>
               <div class="section-title"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; vertical-align:-4px;"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/></svg> Manajemen Sesi (Link Kuesioner)</div>
@@ -312,6 +310,54 @@
               </thead>
               <tbody id="tbody-sessions">
                 <tr><td colspan="5" style="text-align:center;color:var(--text-muted)">Memuat data sesi...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Daftar Siswa Tidak Valid -->
+        <div class="card" style="margin-bottom: 20px;">
+          <h3 style="margin:0 0 15px 0; font-size:16px; color:var(--text-primary); display:flex; align-items:center; gap:8px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--sangat-berat-text)"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Siswa Tidak Valid (Perlu Di-reset)
+          </h3>
+          <p style="font-size:13px; color:var(--text-muted); margin-top:-10px; margin-bottom:15px;">Daftar siswa yang hasil kuesionernya terindikasi Tidak Valid dan perlu dikerjakan ulang.</p>
+          <div class="table-wrap">
+            <table class="table" id="table-tidak-valid" style="font-size: 13px;">
+              <thead>
+                <tr>
+                  <th style="width:40px; text-align:center;">No</th>
+                  <th>Nama Lengkap</th>
+                  <th>Kelas</th>
+                  <th>NISN</th>
+                  <th style="text-align:center;">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-tidak-valid">
+                <tr><td colspan="5" style="text-align:center;color:var(--text-muted)">Memuat data...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Daftar Siswa Prioritas -->
+        <div class="card" style="margin-bottom: 20px;">
+          <h3 style="margin:0 0 15px 0; font-size:16px; color:#b91c1c; display:flex; align-items:center; gap:8px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg> Siswa Membutuhkan Penanganan Segera
+          </h3>
+          <p style="font-size:13px; color:var(--text-muted); margin-top:-10px; margin-bottom:15px;">Daftar siswa dengan intensitas masalah Berat (≥ 50%) atau Sangat Berat (≥ 70%).</p>
+          <div class="table-wrap">
+            <table class="table" id="table-prioritas" style="font-size: 13px;">
+              <thead>
+                <tr>
+                  <th style="width:40px; text-align:center;">No</th>
+                  <th>Nama Lengkap</th>
+                  <th>Kelas</th>
+                  <th style="text-align:center;">Intensitas Tertinggi</th>
+                  <th style="text-align:center;">Status Penanganan</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-prioritas">
+                <tr><td colspan="5" style="text-align:center;color:var(--text-muted)">Memuat data...</td></tr>
               </tbody>
             </table>
           </div>
@@ -367,9 +413,16 @@
         <div class="card">
           <div class="section-header">
             <div class="section-title"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; vertical-align:-4px;"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg> Rekap Jawaban Siswa</div>
-            <div class="search-wrap" style="width:220px">
-              <span class="search-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
-              <input id="tabel-search" type="text" class="form-control search-input" placeholder="Cari nama / kelas / NISN...">
+            <div style="display:flex; gap:12px;">
+              <select id="tabel-filter-status" class="form-control" style="width:140px;" onchange="AdminApp.searchTable(document.getElementById('tabel-search').value)">
+                <option value="Semua">Semua Status</option>
+                <option value="Valid">Hanya Valid</option>
+                <option value="Tidak Valid">Tidak Valid</option>
+              </select>
+              <div class="search-wrap" style="width:220px">
+                <span class="search-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
+                <input id="tabel-search" type="text" class="form-control search-input" placeholder="Cari nama / kelas / NISN...">
+              </div>
             </div>
           </div>
           <div class="table-wrap">
@@ -394,6 +447,71 @@
         </div>
 
       </div><!-- end page-home -->
+
+      <!-- ═══════════════════════════════════
+           PAGE: DATA AKUN SISWA
+      ═══════════════════════════════════ -->
+      <div id="page-data-master" style="display:none">
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:20px;">
+          <div>
+            <h3 style="margin:0 0 8px 0; color:var(--text-primary);">Data Akun Siswa</h3>
+            <div style="color:var(--text-secondary); font-size:14px;">Kelola data akun siswa dan akun login untuk seluruh kelas.</div>
+          </div>
+          <div style="display:flex; gap:12px;">
+            <button class="btn btn-primary" onclick="document.getElementById('import-excel-file').click()" style="display:flex; align-items:center; gap:6px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+              Import Data Excel
+            </button>
+            <input type="file" id="import-excel-file" accept=".xlsx, .xls" style="display:none" onchange="AdminApp.handleImportExcel(event)">
+            <button class="btn btn-outline" onclick="AdminApp.downloadTemplateExcel()" style="display:flex; align-items:center; gap:6px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+              Download Format
+            </button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="filter-bar" style="margin-bottom: 20px;">
+            <div class="filter-group">
+              <label>Pilih Kelas:</label>
+              <select id="master-kelas-filter" class="form-control" onchange="AdminApp.renderMasterSiswa()" style="min-width:150px">
+                <option value="">Semua Kelas</option>
+              </select>
+            </div>
+            <div class="filter-group" style="flex:1;">
+              <label>Cari Siswa:</label>
+              <div class="search-wrap" style="width:100%; max-width:300px;">
+                <span class="search-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
+                <input id="master-search" type="text" class="form-control search-input" placeholder="Cari NISN atau Nama..." oninput="AdminApp.renderMasterSiswa()">
+              </div>
+            </div>
+            <div class="filter-group">
+              <label>&nbsp;</label>
+              <button class="btn btn-success" onclick="AdminApp.showAddSiswaModal()" style="display:flex; align-items:center; gap:6px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Tambah Siswa
+              </button>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table class="table" style="font-size:13px;">
+              <thead>
+                <tr>
+                  <th style="width:50px;">No</th>
+                  <th>NISN</th>
+                  <th>Nama Lengkap</th>
+                  <th>Kelas</th>
+                  <th style="text-align:center;">Password</th>
+                  <th style="text-align:center;">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-master-siswa">
+                <tr><td colspan="6" style="text-align:center;color:var(--text-muted)">Memuat data...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div><!-- end page-data-master -->
 
       <!-- ═══════════════════════════════════
            PAGE: CETAK LAPORAN
@@ -524,6 +642,9 @@
       <div id="page-pengaturan" style="display:none">
 
         <form id="pengaturan-form" onsubmit="event.preventDefault(); AdminApp.savePengaturan()">
+
+          <!-- Tema Aplikasi -->
+
 
           <!-- Identitas Sekolah -->
           <div class="settings-section">
@@ -693,13 +814,13 @@
 </div><!-- end admin-shell -->
 
 <!-- Scripts -->
-<script src="js/data-soal.js?v=12"></script>
-<script src="js/utils/storage.js?v=12"></script>
-<script src="js/utils/scoring.js?v=12"></script>
-<script src="js/utils/api.js?v=12"></script>
-<script src="js/components/ui.js?v=12"></script>
-<script src="js/pages/admin.js?v=12"></script>
-<script src="js/pages/export.js?v=12"></script>
+<script src="js/data-soal.js?v=14"></script>
+<script src="js/utils/storage.js?v=14"></script>
+<script src="js/utils/scoring.js?v=14"></script>
+<script src="js/utils/api.js?v=14"></script>
+<script src="js/components/ui.js?v=14"></script>
+<script src="js/pages/admin.js?v=14"></script>
+<script src="js/pages/export.js?v=14"></script>
 <script>
 window.addEventListener('DOMContentLoaded', () => {
   AdminApp.init();
