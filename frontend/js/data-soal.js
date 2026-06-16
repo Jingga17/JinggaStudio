@@ -1,5 +1,5 @@
 /**
- * Counselor Connect — Data Soal Lengkap
+ * Resilien — Data Soal Lengkap
  * 220 pertanyaan dengan metadata bidang, sub bidang, tipe, dan arah jawaban
  */
 const QUESTIONS_DATA = [

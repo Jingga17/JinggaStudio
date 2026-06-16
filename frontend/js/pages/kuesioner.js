@@ -1,5 +1,5 @@
 /**
- * Counselor Connect — Halaman Kuesioner
+ * Resilien — Halaman Kuesioner
  * Biodata → Soal (11 halaman × 20 soal) → Selesai
  */
 

@@ -71,10 +71,12 @@
   <!-- 👤 STEP 1: BIODATA 👤 -->
   <div id="step-biodata" style="display:none">
     <div class="card card-glass biodata-container">
-      <div class="biodata-hero">
-        <div class="biodata-icon" id="student-logo-container" style="background:none; width:160px; height:160px; margin:0 auto 20px; box-shadow:none; border-radius:0;">
+      <div class="biodata-hero" style="text-align: center; margin-bottom: 32px;">
+        <div class="biodata-icon" id="student-logo-container" style="background:none; width:120px; height:120px; margin:0 auto 16px; box-shadow:none; border-radius:0;">
           <img src="img/logo-full.svg" alt="Resilien" style="width:100%; height:100%; object-fit:contain;">
         </div>
+        <div style="color: var(--accent); font-size:24px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 4px;">Problem Checklist</div>
+        <div style="color: var(--text-secondary); font-size:14px;">Daftar Cek Masalah (DCM) Siswa</div>
       </div>
 
       <form id="biodata-form" class="biodata-form" novalidate>
@@ -88,11 +90,11 @@
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
             <label style="display:flex;align-items:center;gap:8px;padding:11px 14px;background:var(--bg-input);border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all var(--transition)" id="jk-l-label">
               <input type="radio" name="b-jk" id="b-jk" value="L" style="accent-color:var(--accent-secondary)" onchange="document.getElementById('jk-l-label').style.borderColor='var(--accent-secondary)';document.getElementById('jk-p-label').style.borderColor='var(--border)'">
-              🧑 Laki-laki
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Laki-laki
             </label>
             <label style="display:flex;align-items:center;gap:8px;padding:11px 14px;background:var(--bg-input);border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all var(--transition)" id="jk-p-label">
               <input type="radio" name="b-jk" value="P" style="accent-color:var(--accent-secondary)" onchange="document.getElementById('jk-p-label').style.borderColor='var(--accent-secondary)';document.getElementById('jk-l-label').style.borderColor='var(--border)'">
-              👩 Perempuan
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Perempuan
             </label>
           </div>
         </div>
@@ -118,7 +120,7 @@
           <input id="b-nisn" type="text" inputmode="numeric" pattern="[0-9]*" class="form-control" placeholder="Contoh: 0012345678" maxlength="10" required>
           <span class="form-error" data-field="nisn"></span>
           <div style="font-size:12px;color:var(--text-muted);margin-top:4px">
-            ⚠️ NISN digunakan sebagai identitas unik. Pastikan benar.
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:-3px"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg> NISN digunakan sebagai identitas unik. Pastikan benar.
           </div>
         </div>
 
@@ -175,7 +177,7 @@
   <!-- ── SELESAI ── -->
   <div id="step-selesai" style="display:none">
     <div class="selesai-container fade-in">
-      <div class="selesai-icon">🎉</div>
+      <div class="selesai-icon" style="margin-bottom:16px"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--belajar)"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg></div>
       <h1 style="font-size:28px;font-weight:800;margin-bottom:12px">Terima Kasih!</h1>
       <p style="color:var(--text-secondary);font-size:16px;margin-bottom:8px">
         Jawaban kamu berhasil dikirim, <strong id="selesai-nama"></strong>!
@@ -196,7 +198,7 @@
       </div>
 
       <div class="card" style="background:rgba(34,197,94,0.08);border-color:rgba(34,197,94,0.2);text-align:left">
-        <p style="font-size:13px;color:var(--belajar);font-weight:600;margin-bottom:6px">✅ Apa yang terjadi selanjutnya?</p>
+        <p style="font-size:13px;color:var(--belajar);font-weight:600;margin-bottom:6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:-3px"><polyline points="20 6 9 17 4 12"/></svg> Apa yang terjadi selanjutnya?</p>
         <ul style="font-size:13px;color:var(--text-secondary);padding-left:16px;line-height:2">
           <li>Konselor akan menganalisis hasilmu</li>
           <li>Laporan individual akan disiapkan</li>

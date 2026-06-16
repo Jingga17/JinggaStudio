@@ -225,7 +225,7 @@ router.get('/class-report/:kelas', async (req, res, next) => {
 
         // Calculate aggregated scores
         let pSum = 0, bSum = 0, sSum = 0, kSum = 0;
-        let lieSum = 0, ccSum = 0;
+        let lieSum = 0, ccSum = 0, durasiSum = 0;
         
         const subSums = {};
         const subCounts = {};
@@ -239,6 +239,7 @@ router.get('/class-report/:kelas', async (req, res, next) => {
             kSum += scores.karir_pct;
             lieSum += scores.lie_score;
             ccSum += scores.cc_score;
+            durasiSum += s.durasi_pengisian || 0;
 
             Object.entries(scores.subBidangPct).forEach(([sb, pct]) => {
                 subSums[sb] = (subSums[sb] || 0) + pct;
@@ -288,6 +289,7 @@ router.get('/class-report/:kelas', async (req, res, next) => {
                 total_valid: validStudents.length,
                 lie_score_avg: Number((lieSum / vLen).toFixed(1)),
                 cc_score_avg: Number((ccSum / vLen).toFixed(1)),
+                durasi_avg: Math.round(durasiSum / vLen),
                 bidang: {
                     Pribadi: Math.round(pSum / vLen),
                     Belajar: Math.round(bSum / vLen),

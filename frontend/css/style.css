@@ -1,5 +1,5 @@
 /* =============================================
-  Counselor Connect — Design System
+  Resilien — Design System
    Psikometri Problem Checklist
    ============================================= */
 
@@ -44,7 +44,7 @@
   --accent:       #1e3dce;
   --accent-light: #3d5ef0;
   --accent-glow:  rgba(30,61,206,0.15);
-  --accent-secondary: #f59e0b;
+  --accent-secondary: #eab308; /* Updated to golden yellow to match logo */
 
   /* Spacing */
   --radius-sm: 8px;
@@ -868,7 +868,7 @@ select.form-control {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: linear-gradient(135deg, var(--accent-secondary), #D97706);
+  background: linear-gradient(135deg, var(--accent), var(--accent-light));
   color: white;
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);

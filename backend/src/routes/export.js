@@ -97,7 +97,7 @@ router.get('/class/:kelas', auth, async (req, res, next) => {
 router.get('/excel', auth, async (req, res, next) => {
 	try {
 		const workbook = new ExcelJS.Workbook();
-		workbook.creator = 'Counselor Connect';
+		workbook.creator = 'Resilien';
 		workbook.created = new Date();
 
 		const sheet1 = workbook.addWorksheet('Rekap Nilai');

@@ -68,6 +68,13 @@ const ReportApp = {
     return false;
   },
 
+  formatDurasi(totalSeconds) {
+    if (!totalSeconds) return "-";
+    const m = Math.floor(totalSeconds / 60);
+    const s = Math.round(totalSeconds % 60);
+    return `${m} menit ${s} detik`;
+  },
+
   getDeskripsiAnalisis(tipe, nama, val, isKelas = false) {
     let result = `(Teks deskripsi belum tersedia untuk ${nama} - ${val})`;
     if (tipe === 'bidang' && this.csvData.bidang.length > 0) {
@@ -136,7 +143,7 @@ const ReportApp = {
           </div>
         </div>
         <div class="footer-rahasia">
-          <b>⚠ DOKUMEN INI BERSIFAT RAHASIA</b><br>
+          <b><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg> DOKUMEN INI BERSIFAT RAHASIA</b><br>
           Laporan ini hanya diperuntukkan bagi konselor dan pihak-pihak yang berkepentingan secara langsung. 
           Dilarang keras menyebarluaskan isi laporan ini kepada pihak yang tidak berwenang.
         </div>
@@ -155,15 +162,15 @@ const ReportApp = {
     const halfC = Math.PI * r;
     
     const s = Math.min(Math.max(score, 0), 22);
-    const angle = -180 + (s/22)*180;
+    const angle = -90 + (s/22)*180;
 
     return `
       <svg width="100%" height="100" viewBox="0 0 300 130" style="overflow:visible; font-family: 'Inter', sans-serif;">
         <defs>
           <linearGradient id="soft-grad-lie" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="#60a5fa"/> <!-- Soft Blue -->
+            <stop offset="0%" stop-color="#f87171"/> <!-- Soft Red (Rotates to Right) -->
             <stop offset="50%" stop-color="#fde047"/> <!-- Soft Yellow -->
-            <stop offset="100%" stop-color="#f87171"/> <!-- Soft Red -->
+            <stop offset="100%" stop-color="#34d399"/> <!-- Soft Green (Rotates to Left) -->
           </linearGradient>
           <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
             <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000" flood-opacity="0.05"/>
@@ -210,7 +217,7 @@ const ReportApp = {
     // score adalah jumlah pasangan yang inkonsisten (abu-abu di versi sebelumnya)
     // 0 = paling konsisten, 9 = paling tidak konsisten
     const s = isClass ? parseFloat(score) : Math.min(Math.max(score, 0), 9);
-    const angle = -180 + (s/9)*180;
+    const angle = -90 + (s/9)*180;
     const konsisten = 9 - s;
     const inkonsisten = s;
 
@@ -218,9 +225,9 @@ const ReportApp = {
       <svg width="100%" height="100" viewBox="0 0 300 130" style="overflow:visible; font-family: 'Inter', sans-serif;">
         <defs>
           <linearGradient id="soft-grad-cons" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="#34d399"/> <!-- Soft Green (Consistent) -->
+            <stop offset="0%" stop-color="#f87171"/> <!-- Soft Red (Rotates to Right) -->
             <stop offset="50%" stop-color="#fde047"/> <!-- Soft Yellow -->
-            <stop offset="100%" stop-color="#f87171"/> <!-- Soft Red (Inconsistent) -->
+            <stop offset="100%" stop-color="#34d399"/> <!-- Soft Green (Rotates to Left) -->
           </linearGradient>
           <filter id="shadow-cons" x="-20%" y="-20%" width="140%" height="140%">
             <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000" flood-opacity="0.05"/>
@@ -331,11 +338,11 @@ const ReportApp = {
 
     // Dummy Sub Bidang Data (for demo)
     const subPrioritas = [
-      { name: 'Fokus Belajar', bidang: 'Belajar', score: 5, max: 7, pct: 71.4, kat: this.getKategoriWarna(71.4), icon: '🟢' },
-      { name: 'Motivasi Belajar', bidang: 'Belajar', score: 5, max: 8, pct: 62.5, kat: this.getKategoriWarna(62.5), icon: '🟢' },
-      { name: 'Manajemen Waktu', bidang: 'Belajar', score: 3, max: 5, pct: 60.0, kat: this.getKategoriWarna(60.0), icon: '🟢' },
-      { name: 'Beban Belajar', bidang: 'Belajar', score: 4, max: 7, pct: 57.1, kat: this.getKategoriWarna(57.1), icon: '🟢' },
-      { name: 'Kematangan Emosi', bidang: 'Pribadi', score: 6, max: 11, pct: 54.5, kat: this.getKategoriWarna(54.5), icon: '🔵' }
+      { name: 'Fokus Belajar', bidang: 'Belajar', score: 5, max: 7, pct: 71.4, kat: this.getKategoriWarna(71.4), icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect width="18" height="18" x="3" y="3" rx="2"/></svg>' },
+      { name: 'Motivasi Belajar', bidang: 'Belajar', score: 5, max: 8, pct: 62.5, kat: this.getKategoriWarna(62.5), icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect width="18" height="18" x="3" y="3" rx="2"/></svg>' },
+      { name: 'Manajemen Waktu', bidang: 'Belajar', score: 3, max: 5, pct: 60.0, kat: this.getKategoriWarna(60.0), icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect width="18" height="18" x="3" y="3" rx="2"/></svg>' },
+      { name: 'Beban Belajar', bidang: 'Belajar', score: 4, max: 7, pct: 57.1, kat: this.getKategoriWarna(57.1), icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect width="18" height="18" x="3" y="3" rx="2"/></svg>' },
+      { name: 'Kematangan Emosi', bidang: 'Pribadi', score: 6, max: 11, pct: 54.5, kat: this.getKategoriWarna(54.5), icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="12" cy="12" r="10"/></svg>' }
     ];
 
     let mockKrisisRows = '';
@@ -347,7 +354,7 @@ const ReportApp = {
         const problems = qs.slice(0, Math.min(problemCount, qs.length));
         problems.forEach(q => {
           const ans = q.arah === 'Negative' ? 'Ya' : 'Tidak';
-          const indicator = q.arah === 'Negative' ? '🔴 Ya (Skor 1)' : '🔴 Tidak (Skor 1)';
+          const indicator = q.arah === 'Negative' ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="#ef4444" stroke="none" style="vertical-align:-1px; margin-right:4px;"><circle cx="12" cy="12" r="10"/></svg> Ya (Skor 1)' : '<svg width="12" height="12" viewBox="0 0 24 24" fill="#ef4444" stroke="none" style="vertical-align:-1px; margin-right:4px;"><circle cx="12" cy="12" r="10"/></svg> Tidak (Skor 1)';
           mockKrisisRows += `<tr>
             <td style="text-align:center">${rowNo++}</td>
             <td style="text-align:center"><b>${sub.name}</b></td>
@@ -365,7 +372,7 @@ const ReportApp = {
         alertBanner += `
         <div style="background:#f1f5f9; border:1px solid #cbd5e1; border-left:4px solid #64748b; padding:12px 16px; margin-bottom:20px; border-radius:6px; page-break-inside: avoid;">
           <h3 style="margin:0 0 4px 0; color:#334155; font-size:14px; font-weight:800; display:flex; align-items:center; gap:6px;">
-            ⚠️ STATUS PENGISIAN TIDAK VALID
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>️ STATUS PENGISIAN TIDAK VALID
           </h3>
           <p style="margin:0; font-size:12px; color:#475569; font-weight:600; line-height:1.4;">
             Hasil instrumen siswa ini terdeteksi <b>TIDAK VALID</b> berdasarkan Skala Kebohongan (Lie Scale) atau Konsistensi. Disarankan untuk memanggil siswa dan melakukan asesmen ulang.
@@ -376,7 +383,7 @@ const ReportApp = {
         alertBanner += `
         <div style="background:#fef2f2; border:1px solid #fca5a5; border-left:4px solid #ef4444; padding:12px 16px; margin-bottom:20px; border-radius:6px; page-break-inside: avoid;">
           <h3 style="margin:0 0 4px 0; color:#b91c1c; font-size:14px; font-weight:800; display:flex; align-items:center; gap:6px;">
-            🚨 BUTUH PENANGANAN SEGERA
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> BUTUH PENANGANAN SEGERA
           </h3>
           <p style="margin:0; font-size:12px; color:#991b1b; font-weight:600; line-height:1.4;">
             Sangat disarankan untuk segera dijadwalkan sesi konseling.
@@ -386,7 +393,7 @@ const ReportApp = {
         alertBanner += `
         <div style="background:#fff7ed; border:1px solid #fdba74; border-left:4px solid #f97316; padding:12px 16px; margin-bottom:20px; border-radius:6px; page-break-inside: avoid;">
           <h3 style="margin:0 0 4px 0; color:#c2410c; font-size:14px; font-weight:800; display:flex; align-items:center; gap:6px;">
-            ⚠️ BUTUH PENANGANAN
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>️ BUTUH PENANGANAN
           </h3>
           <p style="margin:0; font-size:12px; color:#9a3412; font-weight:600; line-height:1.4;">
             Disarankan untuk dijadwalkan sesi konseling preventif.
@@ -404,6 +411,7 @@ const ReportApp = {
         <tr><th>Kelas</th><td>${student.kelas}</td></tr>
         <tr><th>NISN</th><td>${student.nisn}</td></tr>
         <tr><th>Status Pengisian</th><td><b>${student.status}</b></td></tr>
+        <tr><th>Durasi Pengerjaan</th><td><b>${this.formatDurasi(student.durasi)}</b></td></tr>
       </table>
 
       <h2>A. VALIDITAS PENGISIAN</h2>
@@ -411,7 +419,7 @@ const ReportApp = {
         <!-- Lie Scale Card -->
         <div class="validity-card blue">
           <div class="validity-header">
-            <span>👁️</span> A.1 Lie Scale (Skala Kebohongan)
+            <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></span> A.1 Lie Scale (Skala Kebohongan)
           </div>
           <div class="validity-body" style="display:flex; flex-direction:column; align-items:center; text-align:center;">
             <div style="width: 100%; max-width: 250px; margin: 10px auto;">
@@ -429,7 +437,7 @@ const ReportApp = {
         <!-- Consistency Card -->
         <div class="validity-card green">
           <div class="validity-header">
-            <span>⚖️</span> A.2 Consistency Check
+            <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M12 22V2"/><path d="M5 22h14"/><path d="m20 12-8-4-8 4"/><path d="M4 12v6"/><path d="M20 12v6"/></svg></span> A.2 Consistency Check
           </div>
           <div class="validity-body" style="display:flex; flex-direction:column; align-items:center; text-align:center;">
             <div style="width: 100%; max-width: 250px; margin: 10px auto;">
@@ -446,7 +454,7 @@ const ReportApp = {
 
         <!-- Kesimpulan Badge -->
         <div class="kesimpulan-badge">
-          <h4>👁️ KESIMPULAN 👍</h4>
+          <h4><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg> KESIMPULAN <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg></h4>
           <ul>
             <li>PROFIL DATA SANGAT VALID</li>
             <li>DAPAT DIANDALKAN</li>
@@ -460,10 +468,10 @@ const ReportApp = {
         <!-- Mock donut sizes using conic gradient based on pct relative to total -->
         <div class="donut-chart" style="background:none;">${this.getDonutSvg(pPct, bPct, sPct, kPct)}</div>
         <div class="donut-legend">
-          <div class="legend-item"><div class="legend-color" style="background:var(--c-pribadi)"></div> 🔵 Pribadi <span class="tag ${pKat.cls}">${pKat.label}</span></div>
-          <div class="legend-item"><div class="legend-color" style="background:var(--c-belajar)"></div> 🟢 Belajar <span class="tag ${bKat.cls}">${bKat.label}</span></div>
-          <div class="legend-item"><div class="legend-color" style="background:var(--c-sosial)"></div> 🟠 Sosial <span class="tag ${sKat.cls}">${sKat.label}</span></div>
-          <div class="legend-item"><div class="legend-color" style="background:var(--c-karir)"></div> 🟣 Karir <span class="tag ${kKat.cls}">${kKat.label}</span></div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--c-pribadi)"></div> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="12" cy="12" r="10"/></svg> Pribadi <span class="tag ${pKat.cls}">${pKat.label}</span></div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--c-belajar)"></div> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect width="18" height="18" x="3" y="3" rx="2"/></svg> Belajar <span class="tag ${bKat.cls}">${bKat.label}</span></div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--c-sosial)"></div> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg> Sosial <span class="tag ${sKat.cls}">${sKat.label}</span></div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--c-karir)"></div> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Karir <span class="tag ${kKat.cls}">${kKat.label}</span></div>
         </div>
       </div>
       <div style="margin-top:20px;">
@@ -516,8 +524,8 @@ const ReportApp = {
           <th style="width:100px;">Persentase</th>
           <th style="width:140px;">Status</th>
         </tr>
-        <tr><td>Nilai & Moral</td><td style="text-align:center">🔵 Pribadi</td><td style="text-align:center">0.0%</td><td style="text-align:center">✅ Sangat Baik</td></tr>
-        <tr><td>Perencanaan Karir</td><td style="text-align:center">🟣 Karir</td><td style="text-align:center">14.3%</td><td style="text-align:center">✅ Baik</td></tr>
+        <tr><td>Nilai & Moral</td><td style="text-align:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="12" cy="12" r="10"/></svg> Pribadi</td><td style="text-align:center">0.0%</td><td style="text-align:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px; margin-right:4px;"><polyline points="20 6 9 17 4 12"/></svg> Sangat Baik</td></tr>
+        <tr><td>Perencanaan Karir</td><td style="text-align:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Karir</td><td style="text-align:center">14.3%</td><td style="text-align:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px; margin-right:4px;"><polyline points="20 6 9 17 4 12"/></svg> Baik</td></tr>
       </table>
       <p>Siswa memiliki fondasi nilai dan moral yang sangat kuat &mdash; tidak ditemukan masalah pada aspek ini. Hal ini merupakan aset besar yang perlu terus dipupuk.</p>
 
@@ -554,11 +562,11 @@ const ReportApp = {
     const kKat = this.getKategoriWarna(kPct);
     
     const subPrioritas = [
-      { name: 'Fokus Belajar', bidang: 'Belajar', pct: 75.5, kat: this.getKategoriWarna(75.5), icon: '🟢' },
-      { name: 'Perencanaan Karir', bidang: 'Karir', pct: 71.4, kat: this.getKategoriWarna(71.4), icon: '🟣' },
-      { name: 'Motivasi Belajar', bidang: 'Belajar', pct: 67.9, kat: this.getKategoriWarna(67.9), icon: '🟢' },
-      { name: 'Kematangan Emosi', bidang: 'Pribadi', pct: 64.9, kat: this.getKategoriWarna(64.9), icon: '🔵' },
-      { name: 'Manajemen Waktu', bidang: 'Belajar', pct: 64.3, kat: this.getKategoriWarna(64.3), icon: '🟢' }
+      { name: 'Fokus Belajar', bidang: 'Belajar', pct: 75.5, kat: this.getKategoriWarna(75.5), icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect width="18" height="18" x="3" y="3" rx="2"/></svg>' },
+      { name: 'Perencanaan Karir', bidang: 'Karir', pct: 71.4, kat: this.getKategoriWarna(71.4), icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>' },
+      { name: 'Motivasi Belajar', bidang: 'Belajar', pct: 67.9, kat: this.getKategoriWarna(67.9), icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect width="18" height="18" x="3" y="3" rx="2"/></svg>' },
+      { name: 'Kematangan Emosi', bidang: 'Pribadi', pct: 64.9, kat: this.getKategoriWarna(64.9), icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="12" cy="12" r="10"/></svg>' },
+      { name: 'Manajemen Waktu', bidang: 'Belajar', pct: 64.3, kat: this.getKategoriWarna(64.3), icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect width="18" height="18" x="3" y="3" rx="2"/></svg>' }
     ];
 
     const bidangList = [
@@ -578,7 +586,7 @@ const ReportApp = {
         problems.forEach(q => {
           const itemPct = Math.min(100, Math.max(0, sub.pct + (Math.random() * 20 - 10))).toFixed(1);
           const jmlMasalah = Math.round((itemPct / 100) * validCount);
-          const indicator = itemPct >= 70 ? '🔴' : (itemPct >= 50 ? '🟠' : '🟡');
+          const indicator = itemPct >= 70 ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="#ef4444" stroke="none" style="vertical-align:-1px; margin-right:4px;"><circle cx="12" cy="12" r="10"/></svg>' : (itemPct >= 50 ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>' : '<svg width="12" height="12" viewBox="0 0 24 24" fill="#eab308" stroke="none" style="vertical-align:-1px; margin-right:4px;"><circle cx="12" cy="12" r="10"/></svg>');
           const arahMasalah = q.arah === 'Negative' ? 'Ya' : 'Tidak';
           mockKelasRows += `<tr>
             <td style="text-align:center">${rowK++}</td>
@@ -600,6 +608,7 @@ const ReportApp = {
         <tr><th>Nama Kelas</th><td><b>${kelasName}</b></td></tr>
         <tr><th>Jumlah Mengisi</th><td>${studentsInClass.length} siswa</td></tr>
         <tr><th>Jumlah Valid (Digunakan)</th><td><b>${validCount} siswa</b></td></tr>
+        <tr><th>Rata-rata Durasi Pengerjaan</th><td><b>${this.formatDurasi(Math.round(studentsInClass.reduce((a,b)=>a+(b.durasi||0),0)/Math.max(1,studentsInClass.length)))}</b></td></tr>
       </table>
 
       <h2>A. VALIDITAS PENGISIAN KELAS</h2>
@@ -607,11 +616,11 @@ const ReportApp = {
         <!-- Lie Scale Card -->
         <div class="validity-card blue">
           <div class="validity-header">
-            <span>👁️</span> A.1 Rata-Rata Lie Scale
+            <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></span> A.1 Rata-Rata Lie Scale
           </div>
           <div class="validity-body">
             <div class="validity-score-box">
-              <div style="color:#2563eb;font-size:14px;margin-bottom:2px">👁️</div>
+              <div style="color:#2563eb;font-size:14px;margin-bottom:2px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></div>
               Skor Kelas: <b>3.2 dari 22</b>
             </div>
             <div style="text-align:center; margin-top:-10px;">
@@ -634,12 +643,12 @@ const ReportApp = {
         <!-- Consistency Card -->
         <div class="validity-card green">
           <div class="validity-header">
-            <span>⚖️</span> A.2 Rata-Rata Consistency Check
+            <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M12 22V2"/><path d="M5 22h14"/><path d="m20 12-8-4-8 4"/><path d="M4 12v6"/><path d="M20 12v6"/></svg></span> A.2 Rata-Rata Consistency Check
           </div>
           <div class="validity-body">
             <div style="display:flex; align-items:flex-start; gap:10px;">
               <div class="validity-score-box" style="align-self:flex-start; flex-shrink:0;">
-                <div style="color:#10b981;font-size:14px;margin-bottom:2px">👍</div>
+                <div style="color:#10b981;font-size:14px;margin-bottom:2px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg></div>
                 Skor Kelas: <b>1.4<br>dari 9 pasang</b>
               </div>
               <div style="flex:1; min-width:0; overflow:hidden;">
@@ -654,7 +663,7 @@ const ReportApp = {
 
         <!-- Kesimpulan Badge -->
         <div class="kesimpulan-badge">
-          <h4>👁️ KESIMPULAN KELAS 👍</h4>
+          <h4><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg> KESIMPULAN KELAS <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg></h4>
           <ul>
             <li>DATA KELAS CUKUP VALID</li>
             <li>DAPAT DIANDALKAN SECARA KOLEKTIF</li>
@@ -666,10 +675,10 @@ const ReportApp = {
       <div class="donut-container">
         <div class="donut-chart" style="background:none;">${this.getDonutSvg(pPct, bPct, sPct, kPct)}</div>
         <div class="donut-legend">
-          <div class="legend-item"><div class="legend-color" style="background:var(--c-pribadi)"></div> 🔵 Pribadi <span class="tag ${pKat.cls}">${pKat.label}</span></div>
-          <div class="legend-item"><div class="legend-color" style="background:var(--c-belajar)"></div> 🟢 Belajar <span class="tag ${bKat.cls}">${bKat.label}</span></div>
-          <div class="legend-item"><div class="legend-color" style="background:var(--c-sosial)"></div> 🟠 Sosial <span class="tag ${sKat.cls}">${sKat.label}</span></div>
-          <div class="legend-item"><div class="legend-color" style="background:var(--c-karir)"></div> 🟣 Karir <span class="tag ${kKat.cls}">${kKat.label}</span></div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--c-pribadi)"></div> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="12" cy="12" r="10"/></svg> Pribadi <span class="tag ${pKat.cls}">${pKat.label}</span></div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--c-belajar)"></div> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect width="18" height="18" x="3" y="3" rx="2"/></svg> Belajar <span class="tag ${bKat.cls}">${bKat.label}</span></div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--c-sosial)"></div> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg> Sosial <span class="tag ${sKat.cls}">${sKat.label}</span></div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--c-karir)"></div> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Karir <span class="tag ${kKat.cls}">${kKat.label}</span></div>
         </div>
       </div>
       <div style="margin-top:20px;">
@@ -730,7 +739,7 @@ const ReportApp = {
             <tr>
               <td style="text-align:center">${i+1}</td>
               <td><b>${s.nama}</b></td>
-              <td style="text-align:center">${s.is_valid ? '<span style="color:green">✅ Valid</span>' : '<span style="color:red">❌ Tidak Valid</span>'}</td>
+              <td style="text-align:center">${s.is_valid ? '<span style="color:green"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px; margin-right:4px;"><polyline points="20 6 9 17 4 12"/></svg> Valid</span>' : '<span style="color:red"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px; margin-right:4px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Tidak Valid</span>'}</td>
               <td>${s.is_valid ? 'Perlu pantauan (Belajar/Karir)' : 'Perlu wawancara ulang'}</td>
             </tr>
           `).join('')}
@@ -748,9 +757,9 @@ const ReportApp = {
           </tr>
         </thead>
         <tbody>
-          <tr><td>Nilai & Moral</td><td style="text-align:center">🔵 Pribadi</td><td style="text-align:center">12.9%</td><td style="text-align:center">✅ Sangat Baik</td></tr>
-          <tr><td>Etika Sosial</td><td style="text-align:center">🟠 Sosial</td><td style="text-align:center">23.8%</td><td style="text-align:center">✅ Baik</td></tr>
-          <tr><td>Kesiapan Karir</td><td style="text-align:center">🟣 Karir</td><td style="text-align:center">30.1%</td><td style="text-align:center">✅ Cukup Baik</td></tr>
+          <tr><td>Nilai & Moral</td><td style="text-align:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="12" cy="12" r="10"/></svg> Pribadi</td><td style="text-align:center">12.9%</td><td style="text-align:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px; margin-right:4px;"><polyline points="20 6 9 17 4 12"/></svg> Sangat Baik</td></tr>
+          <tr><td>Etika Sosial</td><td style="text-align:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg> Sosial</td><td style="text-align:center">23.8%</td><td style="text-align:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px; margin-right:4px;"><polyline points="20 6 9 17 4 12"/></svg> Baik</td></tr>
+          <tr><td>Kesiapan Karir</td><td style="text-align:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Karir</td><td style="text-align:center">30.1%</td><td style="text-align:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px; margin-right:4px;"><polyline points="20 6 9 17 4 12"/></svg> Cukup Baik</td></tr>
         </tbody>
       </table>
       <p>Kelas ${kelasName} memiliki landasan nilai dan moral yang sangat kuat sebagai kolektif. Etika dalam berinteraksi sosial juga masih terjaga dengan baik. Ini merupakan modal sosial yang berharga.</p>
@@ -797,7 +806,7 @@ const ReportApp = {
       .map(([name, pct]) => {
         const q = QUESTIONS_DATA.find(x => x.sub_bidang === name);
         const bidang = q ? q.bidang : 'Pribadi';
-        const iconSymbol = bidang === 'Pribadi' ? '🔵' : (bidang === 'Belajar' ? '🟢' : (bidang === 'Sosial' ? '🟠' : '🟣'));
+        const iconSymbol = bidang === 'Pribadi' ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="12" cy="12" r="10"/></svg>' : (bidang === 'Belajar' ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect width="18" height="18" x="3" y="3" rx="2"/></svg>' : (bidang === 'Sosial' ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>' : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'));
         return { name, bidang, pct, kat: this.getKategoriWarna(pct), icon: iconSymbol };
       })
       .sort((a,b) => b.pct - a.pct)
@@ -817,7 +826,7 @@ const ReportApp = {
 
     problemAnswers.forEach(a => {
       const displayAns = a.jawaban.toLowerCase() === 'ya' ? 'Ya' : 'Tidak';
-      const indicator = a.arah_jawaban === 'Negative' ? '🔴 Ya (Skor 1)' : '🔴 Tidak (Skor 1)';
+      const indicator = a.arah_jawaban === 'Negative' ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="#ef4444" stroke="none" style="vertical-align:-1px; margin-right:4px;"><circle cx="12" cy="12" r="10"/></svg> Ya (Skor 1)' : '<svg width="12" height="12" viewBox="0 0 24 24" fill="#ef4444" stroke="none" style="vertical-align:-1px; margin-right:4px;"><circle cx="12" cy="12" r="10"/></svg> Tidak (Skor 1)';
       krisisRows += `<tr>
         <td style="text-align:center">${rowNo++}</td>
         <td style="text-align:center"><b>${a.sub_bidang}</b></td>
@@ -836,11 +845,11 @@ const ReportApp = {
       .map(([name, pct]) => {
         const q = QUESTIONS_DATA.find(x => x.sub_bidang === name);
         const bidang = q ? q.bidang : 'Pribadi';
-        const iconSymbol = bidang === 'Pribadi' ? '🔵' : (bidang === 'Belajar' ? '🟢' : (bidang === 'Sosial' ? '🟠' : '🟣'));
+        const iconSymbol = bidang === 'Pribadi' ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="12" cy="12" r="10"/></svg>' : (bidang === 'Belajar' ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect width="18" height="18" x="3" y="3" rx="2"/></svg>' : (bidang === 'Sosial' ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>' : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'));
         let label = 'Cukup Baik';
         if (pct <= 15) label = 'Sangat Baik';
         else if (pct <= 30) label = 'Baik';
-        return { name, bidang: `${iconSymbol} ${bidang}`, pct, status: `✅ ${label}` };
+        return { name, bidang: `${iconSymbol} ${bidang}`, pct, status: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px; margin-right:4px;"><polyline points="20 6 9 17 4 12"/></svg> ${label}` };
       })
       .sort((a,b) => a.pct - b.pct)
       .slice(0, 3);
@@ -867,7 +876,7 @@ const ReportApp = {
       let kRowNo = 1;
       strengthAnswers.forEach(a => {
         const displayAns = a.jawaban.toLowerCase() === 'ya' ? 'Ya' : 'Tidak';
-        const indicator = '✅ Kondusif';
+        const indicator = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px; margin-right:4px;"><polyline points="20 6 9 17 4 12"/></svg> Kondusif';
         kekuatanAnsRows += `<tr>
           <td style="text-align:center">${kRowNo++}</td>
           <td style="text-align:center"><b>${a.sub_bidang}</b></td>
@@ -886,7 +895,7 @@ const ReportApp = {
         alertBanner += `
         <div style="background:#f1f5f9; border:1px solid #cbd5e1; border-left:4px solid #64748b; padding:12px 16px; margin-bottom:20px; border-radius:6px; page-break-inside: avoid;">
           <h3 style="margin:0 0 4px 0; color:#334155; font-size:14px; font-weight:800; display:flex; align-items:center; gap:6px;">
-            ⚠️ STATUS PENGISIAN TIDAK VALID
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>️ STATUS PENGISIAN TIDAK VALID
           </h3>
           <p style="margin:0; font-size:12px; color:#475569; font-weight:600; line-height:1.4;">
             Hasil instrumen siswa ini terdeteksi <b>TIDAK VALID</b> berdasarkan Skala Kebohongan (Lie Scale) atau Konsistensi. Disarankan untuk memanggil siswa dan melakukan asesmen ulang.
@@ -897,7 +906,7 @@ const ReportApp = {
         alertBanner += `
         <div style="background:#fef2f2; border:1px solid #fca5a5; border-left:4px solid #ef4444; padding:12px 16px; margin-bottom:20px; border-radius:6px; page-break-inside: avoid;">
           <h3 style="margin:0 0 4px 0; color:#b91c1c; font-size:14px; font-weight:800; display:flex; align-items:center; gap:6px;">
-            🚨 BUTUH PENANGANAN SEGERA
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> BUTUH PENANGANAN SEGERA
           </h3>
           <p style="margin:0; font-size:12px; color:#991b1b; font-weight:600; line-height:1.4;">
             Sangat disarankan untuk segera dijadwalkan sesi konseling.
@@ -907,7 +916,7 @@ const ReportApp = {
         alertBanner += `
         <div style="background:#fff7ed; border:1px solid #fdba74; border-left:4px solid #f97316; padding:12px 16px; margin-bottom:20px; border-radius:6px; page-break-inside: avoid;">
           <h3 style="margin:0 0 4px 0; color:#c2410c; font-size:14px; font-weight:800; display:flex; align-items:center; gap:6px;">
-            ⚠️ BUTUH PENANGANAN
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>️ BUTUH PENANGANAN
           </h3>
           <p style="margin:0; font-size:12px; color:#9a3412; font-weight:600; line-height:1.4;">
             Disarankan untuk dijadwalkan sesi konseling preventif.
@@ -925,6 +934,7 @@ const ReportApp = {
         <tr><th>Kelas</th><td>${student.kelas}</td></tr>
         <tr><th>NISN</th><td>${student.nisn}</td></tr>
         <tr><th>Status Pengisian</th><td><b>${student.status}</b></td></tr>
+        <tr><th>Durasi Pengerjaan</th><td><b>${this.formatDurasi(student.durasi)}</b></td></tr>
       </table>
 
       <h2>A. VALIDITAS PENGISIAN</h2>
@@ -932,7 +942,7 @@ const ReportApp = {
         <!-- Lie Scale Card -->
         <div class="validity-card blue">
           <div class="validity-header">
-            <span>👁️</span> A.1 Lie Scale (Skala Kebohongan)
+            <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></span> A.1 Lie Scale (Skala Kebohongan)
           </div>
           <div class="validity-body" style="display:flex; flex-direction:column; align-items:center; text-align:center;">
             <div style="width: 100%; max-width: 250px; margin: 10px auto;">
@@ -950,7 +960,7 @@ const ReportApp = {
         <!-- Consistency Card -->
         <div class="validity-card green">
           <div class="validity-header">
-            <span>⚖️</span> A.2 Consistency Check
+            <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M12 22V2"/><path d="M5 22h14"/><path d="m20 12-8-4-8 4"/><path d="M4 12v6"/><path d="M20 12v6"/></svg></span> A.2 Consistency Check
           </div>
           <div class="validity-body" style="display:flex; flex-direction:column; align-items:center; text-align:center;">
             <div style="width: 100%; max-width: 250px; margin: 10px auto;">
@@ -967,7 +977,7 @@ const ReportApp = {
 
         <!-- Kesimpulan Badge -->
         <div class="kesimpulan-badge">
-          <h4>👁️ KESIMPULAN 👍</h4>
+          <h4><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg> KESIMPULAN <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg></h4>
           <ul>
             ${student.status === 'Valid' ? `
               <li>PROFIL DATA SANGAT VALID</li>
@@ -990,10 +1000,10 @@ const ReportApp = {
       <div class="donut-container">
         <div class="donut-chart" style="background:none;">${this.getDonutSvg(pPct, bPct, sPct, kPct)}</div>
         <div class="donut-legend">
-          <div class="legend-item"><div class="legend-color" style="background:var(--c-pribadi)"></div> 🔵 Pribadi <span class="tag ${pKat.cls}">${pKat.label}</span></div>
-          <div class="legend-item"><div class="legend-color" style="background:var(--c-belajar)"></div> 🟢 Belajar <span class="tag ${bKat.cls}">${bKat.label}</span></div>
-          <div class="legend-item"><div class="legend-color" style="background:var(--c-sosial)"></div> 🟠 Sosial <span class="tag ${sKat.cls}">${sKat.label}</span></div>
-          <div class="legend-item"><div class="legend-color" style="background:var(--c-karir)"></div> 🟣 Karir <span class="tag ${kKat.cls}">${kKat.label}</span></div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--c-pribadi)"></div> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="12" cy="12" r="10"/></svg> Pribadi <span class="tag ${pKat.cls}">${pKat.label}</span></div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--c-belajar)"></div> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect width="18" height="18" x="3" y="3" rx="2"/></svg> Belajar <span class="tag ${bKat.cls}">${bKat.label}</span></div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--c-sosial)"></div> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg> Sosial <span class="tag ${sKat.cls}">${sKat.label}</span></div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--c-karir)"></div> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Karir <span class="tag ${kKat.cls}">${kKat.label}</span></div>
         </div>
       </div>
       <div style="margin-top:20px;">
@@ -1110,7 +1120,7 @@ const ReportApp = {
       .map(([name, pct]) => {
         const q = QUESTIONS_DATA.find(x => x.sub_bidang === name);
         const bidangName = q ? q.bidang : 'Pribadi';
-        const iconSymbol = bidangName === 'Pribadi' ? '🔵' : (bidangName === 'Belajar' ? '🟢' : (bidangName === 'Sosial' ? '🟠' : '🟣'));
+        const iconSymbol = bidangName === 'Pribadi' ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="12" cy="12" r="10"/></svg>' : (bidangName === 'Belajar' ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect width="18" height="18" x="3" y="3" rx="2"/></svg>' : (bidangName === 'Sosial' ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>' : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'));
         return { name, bidang: bidangName, pct, kat: this.getKategoriWarna(pct), icon: iconSymbol };
       })
       .sort((a,b) => b.pct - a.pct)
@@ -1131,7 +1141,7 @@ const ReportApp = {
     .slice(0, 15);
 
     krisisRows = classKrisisQuestions.map((q, idx) => {
-      const indicator = q.pct >= 70 ? '🔴' : (q.pct >= 50 ? '🟠' : '🟡');
+      const indicator = q.pct >= 70 ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="#ef4444" stroke="none" style="vertical-align:-1px; margin-right:4px;"><circle cx="12" cy="12" r="10"/></svg>' : (q.pct >= 50 ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>' : '<svg width="12" height="12" viewBox="0 0 24 24" fill="#eab308" stroke="none" style="vertical-align:-1px; margin-right:4px;"><circle cx="12" cy="12" r="10"/></svg>');
       const arahMasalah = q.arah === 'Negative' ? 'Ya' : 'Tidak';
       return `<tr>
         <td style="text-align:center">${idx+1}</td>
@@ -1148,7 +1158,7 @@ const ReportApp = {
       <tr>
         <td style="text-align:center">${idx+1}</td>
         <td><b>${s.nama}</b></td>
-        <td style="text-align:center">${s.is_valid ? '<span style="color:green">✅ Valid</span>' : '<span style="color:red">❌ Tidak Valid</span>'}</td>
+        <td style="text-align:center">${s.is_valid ? '<span style="color:green"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px; margin-right:4px;"><polyline points="20 6 9 17 4 12"/></svg> Valid</span>' : '<span style="color:red"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px; margin-right:4px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Tidak Valid</span>'}</td>
         <td>${s.is_valid ? 'Perlu pantauan (Belajar/Karir)' : 'Perlu wawancara ulang / Reset Sesi'}</td>
       </tr>
     `).join('');
@@ -1158,11 +1168,11 @@ const ReportApp = {
       .map(([name, pct]) => {
         const q = QUESTIONS_DATA.find(x => x.sub_bidang === name);
         const bidangName = q ? q.bidang : 'Pribadi';
-        const iconSymbol = bidangName === 'Pribadi' ? '🔵' : (bidangName === 'Belajar' ? '🟢' : (bidangName === 'Sosial' ? '🟠' : '🟣'));
+        const iconSymbol = bidangName === 'Pribadi' ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="12" cy="12" r="10"/></svg>' : (bidangName === 'Belajar' ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect width="18" height="18" x="3" y="3" rx="2"/></svg>' : (bidangName === 'Sosial' ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>' : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'));
         let label = 'Cukup Baik';
         if (pct <= 15) label = 'Sangat Baik';
         else if (pct <= 30) label = 'Baik';
-        return { name, bidang: `${iconSymbol} ${bidangName}`, pct, status: `✅ ${label}` };
+        return { name, bidang: `${iconSymbol} ${bidangName}`, pct, status: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px; margin-right:4px;"><polyline points="20 6 9 17 4 12"/></svg> ${label}` };
       })
       .sort((a,b) => a.pct - b.pct)
       .slice(0, 3);
@@ -1198,7 +1208,7 @@ const ReportApp = {
           <td style="text-align:left">${q.teks}</td>
           <td style="text-align:center"><b>${arahKekuatan}</b></td>
           <td style="text-align:center">${q.nonProblemCount} siswa</td>
-          <td style="text-align:center; color: #10b981;"><b>${q.pct.toFixed(1)}%</b> ✅ Kondusif</td>
+          <td style="text-align:center; color: #10b981;"><b>${q.pct.toFixed(1)}%</b> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px; margin-right:4px;"><polyline points="20 6 9 17 4 12"/></svg> Kondusif</td>
         </tr>`;
       }).join('');
       if (classKekuatanQuestions.length === 0) {
@@ -1213,6 +1223,7 @@ const ReportApp = {
         <tr><th>Nama Kelas</th><td><b>${kelas}</b></td></tr>
         <tr><th>Jumlah Mengisi</th><td>${total_responden} siswa</td></tr>
         <tr><th>Jumlah Valid (Digunakan)</th><td><b>${total_valid} siswa</b></td></tr>
+        <tr><th>Rata-rata Durasi Pengerjaan</th><td><b>${this.formatDurasi(data.durasi_avg)}</b></td></tr>
       </table>
 
       <h2>A. VALIDITAS PENGISIAN KELAS</h2>
@@ -1220,7 +1231,7 @@ const ReportApp = {
         <!-- Lie Scale Card -->
         <div class="validity-card blue">
           <div class="validity-header">
-            <span>👁️</span> A.1 Rata-Rata Lie Scale
+            <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></span> A.1 Rata-Rata Lie Scale
           </div>
           <div class="validity-body" style="display:flex; flex-direction:column; align-items:center; text-align:center;">
             <div style="width: 100%; max-width: 250px; margin: 10px auto;">
@@ -1238,7 +1249,7 @@ const ReportApp = {
         <!-- Consistency Card -->
         <div class="validity-card green">
           <div class="validity-header">
-            <span>⚖️</span> A.2 Rata-Rata Consistency Check
+            <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M12 22V2"/><path d="M5 22h14"/><path d="m20 12-8-4-8 4"/><path d="M4 12v6"/><path d="M20 12v6"/></svg></span> A.2 Rata-Rata Consistency Check
           </div>
           <div class="validity-body" style="display:flex; flex-direction:column; align-items:center; text-align:center;">
             <div style="width: 100%; max-width: 250px; margin: 10px auto;">
@@ -1255,7 +1266,7 @@ const ReportApp = {
 
         <!-- Kesimpulan Badge -->
         <div class="kesimpulan-badge">
-          <h4>👁️ KESIMPULAN KELAS 👍</h4>
+          <h4><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg> KESIMPULAN KELAS <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg></h4>
           <ul>
             <li>DATA KELAS CUKUP VALID</li>
             <li>DAPAT DIANDALKAN SECARA KOLEKTIF</li>
@@ -1267,10 +1278,10 @@ const ReportApp = {
       <div class="donut-container">
         <div class="donut-chart" style="background:none;">${this.getDonutSvg(pPct, bPct, sPct, kPct)}</div>
         <div class="donut-legend">
-          <div class="legend-item"><div class="legend-color" style="background:var(--c-pribadi)"></div> 🔵 Pribadi <span class="tag ${pKat.cls}">${pKat.label}</span></div>
-          <div class="legend-item"><div class="legend-color" style="background:var(--c-belajar)"></div> 🟢 Belajar <span class="tag ${bKat.cls}">${bKat.label}</span></div>
-          <div class="legend-item"><div class="legend-color" style="background:var(--c-sosial)"></div> 🟠 Sosial <span class="tag ${sKat.cls}">${sKat.label}</span></div>
-          <div class="legend-item"><div class="legend-color" style="background:var(--c-karir)"></div> 🟣 Karir <span class="tag ${kKat.cls}">${kKat.label}</span></div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--c-pribadi)"></div> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="12" cy="12" r="10"/></svg> Pribadi <span class="tag ${pKat.cls}">${pKat.label}</span></div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--c-belajar)"></div> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect width="18" height="18" x="3" y="3" rx="2"/></svg> Belajar <span class="tag ${bKat.cls}">${bKat.label}</span></div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--c-sosial)"></div> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg> Sosial <span class="tag ${sKat.cls}">${sKat.label}</span></div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--c-karir)"></div> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Karir <span class="tag ${kKat.cls}">${kKat.label}</span></div>
         </div>
       </div>
       <div style="margin-top:20px;">

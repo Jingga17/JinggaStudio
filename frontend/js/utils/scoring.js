@@ -1,5 +1,5 @@
 /**
- * Counselor Connect — Scoring Engine
+ * Resilien — Scoring Engine
  * Implementasi logika hitung sesuai BACKEND_SPEC.md
  */
 

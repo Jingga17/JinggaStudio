@@ -1,6 +1,6 @@
 @echo off
 echo =======================================================
-echo     MENGINSTALL & MENJALANKAN BACKEND Counselor Connect
+echo     MENGINSTALL & MENJALANKAN BACKEND Resilien
 echo =======================================================
 echo.
 echo Sedang masuk ke folder backend...

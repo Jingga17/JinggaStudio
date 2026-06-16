@@ -1,5 +1,5 @@
 /**
- * Counselor Connect — LocalStorage Utilities with Cookie and window.name Fallbacks
+ * Resilien — LocalStorage Utilities with Cookie and window.name Fallbacks
  */
 let memoryStorage = {};
 const Storage = {

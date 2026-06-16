@@ -1,0 +1,1982 @@
+[
+  {
+    "id": 1,
+    "teks_soal": "Saya sering merasa cemas tanpa alasan yang jelas akhir-akhir ini.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Kesehatan Mental",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 2,
+    "teks_soal": "Saya mudah terpancing emosi ketika melihat perdebatan di media sosial.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Kematangan Emosi",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 3,
+    "teks_soal": "Saya bangga dan percaya diri dengan penampilan fisik saya saat ini.",
+    "tipe_soal": "Consistency Check",
+    "bidang": "Pribadi",
+    "sub_bidang": "Consistency Pair 1",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": 1
+  },
+  {
+    "id": 4,
+    "teks_soal": "Saya memiliki jadwal tidur yang teratur dan cukup istirahat.",
+    "tipe_soal": "Consistency Check",
+    "bidang": "Pribadi",
+    "sub_bidang": "Consistency Pair 2",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": 2
+  },
+  {
+    "id": 5,
+    "teks_soal": "Saya tidak pernah berbohong seumur hidup saya.",
+    "tipe_soal": "Lie Scale",
+    "bidang": "Pribadi",
+    "sub_bidang": "Lie Scale",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 6,
+    "teks_soal": "Saya sering merasa lelah berkepanjangan meskipun tidak banyak beraktivitas.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Kesehatan Fisik",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 7,
+    "teks_soal": "Saya merasa kesulitan mengendalikan nafsu makan saat sedang stres.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Kesehatan Fisik",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 8,
+    "teks_soal": "Saya selalu meluangkan waktu untuk berolahraga ringan setiap minggu.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Kesehatan Fisik",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 9,
+    "teks_soal": "Saya sering mengorbankan waktu tidur demi bermain game atau menonton series.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Gaya Hidup",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 10,
+    "teks_soal": "Saya bisa menerima diri saya apa adanya tanpa harus selalu tampil sempurna.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Kesehatan Mental",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 11,
+    "teks_soal": "Saya sering overthinking memikirkan hal-hal yang belum terjadi.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Kesehatan Mental",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 12,
+    "teks_soal": "Saya merasa hidup saya kurang bermakna dibandingkan orang lain.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Kesehatan Mental",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 13,
+    "teks_soal": "Saya mampu menerima kritik dari orang lain dengan lapang dada.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Kematangan Emosi",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 14,
+    "teks_soal": "Saya mudah menyerah saat menghadapi masalah yang rumit.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Kematangan Emosi",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 15,
+    "teks_soal": "Saya selalu tersenyum bahagia setiap saat tanpa terkecuali.",
+    "tipe_soal": "Lie Scale",
+    "bidang": "Pribadi",
+    "sub_bidang": "Lie Scale",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 16,
+    "teks_soal": "Saya merasa tenang saat berada jauh dari ponsel (HP) saya.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Gaya Hidup",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 17,
+    "teks_soal": "Saya memiliki kebiasaan menunda makan karena terlalu asyik dengan gadget.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Kesehatan Fisik",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 18,
+    "teks_soal": "Saya peduli pada kebersihan tubuh dan pakaian saya setiap hari.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Kesehatan Fisik",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 19,
+    "teks_soal": "Saya sering merasa pusing jika menatap layar terlalu lama.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Kesehatan Fisik",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 20,
+    "teks_soal": "Saya merasa kesulitan untuk memaafkan diri sendiri saat berbuat salah.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Kematangan Emosi",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 21,
+    "teks_soal": "Saya sering merasa hampa atau kosong secara emosional.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Kesehatan Mental",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 22,
+    "teks_soal": "Saya bisa mengekspresikan kesedihan saya tanpa merasa lemah.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Kematangan Emosi",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 23,
+    "teks_soal": "Saya meminum air putih dalam jumlah yang cukup setiap hari.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Kesehatan Fisik",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 24,
+    "teks_soal": "Saya sering mengalami sakit perut saat merasa tegang.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Kesehatan Fisik",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 25,
+    "teks_soal": "Saya tidak pernah membuang waktu luang saya sedetik pun.",
+    "tipe_soal": "Lie Scale",
+    "bidang": "Pribadi",
+    "sub_bidang": "Lie Scale",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 26,
+    "teks_soal": "Saya merasa bentuk tubuh saya tidak ideal dan membuat saya malu.",
+    "tipe_soal": "Consistency Check",
+    "bidang": "Pribadi",
+    "sub_bidang": "Consistency Pair 1",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": 1
+  },
+  {
+    "id": 27,
+    "teks_soal": "Saya mudah merasa bersalah atas hal-hal yang bukan tanggung jawab saya.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Kematangan Emosi",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 28,
+    "teks_soal": "Saya memiliki hobi yang membuat saya merasa rileks.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Gaya Hidup",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 29,
+    "teks_soal": "Saya sering mengonsumsi makanan instan/junk food lebih dari 3 kali seminggu.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Kesehatan Fisik",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 30,
+    "teks_soal": "Saya bisa membatasi pengeluaran uang saku agar tidak boros.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Gaya Hidup",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 31,
+    "teks_soal": "Saya sering begadang (doomscrolling) melihat TikTok/Reels sampai larut malam.",
+    "tipe_soal": "Consistency Check",
+    "bidang": "Pribadi",
+    "sub_bidang": "Consistency Pair 2",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": 2
+  },
+  {
+    "id": 32,
+    "teks_soal": "Saya tidak pernah iri melihat kesuksesan orang lain.",
+    "tipe_soal": "Lie Scale",
+    "bidang": "Pribadi",
+    "sub_bidang": "Lie Scale",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 33,
+    "teks_soal": "Saya kesulitan mengatakan 'Tidak' pada permintaan yang memberatkan saya.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Kematangan Emosi",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 34,
+    "teks_soal": "Saya merasa kesulitan beradaptasi dengan perubahan yang mendadak.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Kematangan Emosi",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 35,
+    "teks_soal": "Saya rajin menjaga kebersihan kamar dan barang pribadi saya.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Gaya Hidup",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 36,
+    "teks_soal": "Saya merasa nyaman dan percaya diri dengan penampilan fisik saya di depan orang lain.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Kesehatan Mental",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 37,
+    "teks_soal": "Saya tahu cara menenangkan diri sendiri saat sedang panik.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Kematangan Emosi",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 38,
+    "teks_soal": "Saya merasa spiritualitas/ibadah membantu menenangkan pikiran saya.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Nilai & Moral",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 39,
+    "teks_soal": "Saya merasa aturan agama terlalu mengekang kebebasan saya.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Nilai & Moral",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 40,
+    "teks_soal": "Saya tidak mudah terpengaruh oleh tren yang bertentangan dengan prinsip saya.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Nilai & Moral",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 41,
+    "teks_soal": "Saya sering berbohong kecil untuk menghindari masalah.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Nilai & Moral",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 42,
+    "teks_soal": "Saya selalu mematuhi semua aturan sekolah tanpa pernah melanggar sedikit pun.",
+    "tipe_soal": "Lie Scale",
+    "bidang": "Pribadi",
+    "sub_bidang": "Lie Scale",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 43,
+    "teks_soal": "Saya merasa tidak memiliki tujuan hidup yang jelas saat ini.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Kesehatan Mental",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 44,
+    "teks_soal": "Saya cepat merasa bosan dengan rutinitas harian saya.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Gaya Hidup",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 45,
+    "teks_soal": "Saya selalu merencanakan hal-hal yang akan saya lakukan besok.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Gaya Hidup",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 46,
+    "teks_soal": "Saya peduli terhadap dampak lingkungan dari gaya hidup saya.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Nilai & Moral",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 47,
+    "teks_soal": "Saya merasa sulit mempercayai orang lain sepenuhnya.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Kematangan Emosi",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 48,
+    "teks_soal": "Saya tidak malu meminta bantuan profesional jika mental saya sedang down.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Kesehatan Mental",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 49,
+    "teks_soal": "Saya sering meragukan kemampuan diri saya sendiri (imposter syndrome).",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Kesehatan Mental",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 50,
+    "teks_soal": "Saya selalu berusaha mencari sisi positif dari sebuah kegagalan.",
+    "tipe_soal": "Core",
+    "bidang": "Pribadi",
+    "sub_bidang": "Kematangan Emosi",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 51,
+    "teks_soal": "Saya tidak pernah marah ketika dihina oleh siapa pun.",
+    "tipe_soal": "Lie Scale",
+    "bidang": "Pribadi",
+    "sub_bidang": "Lie Scale",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 52,
+    "teks_soal": "Saya sering menggunakan AI (seperti ChatGPT) sekadar copy-paste tanpa dipahami.",
+    "tipe_soal": "Consistency Check",
+    "bidang": "Belajar",
+    "sub_bidang": "Consistency Pair 3",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": 3
+  },
+  {
+    "id": 53,
+    "teks_soal": "Semangat belajar saya tetap tinggi dalam kondisi apa pun.",
+    "tipe_soal": "Consistency Check",
+    "bidang": "Belajar",
+    "sub_bidang": "Consistency Pair 4",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": 4
+  },
+  {
+    "id": 54,
+    "teks_soal": "Saya merasa pelajaran di sekolah tidak relevan dengan dunia nyata saat ini.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Motivasi Belajar",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 55,
+    "teks_soal": "Saya bisa mengatur waktu antara belajar dan bermain dengan seimbang.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Manajemen Waktu",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 56,
+    "teks_soal": "Saya sering menunda mengerjakan tugas (prokrastinasi) hingga mendekati deadline.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Manajemen Waktu",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 57,
+    "teks_soal": "Saya kesulitan fokus belajar karena sering terganggu notifikasi HP.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Fokus Belajar",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 58,
+    "teks_soal": "Saya memiliki metode belajar sendiri yang efektif untuk saya.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Keterampilan Belajar",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 59,
+    "teks_soal": "Saya merasa tugas sekolah saat ini terlalu banyak dan menguras energi.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Beban Belajar",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 60,
+    "teks_soal": "Saya berani bertanya kepada guru jika ada materi yang tidak dipahami.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Sikap Belajar",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 61,
+    "teks_soal": "Saya tidak pernah merasa malas untuk belajar.",
+    "tipe_soal": "Lie Scale",
+    "bidang": "Belajar",
+    "sub_bidang": "Lie Scale",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 62,
+    "teks_soal": "Saya sering merasa mengantuk berat saat jam pelajaran berlangsung.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Fokus Belajar",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 63,
+    "teks_soal": "Saya merasa metode mengajar sebagian guru sangat membosankan.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Lingkungan Sekolah",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 64,
+    "teks_soal": "Saya menggunakan internet dan YouTube untuk memperdalam materi sekolah.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Keterampilan Belajar",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 65,
+    "teks_soal": "Saya merasa tekanan untuk mendapat nilai tinggi membuat saya stres.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Beban Belajar",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 66,
+    "teks_soal": "Saya sering ikut-ikutan teman saat bolos atau tidak mengerjakan PR.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Sikap Belajar",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 67,
+    "teks_soal": "Saya merasa ruang kelas saya nyaman dan mendukung proses belajar.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Lingkungan Sekolah",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 68,
+    "teks_soal": "Saya kehilangan konsentrasi jika suasana belajar terlalu berisik.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Fokus Belajar",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 69,
+    "teks_soal": "Saya selalu mengerjakan tugas sendiri sebelum menggunakan bantuan AI.",
+    "tipe_soal": "Consistency Check",
+    "bidang": "Belajar",
+    "sub_bidang": "Consistency Pair 3",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": 3
+  },
+  {
+    "id": 70,
+    "teks_soal": "Saya merasa sangat malas memulai belajar setelah libur panjang.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Motivasi Belajar",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 71,
+    "teks_soal": "Saya selalu mendengarkan penjelasan guru dengan penuh perhatian penuh.",
+    "tipe_soal": "Lie Scale",
+    "bidang": "Belajar",
+    "sub_bidang": "Lie Scale",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 72,
+    "teks_soal": "Saya memiliki target nilai yang realistis dan berusaha mencapainya.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Motivasi Belajar",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 73,
+    "teks_soal": "Saya merasa kesulitan memahami materi eksakta (seperti Matematika/Fisika).",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Keterampilan Belajar",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 74,
+    "teks_soal": "Saya lebih mudah belajar dengan menonton video daripada membaca buku teks.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Keterampilan Belajar",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 75,
+    "teks_soal": "Saya merasa buku perpustakaan sekolah kurang update dan kurang lengkap.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Fasilitas Belajar",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 76,
+    "teks_soal": "Saya rajin membuat catatan atau mind map agar lebih mudah mengingat materi.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Keterampilan Belajar",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 77,
+    "teks_soal": "Saya sering lupa materi pelajaran sesaat setelah ujian selesai.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Keterampilan Belajar",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 78,
+    "teks_soal": "Saya belajar hanya saat besok akan diadakan ujian (Sistem SKS).",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Manajemen Waktu",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 79,
+    "teks_soal": "Saya merasa sekolah tidak memberikan ruang untuk mengembangkan kreativitas.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Lingkungan Sekolah",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 80,
+    "teks_soal": "Saya mampu mencari jalan keluar saat kesulitan mengerjakan tugas yang sulit.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Sikap Belajar",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 81,
+    "teks_soal": "Saya tidak pernah sekalipun menyontek saat ujian.",
+    "tipe_soal": "Lie Scale",
+    "bidang": "Belajar",
+    "sub_bidang": "Lie Scale",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 82,
+    "teks_soal": "Saya kehilangan motivasi belajar semenjak terbiasa dengan sekolah online/pandemi.",
+    "tipe_soal": "Consistency Check",
+    "bidang": "Belajar",
+    "sub_bidang": "Consistency Pair 4",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": 4
+  },
+  {
+    "id": 83,
+    "teks_soal": "Saya merasa fasilitas lab/komputer di sekolah sangat tertinggal.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Fasilitas Belajar",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 84,
+    "teks_soal": "Saya tergabung dalam kelompok belajar yang saling mendukung.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Lingkungan Sosial Belajar",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 85,
+    "teks_soal": "Saya merasa enggan belajar kelompok karena ujung-ujungnya hanya mengobrol.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Lingkungan Sosial Belajar",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 86,
+    "teks_soal": "Saya merasa guru memiliki anak emas (favorit) di kelas.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Lingkungan Sekolah",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 87,
+    "teks_soal": "Saya bersemangat saat diberikan tugas yang berbasis proyek nyata.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Motivasi Belajar",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 88,
+    "teks_soal": "Saya merasa kesulitan menyampaikan pendapat saat diskusi kelas.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Sikap Belajar",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 89,
+    "teks_soal": "Saya mencatat jadwal ujian dan pengumpulan tugas dengan rapi.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Manajemen Waktu",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 90,
+    "teks_soal": "Saya merasa sistem pendidikan saat ini hanya mementingkan nilai angka.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Motivasi Belajar",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 91,
+    "teks_soal": "Saya selalu memaafkan teman yang menyakiti saya saat itu juga.",
+    "tipe_soal": "Lie Scale",
+    "bidang": "Sosial",
+    "sub_bidang": "Lie Scale",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 92,
+    "teks_soal": "Saya khawatir akan gagal lulus dengan nilai yang memuaskan.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Beban Belajar",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 93,
+    "teks_soal": "Saya merasa ada mata pelajaran yang sama sekali tidak ada gunanya bagi saya.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Motivasi Belajar",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 94,
+    "teks_soal": "Saya rutin membaca buku atau artikel di luar materi wajib sekolah.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Keterampilan Belajar",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 95,
+    "teks_soal": "Saya merasa kelelahan karena harus mengikuti banyak les tambahan/bimbel.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Beban Belajar",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 96,
+    "teks_soal": "Saya merasa tertinggal materi dibandingkan teman-teman sekelas.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Beban Belajar",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 97,
+    "teks_soal": "Saya selalu mengecek ulang lembar jawaban saya sebelum dikumpulkan.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Sikap Belajar",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 98,
+    "teks_soal": "Saya mudah panik saat tiba-tiba diadakan kuis dadakan.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Fokus Belajar",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 99,
+    "teks_soal": "Saya memiliki tempat belajar yang khusus dan nyaman di rumah.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Fasilitas Belajar",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 100,
+    "teks_soal": "Saya sering merasa mengerti saat guru menjelaskan tapi bingung saat mengerjakan soal.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Keterampilan Belajar",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 101,
+    "teks_soal": "Saya tidak pernah membicarakan keburukan orang lain di belakangnya.",
+    "tipe_soal": "Lie Scale",
+    "bidang": "Sosial",
+    "sub_bidang": "Lie Scale",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 102,
+    "teks_soal": "Saya merasa prestasi saya menurun di semester terakhir ini.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Motivasi Belajar",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 103,
+    "teks_soal": "Saya berusaha mematuhi tata tertib sekolah meskipun tidak ada guru.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Sikap Belajar",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 104,
+    "teks_soal": "Saya lebih suka belajar secara mandiri daripada berkelompok.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Lingkungan Sosial Belajar",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 105,
+    "teks_soal": "Saya sering lupa membawa buku atau perlengkapan sekolah yang dibutuhkan.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Manajemen Waktu",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 106,
+    "teks_soal": "Saya memiliki target universitas yang memacu saya belajar lebih keras.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Motivasi Belajar",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 107,
+    "teks_soal": "Saya merasa cemas jika ketinggalan tren terbaru di media sosial (FOMO).",
+    "tipe_soal": "Consistency Check",
+    "bidang": "Sosial",
+    "sub_bidang": "Consistency Pair 5",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": 5
+  },
+  {
+    "id": 108,
+    "teks_soal": "Saya merasa terjebak dalam lingkungan pertemanan yang toxic.",
+    "tipe_soal": "Consistency Check",
+    "bidang": "Sosial",
+    "sub_bidang": "Consistency Pair 6",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": 6
+  },
+  {
+    "id": 109,
+    "teks_soal": "Saya merasa orang tua terlalu memaksakan kehendak mereka pada saya.",
+    "tipe_soal": "Consistency Check",
+    "bidang": "Sosial",
+    "sub_bidang": "Consistency Pair 7",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": 7
+  },
+  {
+    "id": 110,
+    "teks_soal": "Saya memiliki sahabat yang bisa dipercaya menjaga rahasia saya.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Hubungan Teman",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 111,
+    "teks_soal": "Saya tidak pernah merasa malas untuk menolong orang yang tidak saya kenal.",
+    "tipe_soal": "Lie Scale",
+    "bidang": "Sosial",
+    "sub_bidang": "Lie Scale",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 112,
+    "teks_soal": "Saya merasa energi saya cepat habis setelah berinteraksi dengan banyak orang (Social Battery).",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Hubungan Teman",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 113,
+    "teks_soal": "Saya kesulitan memulai obrolan dengan orang yang baru dikenal.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Keterampilan Sosial",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 114,
+    "teks_soal": "Saya mampu menempatkan diri dan bersikap sopan pada orang yang lebih tua.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Etika Sosial",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 115,
+    "teks_soal": "Saya pernah menjadi korban perundungan (bullying) secara verbal maupun fisik.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Masalah Sosial",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 116,
+    "teks_soal": "Saya aktif mengikuti kegiatan ekstrakurikuler atau organisasi di sekolah.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Gaya Hidup & Lingkungan Sosial",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 117,
+    "teks_soal": "Saya merasa dikucilkan jika tidak mengikuti apa yang teman-teman lakukan.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Masalah Sosial",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 118,
+    "teks_soal": "Saya berani menegur teman yang melakukan perbuatan salah/melanggar aturan.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Keterampilan Sosial",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 119,
+    "teks_soal": "Saya menyempatkan waktu untuk ngobrol langsung dengan keluarga setiap harinya.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Hubungan Keluarga",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 120,
+    "teks_soal": "Saya selalu setuju dengan nasihat orang tua tanpa pernah membantah sekalipun.",
+    "tipe_soal": "Lie Scale",
+    "bidang": "Sosial",
+    "sub_bidang": "Lie Scale",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 121,
+    "teks_soal": "Saya merasa tenang dan tidak peduli meskipun tidak mengikuti hal yang sedang viral.",
+    "tipe_soal": "Consistency Check",
+    "bidang": "Sosial",
+    "sub_bidang": "Consistency Pair 5",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": 5
+  },
+  {
+    "id": 122,
+    "teks_soal": "Saya pernah melakukan cyberbullying atau menulis komentar jahat tanpa sadar.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Masalah Sosial",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 123,
+    "teks_soal": "Saya menghindari konflik terbuka dan lebih memilih diam jika marah pada teman.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Keterampilan Sosial",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 124,
+    "teks_soal": "Saya merasa rumah bukanlah tempat yang nyaman untuk beristirahat.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Hubungan Keluarga",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 125,
+    "teks_soal": "Teman-teman terdekat saya selalu mendukung perkembangan positif saya.",
+    "tipe_soal": "Consistency Check",
+    "bidang": "Sosial",
+    "sub_bidang": "Consistency Pair 6",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": 6
+  },
+  {
+    "id": 126,
+    "teks_soal": "Saya mudah merasa simpati ketika melihat orang lain tertimpa musibah.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Keterampilan Sosial",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 127,
+    "teks_soal": "Saya memiliki akun alter/second account untuk menyembunyikan identitas asli saya.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Gaya Hidup & Lingkungan Sosial",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 128,
+    "teks_soal": "Saya dan orang tua punya waktu berkualitas bersama meski di tengah kesibukan.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Hubungan Keluarga",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 129,
+    "teks_soal": "Saya tahu etika yang baik saat berinteraksi di media sosial.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Etika Sosial",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 130,
+    "teks_soal": "Saya tidak pernah sekalipun merasa kesal pada orang tua.",
+    "tipe_soal": "Lie Scale",
+    "bidang": "Sosial",
+    "sub_bidang": "Lie Scale",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 131,
+    "teks_soal": "Orang tua saya memberikan kebebasan bagi saya untuk memilih jalan hidup sendiri.",
+    "tipe_soal": "Consistency Check",
+    "bidang": "Sosial",
+    "sub_bidang": "Consistency Pair 7",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": 7
+  },
+  {
+    "id": 132,
+    "teks_soal": "Saya memiliki batasan yang jelas dalam bergaul dengan lawan jenis.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Etika Sosial",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 133,
+    "teks_soal": "Saya mampu menolak ajakan teman yang tidak sesuai dengan nilai dan prinsip saya.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Masalah Sosial",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 134,
+    "teks_soal": "Saya bisa menghargai pendapat orang lain walau sangat bertentangan dengan saya.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Keterampilan Sosial",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 135,
+    "teks_soal": "Saya merasa cemas memikirkan kehidupan asmara/percintaan saya saat ini.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Masalah Sosial",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 136,
+    "teks_soal": "Saya merasa keluarga saya sering ribut karena masalah finansial.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Hubungan Keluarga",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 137,
+    "teks_soal": "Saya sering mengabaikan kebersihan dan ketertiban fasilitas umum di sekitar saya.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Etika Sosial",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 138,
+    "teks_soal": "Saya menjaga keseimbangan antara interaksi sosial online dan pertemuan langsung dengan teman.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Masalah Sosial",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 139,
+    "teks_soal": "Saya selalu menyukai semua teman sekelas tanpa terkecuali.",
+    "tipe_soal": "Lie Scale",
+    "bidang": "Sosial",
+    "sub_bidang": "Lie Scale",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 140,
+    "teks_soal": "Saya berani menolak ajakan teman jika itu merugikan masa depan saya.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Keterampilan Sosial",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 141,
+    "teks_soal": "Saya pernah merasa ingin membalas dendam pada orang yang menyakiti saya.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Keterampilan Sosial",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 142,
+    "teks_soal": "Orang tua saya sering membanding-bandingkan saya dengan anak orang lain.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Hubungan Keluarga",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 143,
+    "teks_soal": "Saya kadang melanggar aturan sosial jika tidak ada orang yang mengawasi saya.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Etika Sosial",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 144,
+    "teks_soal": "Saya sering merasa canggung saat berada di acara kumpul keluarga besar.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Keterampilan Sosial",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 145,
+    "teks_soal": "Saya memiliki seseorang di keluarga yang selalu mendengarkan keluh kesah saya.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Hubungan Keluarga",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 146,
+    "teks_soal": "Saya menjauhi lingkungan pergaulan yang menggunakan obat terlarang atau alkohol.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Masalah Sosial",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 147,
+    "teks_soal": "Saya sering ikut menghakimi (cancel culture) seseorang di internet tanpa tahu fakta aslinya.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Masalah Sosial",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 148,
+    "teks_soal": "Saya tidak pernah mengeluh meski diberi tugas yang sangat berat.",
+    "tipe_soal": "Lie Scale",
+    "bidang": "Sosial",
+    "sub_bidang": "Lie Scale",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 149,
+    "teks_soal": "Saya menghormati perbedaan agama dan suku dalam pergaulan sehari-hari.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Etika Sosial",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 150,
+    "teks_soal": "Saya pernah merasa trauma akibat konflik berat di dalam keluarga (broken home).",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Hubungan Keluarga",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 151,
+    "teks_soal": "Saya merasa bangga ketika bisa membantu menyelesaikan masalah teman.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Keterampilan Sosial",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 152,
+    "teks_soal": "Saya sering menyembunyikan masalah dari orang tua agar mereka tidak kepikiran.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Hubungan Keluarga",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 153,
+    "teks_soal": "Saya merasa persaingan antar teman di sekolah sangat tidak sehat.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Hubungan Teman",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 154,
+    "teks_soal": "Saya masih sangat kebingungan menentukan jurusan kuliah atau pekerjaan impian.",
+    "tipe_soal": "Consistency Check",
+    "bidang": "Karir",
+    "sub_bidang": "Consistency Pair 8",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": 8
+  },
+  {
+    "id": 155,
+    "teks_soal": "Saya khawatir kondisi ekonomi keluarga akan menghambat cita-cita saya.",
+    "tipe_soal": "Consistency Check",
+    "bidang": "Karir",
+    "sub_bidang": "Consistency Pair 9",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": 9
+  },
+  {
+    "id": 156,
+    "teks_soal": "Saya tahu apa saja kekuatan dan kelemahan terbesar dalam diri saya.",
+    "tipe_soal": "Core",
+    "bidang": "Karir",
+    "sub_bidang": "Minat & Bakat",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 157,
+    "teks_soal": "Saya selalu paham semua materi pelajaran sejak pertama kali diajarkan.",
+    "tipe_soal": "Lie Scale",
+    "bidang": "Karir",
+    "sub_bidang": "Lie Scale",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 158,
+    "teks_soal": "Saya sering merasa pesimis membayangkan sulitnya mencari pekerjaan di masa depan.",
+    "tipe_soal": "Core",
+    "bidang": "Karir",
+    "sub_bidang": "Kesiapan Karir",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 159,
+    "teks_soal": "Saya sudah mencari informasi detail tentang kampus atau jurusan yang saya tuju.",
+    "tipe_soal": "Core",
+    "bidang": "Karir",
+    "sub_bidang": "Perencanaan Karir",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 160,
+    "teks_soal": "Saya merasa bakat yang saya miliki tidak dihargai di lingkungan sekolah.",
+    "tipe_soal": "Core",
+    "bidang": "Karir",
+    "sub_bidang": "Minat & Bakat",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 161,
+    "teks_soal": "Saya takut profesi yang saya impikan akan tergantikan oleh Artificial Intelligence (AI).",
+    "tipe_soal": "Core",
+    "bidang": "Karir",
+    "sub_bidang": "Kesiapan Karir",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 162,
+    "teks_soal": "Saya merasa jurusan yang saya inginkan bertentangan dengan kemauan orang tua.",
+    "tipe_soal": "Core",
+    "bidang": "Karir",
+    "sub_bidang": "Perencanaan Karir",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 163,
+    "teks_soal": "Saya merasa belum memiliki skill khusus yang bisa dibanggakan untuk dunia kerja.",
+    "tipe_soal": "Core",
+    "bidang": "Karir",
+    "sub_bidang": "Minat & Bakat",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 164,
+    "teks_soal": "Saya merasa gengsi jika nanti harus bekerja di bidang yang gajinya kecil.",
+    "tipe_soal": "Core",
+    "bidang": "Karir",
+    "sub_bidang": "Kesiapan Karir",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 165,
+    "teks_soal": "Saya tidak pernah menyontek ide orang lain seumur hidup saya.",
+    "tipe_soal": "Lie Scale",
+    "bidang": "Karir",
+    "sub_bidang": "Lie Scale",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 166,
+    "teks_soal": "Saya sudah memiliki rencana karir atau studi lanjut yang sangat jelas.",
+    "tipe_soal": "Consistency Check",
+    "bidang": "Karir",
+    "sub_bidang": "Consistency Pair 8",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": 8
+  },
+  {
+    "id": 167,
+    "teks_soal": "Saya tahu cara membuat riwayat hidup (CV) yang baik dan benar.",
+    "tipe_soal": "Core",
+    "bidang": "Karir",
+    "sub_bidang": "Keterampilan Praktis",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 168,
+    "teks_soal": "Saya yakin kondisi finansial keluarga mampu mendukung penuh pendidikan lanjutan saya.",
+    "tipe_soal": "Consistency Check",
+    "bidang": "Karir",
+    "sub_bidang": "Consistency Pair 9",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": 9
+  },
+  {
+    "id": 169,
+    "teks_soal": "Saya menyadari pentingnya belajar bahasa asing untuk karir masa depan.",
+    "tipe_soal": "Core",
+    "bidang": "Karir",
+    "sub_bidang": "Keterampilan Praktis",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 170,
+    "teks_soal": "Saya sering membayangkan diri saya sukses memimpin sebuah perusahaan atau proyek.",
+    "tipe_soal": "Core",
+    "bidang": "Karir",
+    "sub_bidang": "Minat & Bakat",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 171,
+    "teks_soal": "Saya ragu apakah saya sanggup hidup mandiri jauh dari orang tua saat kuliah/kerja nanti.",
+    "tipe_soal": "Core",
+    "bidang": "Karir",
+    "sub_bidang": "Kesiapan Karir",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 172,
+    "teks_soal": "Saya selalu bekerja maksimal tanpa mengharapkan imbalan apa pun.",
+    "tipe_soal": "Lie Scale",
+    "bidang": "Karir",
+    "sub_bidang": "Lie Scale",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 173,
+    "teks_soal": "Saya memanfaatkan media sosial untuk membangun personal branding yang positif.",
+    "tipe_soal": "Core",
+    "bidang": "Karir",
+    "sub_bidang": "Keterampilan Praktis",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 174,
+    "teks_soal": "Saya memiliki idola atau role model profesional yang menginspirasi karir saya.",
+    "tipe_soal": "Core",
+    "bidang": "Karir",
+    "sub_bidang": "Minat & Bakat",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 175,
+    "teks_soal": "Saya sering mengubah-ubah pilihan cita-cita setiap kali melihat tren baru.",
+    "tipe_soal": "Core",
+    "bidang": "Karir",
+    "sub_bidang": "Perencanaan Karir",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 176,
+    "teks_soal": "Saya sudah mempersiapkan mental untuk menghadapi penolakan (kegagalan) di masa depan.",
+    "tipe_soal": "Core",
+    "bidang": "Karir",
+    "sub_bidang": "Kesiapan Karir",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 177,
+    "teks_soal": "Saya memilih jurusan berdasarkan minat dan passion, bukan sekadar gaji yang tinggi.",
+    "tipe_soal": "Core",
+    "bidang": "Karir",
+    "sub_bidang": "Perencanaan Karir",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 178,
+    "teks_soal": "Saya merasa tidak memiliki satu pun mata pelajaran yang menonjol.",
+    "tipe_soal": "Core",
+    "bidang": "Karir",
+    "sub_bidang": "Minat & Bakat",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 179,
+    "teks_soal": "Saya bersedia keluar dari zona nyaman demi mengejar karir impian.",
+    "tipe_soal": "Core",
+    "bidang": "Karir",
+    "sub_bidang": "Kesiapan Karir",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 180,
+    "teks_soal": "Saya tidak pernah menyesali satupun keputusan yang saya ambil.",
+    "tipe_soal": "Lie Scale",
+    "bidang": "Karir",
+    "sub_bidang": "Lie Scale",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 181,
+    "teks_soal": "Saya rajin mengasah keterampilan komunikasi (public speaking) untuk modal kerja.",
+    "tipe_soal": "Core",
+    "bidang": "Karir",
+    "sub_bidang": "Keterampilan Praktis",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 182,
+    "teks_soal": "Saya terbuka untuk mempelajari bidang baru yang sama sekali tidak saya kuasai.",
+    "tipe_soal": "Core",
+    "bidang": "Karir",
+    "sub_bidang": "Minat & Bakat",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 183,
+    "teks_soal": "Saya tahu cara mencari informasi beasiswa secara mandiri di internet.",
+    "tipe_soal": "Core",
+    "bidang": "Karir",
+    "sub_bidang": "Keterampilan Praktis",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 184,
+    "teks_soal": "Saya merasa kemampuan dasar komputer (seperti Excel/Word) saya masih sangat kurang.",
+    "tipe_soal": "Core",
+    "bidang": "Karir",
+    "sub_bidang": "Keterampilan Praktis",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 185,
+    "teks_soal": "Saya memiliki keinginan kuat untuk bisa membuka lapangan pekerjaan (wirausaha).",
+    "tipe_soal": "Core",
+    "bidang": "Karir",
+    "sub_bidang": "Minat & Bakat",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 186,
+    "teks_soal": "Saya pesimis bisa masuk ke perguruan tinggi negeri impian melalui jalur tes.",
+    "tipe_soal": "Core",
+    "bidang": "Karir",
+    "sub_bidang": "Perencanaan Karir",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 187,
+    "teks_soal": "Saya tidak pernah menangis atau merasa sedih karena urusan masa depan.",
+    "tipe_soal": "Lie Scale",
+    "bidang": "Karir",
+    "sub_bidang": "Lie Scale",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 188,
+    "teks_soal": "Saya merasa belum siap dan gugup jika harus menghadapi sesi wawancara kerja sekarang.",
+    "tipe_soal": "Core",
+    "bidang": "Karir",
+    "sub_bidang": "Keterampilan Praktis",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 189,
+    "teks_soal": "Saya belum memahami konsep dasar mengelola uang dan berinvestasi untuk masa depan.",
+    "tipe_soal": "Core",
+    "bidang": "Karir",
+    "sub_bidang": "Keterampilan Praktis",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 190,
+    "teks_soal": "Saya takut salah pilih jurusan dan menyesal di kemudian hari.",
+    "tipe_soal": "Core",
+    "bidang": "Karir",
+    "sub_bidang": "Perencanaan Karir",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 191,
+    "teks_soal": "Saya sudah mempersiapkan portofolio atau bukti karya dari hobi yang saya tekuni.",
+    "tipe_soal": "Core",
+    "bidang": "Karir",
+    "sub_bidang": "Keterampilan Praktis",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 192,
+    "teks_soal": "Saya memiliki jiwa kepemimpinan dan suka memimpin kelompok.",
+    "tipe_soal": "Core",
+    "bidang": "Karir",
+    "sub_bidang": "Minat & Bakat",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 193,
+    "teks_soal": "Saya aktif mencari informasi kampus, jurusan, dan karir secara mandiri tanpa menunggu.",
+    "tipe_soal": "Core",
+    "bidang": "Karir",
+    "sub_bidang": "Perencanaan Karir",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 194,
+    "teks_soal": "Saya merasa jurusan SMA/SMK saya saat ini tidak sesuai dengan bakat saya.",
+    "tipe_soal": "Core",
+    "bidang": "Karir",
+    "sub_bidang": "Minat & Bakat",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 195,
+    "teks_soal": "Saya yakin bisa sukses berkarir meskipun tidak berkuliah.",
+    "tipe_soal": "Core",
+    "bidang": "Karir",
+    "sub_bidang": "Kesiapan Karir",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 196,
+    "teks_soal": "Saya tidak pernah ragu sedetik pun akan kehebatan diri saya.",
+    "tipe_soal": "Lie Scale",
+    "bidang": "Karir",
+    "sub_bidang": "Lie Scale",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 197,
+    "teks_soal": "Saya merasa bingung membedakan antara hobi sesaat dan passion sejati untuk berkarir.",
+    "tipe_soal": "Core",
+    "bidang": "Karir",
+    "sub_bidang": "Minat & Bakat",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 198,
+    "teks_soal": "Saya sering ikut-ikutan teman melakukan hal yang sebenarnya tidak saya sukai.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Gaya Hidup & Lingkungan Sosial",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 199,
+    "teks_soal": "Saya merasa cemas ketika teman-teman jalan bareng tapi saya tidak diajak (FOMO).",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Gaya Hidup & Lingkungan Sosial",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 200,
+    "teks_soal": "Saya lebih memilih menghabiskan waktu luang sendiri daripada berkumpul dengan teman.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Gaya Hidup & Lingkungan Sosial",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 201,
+    "teks_soal": "Saya merasa nyaman dan diterima di lingkungan pertemanan saya saat ini.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Gaya Hidup & Lingkungan Sosial",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 202,
+    "teks_soal": "Saya bisa memilih pergaulan yang baik tanpa terpengaruh tekanan lingkungan sekitar.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Gaya Hidup & Lingkungan Sosial",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 203,
+    "teks_soal": "Saya aktif terlibat dalam kegiatan di lingkungan rumah atau komunitas sekitar.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Gaya Hidup & Lingkungan Sosial",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 204,
+    "teks_soal": "Saya kesulitan mengakses internet yang stabil untuk keperluan belajar di rumah.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Fasilitas Belajar",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 205,
+    "teks_soal": "Saya sering kekurangan alat tulis atau buku karena keterbatasan ekonomi.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Fasilitas Belajar",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 206,
+    "teks_soal": "Saya memiliki akses ke perangkat (laptop/tablet) yang mendukung kegiatan belajar saya.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Fasilitas Belajar",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 207,
+    "teks_soal": "Saya merasa teman sekelas justru sering mengalihkan fokus saat belajar bersama.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Lingkungan Sosial Belajar",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 208,
+    "teks_soal": "Saya canggung meminta tolong ke teman untuk menjelaskan ulang materi yang tidak dipahami.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Lingkungan Sosial Belajar",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 209,
+    "teks_soal": "Saya senang berdiskusi dengan teman karena bisa saling melengkapi pemahaman materi.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Lingkungan Sosial Belajar",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 210,
+    "teks_soal": "Saya merasa teman-teman tidak terlalu peduli dengan masalah yang saya hadapi.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Hubungan Teman",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 211,
+    "teks_soal": "Saya mudah tersinggung jika teman membuat lelucon tentang saya di depan orang banyak.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Hubungan Teman",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 212,
+    "teks_soal": "Saya bisa dengan mudah memaafkan teman yang tidak sengaja menyakiti perasaan saya.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Hubungan Teman",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 213,
+    "teks_soal": "Saya merasa dikelilingi teman-teman yang benar-benar peduli dengan kondisi saya.",
+    "tipe_soal": "Core",
+    "bidang": "Sosial",
+    "sub_bidang": "Hubungan Teman",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 214,
+    "teks_soal": "Saya mampu langsung masuk mode fokus begitu duduk di meja belajar.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Fokus Belajar",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 215,
+    "teks_soal": "Saya punya teknik khusus untuk menghalau distraksi saat sedang belajar penting.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Fokus Belajar",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 216,
+    "teks_soal": "Saya bisa tetap konsentrasi belajar meskipun suasana sekitar agak ramai.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Fokus Belajar",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 217,
+    "teks_soal": "Saya mampu tetap tenang menghadapi tekanan akademis tanpa kehilangan semangat.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Beban Belajar",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 218,
+    "teks_soal": "Saya menerima proses belajar yang sulit sebagai bagian dari perjalanan menuju sukses.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Beban Belajar",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 219,
+    "teks_soal": "Saya merasa aturan sekolah sering kali tidak adil dan tidak relevan untuk siswa.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Lingkungan Sekolah",
+    "arah_jawaban": "Negative",
+    "consistency_pair_id": null
+  },
+  {
+    "id": 220,
+    "teks_soal": "Saya merasa hubungan saya dengan guru-guru di sekolah cukup baik dan saling menghormati.",
+    "tipe_soal": "Core",
+    "bidang": "Belajar",
+    "sub_bidang": "Lingkungan Sekolah",
+    "arah_jawaban": "Positive",
+    "consistency_pair_id": null
+  }
+]

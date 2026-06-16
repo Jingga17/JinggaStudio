@@ -1,4 +1,4 @@
-# Counselor Connect Backend — Running & Tests
+# Resilien Backend — Running & Tests
 
 Instruksi singkat untuk menjalankan server dan tes lokal pada Windows.
 

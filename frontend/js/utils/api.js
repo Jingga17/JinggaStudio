@@ -1,5 +1,5 @@
 /**
- * Counselor Connect — API Client
+ * Resilien — API Client
  * Komunikasi ke backend REST API.
  * Jika backend belum ready, gunakan MOCK_MODE = true untuk data demo.
  */

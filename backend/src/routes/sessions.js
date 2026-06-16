@@ -76,12 +76,12 @@ router.delete('/:id', requireAdmin, (req, res) => {
   
   db.serialize(() => {
     db.run("BEGIN TRANSACTION");
-    // Delete students (which cascades to answers thanks to ON DELETE CASCADE)
-    db.run(`DELETE FROM students WHERE session_id = ?`, [id], (err) => {
+    // Unlink students from session instead of deleting them
+    db.run(`UPDATE students SET session_id = NULL WHERE session_id = ?`, [id], (err) => {
       if (err) {
         db.run("ROLLBACK");
         db.close();
-        return res.status(500).json({ error: 'Failed to delete associated students' });
+        return res.status(500).json({ error: 'Failed to unlink associated students' });
       }
       db.run(`DELETE FROM sessions WHERE id = ?`, [id], function(err) {
         if (err) {

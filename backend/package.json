@@ -1,7 +1,7 @@
 {
   "name": "dcm-220-backend",
   "version": "1.0.0",
-  "description": "Backend API for Counselor Connect Psikometri",
+  "description": "Backend API for Resilien Psikometri",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",

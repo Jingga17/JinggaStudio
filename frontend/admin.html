@@ -43,12 +43,25 @@
 </div>
 
 <!-- ═══════════ LOGIN PAGE ═══════════ -->
-<div id="admin-login" class="login-page" style="display:none">
-  <div class="login-card fade-in">
-    <div class="login-logo">
-      <div class="login-logo-icon" style="background:none; width:160px; height:160px; margin:0 auto 20px; box-shadow:none; border-radius:0;">
+<div id="admin-login" class="login-page" style="display:none; padding:0; align-items: stretch; flex-wrap: wrap;">
+  
+  <!-- Sisi Kiri (Area Konten) -->
+  <div id="login-left-area" style="flex: 1 1 400px; display: flex; align-items: center; justify-content: center; padding: 40px; border-right: 1px solid var(--border); background: rgba(255,255,255,0.3);">
+    <div style="text-align: center; color: var(--text-muted); border: 2px dashed var(--border); padding: 40px; border-radius: var(--radius-lg); width: 100%; max-width: 500px;">
+      <h3 style="color: var(--text-primary); margin-bottom: 12px;">Area Konten Kiri</h3>
+      <p style="font-size: 14px; line-height: 1.6;">Ruang kosong ini sengaja disiapkan agar Anda bisa menambahkan ilustrasi gambar, logo instansi, atau teks sambutan kustom sesuai kebutuhan Anda.</p>
+    </div>
+  </div>
+
+  <!-- Sisi Kanan (Form Login) -->
+  <div id="login-right-area" style="flex: 1 1 400px; display: flex; align-items: center; justify-content: center; padding: 20px;">
+    <div class="login-card fade-in">
+    <div class="login-logo" style="text-align: center; margin-bottom: 32px;">
+      <div class="login-logo-icon" style="background:none; width:120px; height:120px; margin:0 auto 16px; box-shadow:none; border-radius:0;">
         <img src="img/logo-full.svg" alt="Resilien Logo" style="width:100%; height:100%; object-fit:contain;">
       </div>
+      <div style="color: var(--accent); font-size:24px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 6px;">Resilien</div>
+      <div style="color: var(--text-secondary); font-size:14px; font-style: italic;">"Unburdening the Resilient Counselor."</div>
     </div>
 
     <form id="login-form" class="login-form" novalidate>
@@ -61,7 +74,7 @@
         <label class="form-label" for="login-pass">Password</label>
         <div style="position:relative">
           <input id="login-pass" type="password" class="form-control" placeholder="Masukkan password" autocomplete="current-password" required style="padding-right:44px">
-          <button type="button" id="login-pass-toggle" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:16px">👁</button>
+          <button type="button" id="login-pass-toggle" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg></button>
         </div>
       </div>
 
@@ -76,6 +89,7 @@
       </div>
     </form>
   </div>
+  </div>
 </div>
 
 <!-- ═══════════ ADMIN SHELL ═══════════ -->
@@ -86,47 +100,65 @@
 
   <!-- ── SIDEBAR ── -->
   <nav id="sidebar" class="sidebar">
-    <div class="sidebar-logo" style="display:flex; justify-content:center; align-items:center; padding: 20px 10px;">
-      <div style="width: 140px; height: auto;">
-        <img src="img/logo-full.svg" alt="Resilien" style="width:100%; height:auto; object-fit:contain;">
+    <div class="sidebar-logo" style="display:flex; align-items:center; gap: 12px; padding: 16px 14px;">
+      <div style="width: 44px; height: 44px; flex-shrink: 0;">
+        <img src="img/logo-full.svg" alt="Resilien Logo" style="width:100%; height:100%; object-fit:contain;">
+      </div>
+      <div style="display: flex; flex-direction: column; justify-content: center;">
+        <div style="color: var(--accent); font-size:16px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.2;">Resilien</div>
+        <div style="color: var(--text-secondary); font-size:10.5px; font-style: italic; line-height: 1.2; margin-top: 2px;">"Unburdening the Resilient Counselor."</div>
       </div>
     </div>
 
     <div class="sidebar-nav">
       <div class="nav-item active" data-page="dashboard-global">
-        <span class="nav-icon">🏠</span>
+        <span class="nav-icon" style="display:flex; align-items:center; justify-content:center;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </span>
         <span>Dashboard Utama</span>
       </div>
 
       <div class="nav-group expanded">
         <div class="nav-group-title" onclick="AdminApp.toggleNavGroup(this)">
-          <span class="nav-icon">📝</span>
+          <span class="nav-icon" style="display:flex; align-items:center; justify-content:center;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/></svg>
+          </span>
           <span>Asesmen</span>
           <span class="nav-group-caret">▼</span>
         </div>
         <div class="nav-group-items">
           <div class="nav-item" data-page="home">
-            <span class="nav-icon">📋</span>
+            <span class="nav-icon" style="display:flex; align-items:center; justify-content:center;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
+            </span>
             <span>Problem Checklist</span>
           </div>
           <div class="nav-item" data-page="dummy-sosiogram">
-            <span class="nav-icon">🔗</span>
+            <span class="nav-icon" style="display:flex; align-items:center; justify-content:center;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            </span>
             <span>Sosiogram</span>
           </div>
           <div class="nav-item" data-page="dummy-ikms">
-            <span class="nav-icon">📊</span>
+            <span class="nav-icon" style="display:flex; align-items:center; justify-content:center;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>
+            </span>
             <span>IKMS</span>
           </div>
         </div>
       </div>
 
       <div class="nav-item" data-page="laporan">
-        <span class="nav-icon">🖨️</span>
+        <span class="nav-icon" style="display:flex; align-items:center; justify-content:center;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+        </span>
         <span>Cetak Laporan</span>
       </div>
 
       <div class="nav-item" data-page="pengaturan">
-        <span class="nav-icon">⚙️</span>
+        <span class="nav-icon" style="display:flex; align-items:center; justify-content:center;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+        </span>
         <span>Pengaturan</span>
       </div>
     </div>
@@ -139,8 +171,8 @@
           <div style="font-size:11px;color:var(--text-muted)">Administrator</div>
         </div>
       </div>
-      <button id="logout-btn" class="btn btn-ghost btn-sm btn-full" style="margin-top:8px">
-        🚪 Keluar
+      <button id="logout-btn" class="btn btn-ghost btn-sm btn-full" style="margin-top:8px; display:flex; align-items:center; justify-content:center;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg> Keluar
       </button>
     </div>
   </nav>
@@ -151,7 +183,7 @@
     <!-- Topbar -->
     <div class="topbar">
       <button id="hamburger" class="topbar-hamburger" onclick="AdminApp.toggleSidebar()">☰</button>
-      <h2 id="topbar-title" class="topbar-title">🏠 Dashboard</h2>
+      <h2 id="topbar-title" class="topbar-title"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; vertical-align:-3px"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Dashboard</h2>
       <div class="topbar-actions">
 
       </div>
@@ -165,10 +197,10 @@
         ════════════════════════════════════════════════════════════════ -->
         <div id="page-dashboard-global" style="display:none">
           <div class="card" style="text-align:center; padding: 40px 20px;">
-            <div style="font-size:48px; margin-bottom:16px;">🌍</div>
+            <div style="margin-bottom:16px;"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg></div>
             <h2 style="margin:0 0 8px 0; color:var(--text-primary);">Dashboard Utama (Global)</h2>
             <p style="color:var(--text-muted); max-width:500px; margin:0 auto; line-height:1.5;">
-              Halaman ini akan menjadi pusat komando yang menampilkan rangkuman statistik gabungan dari seluruh asesmen yang ada di Counselor Connect. 
+              Halaman ini akan menjadi pusat komando yang menampilkan rangkuman statistik gabungan dari seluruh asesmen yang ada di Resilien. 
               <br><br>
               <em>Segera hadir seiring bertambahnya modul asesmen baru!</em>
             </p>
@@ -180,7 +212,7 @@
       ════════════════════════════════════════════════════════════════ -->
       <div id="page-dummy-sosiogram" style="display:none">
         <div class="card" style="text-align:center; padding: 40px 20px;">
-          <div style="font-size:48px; margin-bottom:16px;">🔗</div>
+          <div style="margin-bottom:16px;"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
           <h2 style="margin:0 0 8px 0; color:var(--text-primary);">Sosiogram</h2>
           <p style="color:var(--text-muted); max-width:500px; margin:0 auto; line-height:1.5;">Modul asesmen hubungan sosial antar siswa. <em>Dalam pengembangan.</em></p>
         </div>
@@ -188,7 +220,7 @@
 
       <div id="page-dummy-ikms" style="display:none">
         <div class="card" style="text-align:center; padding: 40px 20px;">
-          <div style="font-size:48px; margin-bottom:16px;">📊</div>
+          <div style="margin-bottom:16px;"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg></div>
           <h2 style="margin:0 0 8px 0; color:var(--text-primary);">IKMS</h2>
           <p style="color:var(--text-muted); max-width:500px; margin:0 auto; line-height:1.5;">Identifikasi Kebutuhan dan Masalah Siswa. <em>Dalam pengembangan.</em></p>
         </div>
@@ -201,7 +233,7 @@
 
         <!-- Notifikasi Tahunan -->
         <div id="yearly-notif" class="notif-banner fade-in" style="display:none">
-          <span class="notif-banner-icon">🔔</span>
+          <span class="notif-banner-icon" style="display:flex; align-items:center; justify-content:center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span>
           <div class="notif-banner-text">
             <strong>Pengingat Tahunan!</strong> Segera download dan backup data jawaban siswa sebelum database dikosongkan untuk tahun ajaran baru.
           </div>
@@ -212,21 +244,21 @@
         <!-- Stat Cards -->
         <div class="stat-grid">
           <div class="stat-card">
-            <div class="stat-icon stat-icon-blue">👥</div>
+            <div class="stat-icon stat-icon-blue"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
             <div>
               <div class="stat-label">Total Responden</div>
               <div class="stat-value" id="stat-responden">—</div>
             </div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon stat-icon-green">🏫</div>
+            <div class="stat-icon stat-icon-green"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
             <div>
               <div class="stat-label">Kelas Terdaftar</div>
               <div class="stat-value" id="stat-kelas">—</div>
             </div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon stat-icon-orange">📈</div>
+            <div class="stat-icon stat-icon-orange"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
             <div>
               <div class="stat-label">% Pengisian</div>
               <div class="stat-value" id="stat-pct">—</div>
@@ -237,7 +269,7 @@
         <!-- Daftar Siswa Prioritas -->
         <div class="card" style="margin-top: 20px; margin-bottom: 20px;">
           <h3 style="margin:0 0 15px 0; font-size:16px; color:#b91c1c; display:flex; align-items:center; gap:8px;">
-            🚨 Siswa Membutuhkan Penanganan Segera
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg> Siswa Membutuhkan Penanganan Segera
           </h3>
           <p style="font-size:13px; color:var(--text-muted); margin-top:-10px; margin-bottom:15px;">Daftar siswa dengan intensitas masalah Berat (≥ 50%) atau Sangat Berat (≥ 70%).</p>
           <div class="table-container">
@@ -262,7 +294,7 @@
         <div class="card" style="margin-bottom:20px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
             <div>
-              <div class="section-title">🗂️ Manajemen Sesi (Link Kuesioner)</div>
+              <div class="section-title"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; vertical-align:-4px;"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/></svg> Manajemen Sesi (Link Kuesioner)</div>
               <div class="section-sub">Buat link baru untuk kelas/angkatan tertentu.</div>
             </div>
             <button class="btn btn-primary btn-sm" onclick="AdminApp.showCreateSessionModal()">+ Buat Sesi Baru</button>
@@ -309,7 +341,7 @@
         <div class="charts-grid">
           <!-- Donut -->
           <div class="chart-card">
-            <div class="chart-title">🍩 Skor Per Bidang</div>
+            <div class="chart-title"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; vertical-align:-4px;"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg> Skor Per Bidang</div>
             <div class="chart-wrap">
               <canvas id="chart-donut" width="220" height="220"></canvas>
             </div>
@@ -318,7 +350,7 @@
 
           <!-- Bar -->
           <div class="chart-card">
-            <div class="chart-title">📊 Skor Per Sub Bidang (25 sub bidang)</div>
+            <div class="chart-title"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; vertical-align:-4px;"><line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/></svg> Skor Per Sub Bidang (25 sub bidang)</div>
             <div class="chart-wrap" style="overflow-x:auto">
               <canvas id="chart-bar"></canvas>
             </div>
@@ -327,16 +359,16 @@
 
         <!-- Deskripsi Analisis -->
         <div class="section-header" style="margin-bottom:12px">
-          <div class="section-title">📝 Deskripsi Analisis</div>
+          <div class="section-title"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; vertical-align:-4px;"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg> Deskripsi Analisis</div>
         </div>
         <div id="deskripsi-grid" class="deskripsi-grid" style="margin-bottom:20px"></div>
 
         <!-- Tabel Rekap -->
         <div class="card">
           <div class="section-header">
-            <div class="section-title">📋 Rekap Jawaban Siswa</div>
+            <div class="section-title"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; vertical-align:-4px;"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg> Rekap Jawaban Siswa</div>
             <div class="search-wrap" style="width:220px">
-              <span class="search-icon">🔍</span>
+              <span class="search-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
               <input id="tabel-search" type="text" class="form-control search-input" placeholder="Cari nama / kelas / NISN...">
             </div>
           </div>
@@ -372,9 +404,9 @@
             <h3 style="margin:0 0 12px 0; color:var(--text-primary);">Pusat Cetak Laporan Asesmen</h3>
             
             <div style="display:flex; gap:8px; margin-bottom:16px;">
-              <button class="btn btn-primary btn-sm">📋 Problem Checklist</button>
-              <button class="btn btn-outline btn-sm" style="color:var(--text-muted); cursor:not-allowed;">🔗 Sosiogram</button>
-              <button class="btn btn-outline btn-sm" style="color:var(--text-muted); cursor:not-allowed;">📊 IKMS</button>
+              <button class="btn btn-primary btn-sm" style="display:flex;align-items:center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg> Problem Checklist</button>
+              <button class="btn btn-outline btn-sm" style="color:var(--text-muted); cursor:not-allowed; display:flex;align-items:center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg> Sosiogram</button>
+              <button class="btn btn-outline btn-sm" style="color:var(--text-muted); cursor:not-allowed; display:flex;align-items:center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg> IKMS</button>
             </div>
 
             <p style="margin:4px 0 0 0; font-size:13px; color:var(--text-muted);">Pilih submenu di bawah untuk mencetak jenis laporan <b>Problem Checklist</b>.</p>
@@ -383,12 +415,12 @@
           <!-- Sub-menu toggle -->
         <div class="laporan-submenu">
           <div class="laporan-sub-card active" id="lap-sub-kelas" onclick="AdminApp.switchLapSubMenu('kelas')">
-            <div class="laporan-sub-icon">🏫</div>
+            <div class="laporan-sub-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
             <div class="laporan-sub-title">Laporan Analisis Kelas</div>
             <div class="laporan-sub-desc">Download laporan per kelas atau semua kelas</div>
           </div>
           <div class="laporan-sub-card" id="lap-sub-individu" onclick="AdminApp.switchLapSubMenu('individu')">
-            <div class="laporan-sub-icon">👤</div>
+            <div class="laporan-sub-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
             <div class="laporan-sub-title">Laporan Analisis Individu</div>
             <div class="laporan-sub-desc">Download laporan per siswa dalam kelas</div>
           </div>
@@ -397,7 +429,7 @@
         <!-- ── Kelas ── -->
         <div id="lap-content-kelas">
           <div class="card">
-            <div class="section-title" style="margin-bottom:16px">🏫 Laporan Kelas</div>
+            <div class="section-title" style="margin-bottom:16px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; vertical-align:-4px;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> Laporan Kelas</div>
             <div class="form-group" style="margin-bottom:16px">
               <label class="form-label">Pilih Kelas</label>
               <select id="lap-kelas-select" class="form-control" onchange="AdminApp.pilihKelasLaporan()" style="max-width:300px">
@@ -405,23 +437,23 @@
               </select>
             </div>
             <div id="lap-kelas-dl-wrap" style="display:none;gap:10px;flex-wrap:wrap;align-items:center">
-              <button class="btn btn-primary" onclick="AdminApp.downloadKelas()">
-                ⬇️ Download PDF Kelas Ini
+              <button class="btn btn-primary" style="display:flex;align-items:center;" onclick="AdminApp.downloadKelas()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg> Download PDF Kelas Ini
               </button>
             </div>
             <hr class="divider">
             <div>
               <div class="section-sub" style="margin-bottom:12px">Download semua laporan kelas sekaligus</div>
-              <button class="btn btn-outline" onclick="AdminApp.downloadBulkKelas()">
-                📦 Download Semua Laporan Kelas (PDF)
+              <button class="btn btn-outline" style="display:flex;align-items:center;" onclick="AdminApp.downloadBulkKelas()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><line x1="16.5" x2="7.5" y1="9.4" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" x2="12" y1="22.08" y2="12"/></svg> Download Semua Laporan Kelas (PDF)
               </button>
             </div>
             <hr class="divider">
             <div>
-              <div class="section-title" style="margin-bottom:16px">📊 Ekspor Excel (Rekap & Detail)</div>
+              <div class="section-title" style="margin-bottom:16px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; vertical-align:-4px;"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M8 13h2"/><path d="M8 17h2"/><path d="M14 13h2"/><path d="M14 17h2"/></svg> Ekspor Excel (Rekap & Detail)</div>
               <div class="section-sub" style="margin-bottom:12px">Download data lengkap seluruh siswa dalam format Excel (.xlsx)</div>
-              <button class="btn btn-success" onclick="AdminApp.exportExcel()">
-                📥 Unduh Data (Excel)
+              <button class="btn btn-success" style="display:flex;align-items:center;" onclick="AdminApp.exportExcel()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg> Unduh Data (Excel)
               </button>
             </div>
           </div>
@@ -430,7 +462,7 @@
         <!-- ── Individu ── -->
         <div id="lap-content-individu" style="display:none">
           <div class="card">
-            <div class="section-title" style="margin-bottom:16px">👤 Laporan Individu</div>
+            <div class="section-title" style="margin-bottom:16px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; vertical-align:-4px;"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Laporan Individu</div>
             <div class="form-group" style="margin-bottom:16px">
               <label class="form-label">Pilih Kelas</label>
               <select id="lap-ind-kelas-select" class="form-control" onchange="AdminApp.pilihKelasIndividu()" style="max-width:300px">
@@ -441,8 +473,8 @@
             <div id="lap-ind-table-wrap" style="display:none">
               <div class="section-header" style="margin-bottom:12px">
                 <div class="section-sub">Daftar siswa di kelas yang dipilih</div>
-                <button class="btn btn-outline btn-sm" onclick="AdminApp.downloadBulkIndividu()">
-                  📦 Download Bulk Kelas Ini (PDF)
+                <button class="btn btn-outline btn-sm" style="display:flex;align-items:center;" onclick="AdminApp.downloadBulkIndividu()">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><line x1="16.5" x2="7.5" y1="9.4" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" x2="12" y1="22.08" y2="12"/></svg> Download Bulk Kelas Ini (PDF)
                 </button>
               </div>
               <div class="table-wrap">
@@ -466,8 +498,8 @@
             <hr class="divider" style="margin-top:20px; margin-bottom:20px;">
             <div>
               <div class="section-sub" style="margin-bottom:12px">Download seluruh laporan individu (semua kelas)</div>
-              <button class="btn btn-outline" onclick="AdminApp.downloadBulkSemuaIndividu()">
-                📦 Download Seluruh Laporan Individu (PDF)
+              <button class="btn btn-outline" style="display:flex;align-items:center;" onclick="AdminApp.downloadBulkSemuaIndividu()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><line x1="16.5" x2="7.5" y1="9.4" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" x2="12" y1="22.08" y2="12"/></svg> Download Seluruh Laporan Individu (PDF)
               </button>
             </div>
           </div>
@@ -476,7 +508,7 @@
         <!-- Info catatan teknis -->
         <div class="card" style="margin-top:16px;background:rgba(59,130,246,0.05);border-color:rgba(59,130,246,0.15)">
           <div style="font-size:13px;color:var(--text-muted);line-height:1.8">
-            <strong style="color:var(--accent)">ℹ️ Catatan Teknis:</strong><br>
+            <strong style="color:var(--accent)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:-3px"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg> Catatan Teknis:</strong><br>
             • PDF diunduh langsung ke perangkat (tidak disimpan di server)<br>
             • Ukuran kertas: A4 | Watermark: DOKUMEN RAHASIA<br>
             • Grafik berwarna sesuai bidang (Pribadi=Biru, Belajar=Hijau, Sosial=Oranye, Karir=Ungu)<br>
@@ -495,7 +527,7 @@
 
           <!-- Identitas Sekolah -->
           <div class="settings-section">
-            <div class="settings-section-title">🏫 Identitas Sekolah</div>
+            <div class="settings-section-title"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; vertical-align:-4px;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> Identitas Sekolah</div>
             <div class="settings-grid">
               <div class="form-group">
                 <label class="form-label" for="set-nama-sekolah">Nama Sekolah</label>
@@ -520,7 +552,7 @@
 
           <!-- Identitas Konselor -->
           <div class="settings-section">
-            <div class="settings-section-title">👤 Identitas Konselor</div>
+            <div class="settings-section-title"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; vertical-align:-4px;"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Identitas Konselor</div>
             <div class="settings-grid">
               <div class="form-group">
                 <label class="form-label" for="set-nama-konselor">Nama Konselor</label>
@@ -535,7 +567,7 @@
 
           <!-- Upload Logo & TTD -->
           <div class="settings-section">
-            <div class="settings-section-title">🖼️ Logo & Tanda Tangan</div>
+            <div class="settings-section-title"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; vertical-align:-4px;"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg> Logo & Tanda Tangan</div>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px">
 
               <div>
@@ -543,7 +575,7 @@
                 <div class="upload-box" id="upload-logo-sekolah">
                   <input type="file" name="logo_sekolah" accept="image/*">
                   <img class="upload-preview" src="" alt="Preview">
-                  <div class="upload-icon">🖼️</div>
+                  <div class="upload-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:8px; color:var(--text-muted);"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></div>
                   <div class="upload-label">Klik untuk upload</div>
                   <div class="upload-name"></div>
                 </div>
@@ -554,7 +586,7 @@
                 <div class="upload-box" id="upload-logo-bk">
                   <input type="file" name="logo_bk" accept="image/*">
                   <img class="upload-preview" src="" alt="Preview">
-                  <div class="upload-icon">🖼️</div>
+                  <div class="upload-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:8px; color:var(--text-muted);"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></div>
                   <div class="upload-label">Klik untuk upload</div>
                   <div class="upload-name"></div>
                 </div>
@@ -565,7 +597,7 @@
                 <div class="upload-box" id="upload-cap-konselor">
                   <input type="file" name="cap_konselor" accept="image/*">
                   <img class="upload-preview" src="" alt="Preview">
-                  <div class="upload-icon">🔏</div>
+                  <div class="upload-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:8px; color:var(--text-muted);"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg></div>
                   <div class="upload-label">Klik untuk upload</div>
                   <div class="upload-name"></div>
                 </div>
@@ -576,7 +608,7 @@
                 <div class="upload-box" id="upload-ttd-konselor">
                   <input type="file" name="ttd_konselor" accept="image/*">
                   <img class="upload-preview" src="" alt="Preview">
-                  <div class="upload-icon">✍️</div>
+                  <div class="upload-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:8px; color:var(--text-muted);"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg></div>
                   <div class="upload-label">Klik untuk upload</div>
                   <div class="upload-name"></div>
                 </div>
@@ -587,13 +619,13 @@
 
           <!-- Manajemen Kelas Manual -->
           <div class="settings-section">
-            <div class="settings-section-title">🏫 Manajemen Daftar Kelas</div>
+            <div class="settings-section-title"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; vertical-align:-4px;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> Manajemen Daftar Kelas</div>
             <div style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">Daftar kelas ini akan muncul sebagai pilihan di halaman pengisian data diri siswa. Anda dapat menambah atau menghapus kelas sesuai kebutuhan tahun ajaran.</div>
             
             <div style="display:flex;gap:10px;margin-bottom:16px;">
               <input id="new-kelas-input" type="text" class="form-control" placeholder="Contoh: XII IPA 1" style="max-width:250px">
-              <button type="button" class="btn btn-outline" onclick="AdminApp.tambahKelas()">✚ Tambah Kelas</button>
-              <button type="button" class="btn btn-outline" style="color:#ef4444; border-color:#fca5a5;" onclick="AdminApp.hapusSemuaKelas()">🗑️ Hapus Semua</button>
+              <button type="button" class="btn btn-outline" style="display:flex;align-items:center;" onclick="AdminApp.tambahKelas()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; vertical-align:-3px"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></svg> Tambah Kelas</button>
+              <button type="button" class="btn btn-outline" style="color:#ef4444; border-color:#fca5a5; display:flex;align-items:center;" onclick="AdminApp.hapusSemuaKelas()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; vertical-align:-3px"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg> Hapus Semua</button>
             </div>
             
             <div id="kelas-list-container" style="display:flex;flex-wrap:wrap;gap:8px;">
@@ -603,7 +635,7 @@
 
           <!-- Preview Laporan -->
           <div class="settings-section">
-            <div class="settings-section-title">👁️ Preview Posisi di Laporan</div>
+            <div class="settings-section-title"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; vertical-align:-4px;"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg> Preview Posisi di Laporan</div>
             <div style="background:white;border-radius:var(--radius-md);padding:20px;color:#1a1a1a;max-width:600px">
               <!-- Kop surat mini preview -->
               <div style="display:flex;align-items:center;gap:12px;border-bottom:2px solid #1a1a1a;padding-bottom:10px;margin-bottom:10px">
@@ -627,8 +659,8 @@
           </div>
 
           <div style="display:flex;gap:10px">
-            <button type="submit" class="btn btn-primary btn-lg">
-              💾 Simpan Pengaturan
+            <button type="submit" class="btn btn-primary btn-lg" style="display:flex;align-items:center;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Simpan Pengaturan
             </button>
           </div>
         </form>

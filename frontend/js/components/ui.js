@@ -1,5 +1,5 @@
 /**
- * Counselor Connect — UI Components
+ * Resilien — UI Components
  * Toast, Modal, Spinner, Charts
  */
 
