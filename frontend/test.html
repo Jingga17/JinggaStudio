@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test JS Syntax</title>
+</head>
+<body style="padding: 20px; font-family: sans-serif;">
+  <h2>Syntax Error Check</h2>
+  <div id="error-log" style="color: red; font-size: 16px; margin-top: 20px;"></div>
+  
+  <script>
+    window.onerror = function(msg, url, line, col, error) {
+      document.getElementById('error-log').innerHTML += 
+        '<p><strong>Error:</strong> ' + msg + '<br>' +
+        '<strong>Line:</strong> ' + line + ' <strong>Col:</strong> ' + col + '</p>';
+      return false; // Let it print to console too
+    };
+  </script>
+  
+  <script src="js/pages/admin.js"></script>
+  
+  <script>
+    if (typeof AdminApp !== 'undefined') {
+      document.body.innerHTML += '<h3 style="color: green;">SUCCESS! admin.js dimuat tanpa error syntax!</h3>';
+    } else {
+      document.body.innerHTML += '<h3 style="color: red;">GAGAL! admin.js memiliki error dan tidak dimuat.</h3>';
+    }
+  </script>
+</body>
+</html>

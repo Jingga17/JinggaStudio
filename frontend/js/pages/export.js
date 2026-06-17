@@ -131,8 +131,8 @@ const ExportApp = {
   async exportRaporExcel(studentId, nama) {
     Spinner.show('Mengambil data rapor...');
     try {
-      const res = await API.get(`/students/${studentId}/rapor`);
-      const raporList = res.data || [];
+      const res = await API.get(`/students/${studentId}/buku-induk`);
+      const raporList = (res && res.data && res.data.rapor) ? res.data.rapor : [];
       if (raporList.length === 0) {
         Toast.error('Belum ada data rapor untuk siswa ini.');
         return;
