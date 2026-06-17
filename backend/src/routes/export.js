@@ -296,4 +296,265 @@ router.get('/zip/kelas/all', auth, async (req, res, next) => {
 	} catch (e) { next(e); }
 });
 
+// Export all rapor data (Formatted Excel)
+router.get('/rapor', auth, async (req, res, next) => {
+	try {
+        const kelas = req.query.kelas;
+        const search = req.query.search;
+        let sql = `
+            SELECT id, nisn, nama, kelas, nilai_akademik
+            FROM students
+            WHERE 1=1
+        `;
+        const params = [];
+        if (kelas) {
+            sql += ` AND kelas = ?`;
+            params.push(kelas);
+        }
+        if (search) {
+            sql += ` AND (nama LIKE ? OR nisn LIKE ?)`;
+            params.push(`%${search}%`, `%${search}%`);
+        }
+        sql += ` ORDER BY kelas, nama`;
+		const students = await query(sql, params);
+
+        const workbook = new ExcelJS.Workbook();
+        workbook.creator = 'Resilien';
+        workbook.created = new Date();
+
+        const mapelWajibS1S2 = [
+            'Pend. Agama', 'PKN', 'B. Indo', 'MTK',
+            'B. Inggris', 'PJOK', 'Seni Budaya', 
+            'IPA', 'IPS', 'Informatika'
+        ];
+        
+        const mapelWajibS3S6 = [
+            'Pend. Agama', 'PKN', 'B. Indo', 'MTK',
+            'B. Inggris', 'PJOK', 'Seni Budaya',
+            'PKWU', 'Sejarah'
+        ];
+
+        // Process data per student
+        const studentData = students.map(s => {
+            let n = {};
+            try { if (s.nilai_akademik) n = typeof s.nilai_akademik === 'string' ? JSON.parse(s.nilai_akademik) : s.nilai_akademik; } catch (e) {}
+            return { ...s, n };
+        });
+
+        // We will create sheets for Semester 1 to 6
+        for (let sem = 1; sem <= 6; sem++) {
+            // Check if any student has data for this semester
+            let hasData = false;
+            let uniqueSubjects = new Map(); // key -> Display Name
+
+            let uniqueSubjectsSet = new Set(); // Stores display names
+            let baseMapelNames = [];
+
+            if (sem <= 2) {
+                baseMapelNames = mapelWajibS1S2;
+            } else {
+                baseMapelNames = mapelWajibS3S6;
+            }
+
+            studentData.forEach(s => {
+                s.mappedScores = {};
+                let count = 0;
+                
+                if (sem <= 2) {
+                    mapelWajibS1S2.forEach((m, i) => {
+                        let val = s.n[`akademik_s${sem}_${i}`];
+                        if (val !== undefined && val !== '') {
+                            s.mappedScores[m] = parseFloat(val);
+                            count++;
+                            uniqueSubjectsSet.add(m);
+                        }
+                    });
+                } else {
+                    mapelWajibS3S6.forEach((m, i) => {
+                        let val = s.n[`akademik_s${sem}_w${i}`];
+                        if (val !== undefined && val !== '') {
+                            s.mappedScores[m] = parseFloat(val);
+                            count++;
+                            uniqueSubjectsSet.add(m);
+                        }
+                    });
+                    
+                    for (let p = 1; p <= 4; p++) {
+                        let val = s.n[`akademik_s${sem}_p${p}`];
+                        if (val !== undefined && val !== '') {
+                            let mapelName = s.n[`pil_${p}`] || `Pilihan ${p}`;
+                            s.mappedScores[mapelName] = parseFloat(val);
+                            count++;
+                            uniqueSubjectsSet.add(mapelName);
+                        }
+                    }
+                }
+                s.semCount = count;
+                if (count > 0) hasData = true;
+            });
+
+            if (!hasData) continue; // Skip empty semesters
+
+            // Sort subjects: Mandatory first (in order), then Electives alphabetically
+            let allSubjectsArr = [];
+            baseMapelNames.forEach(m => {
+                if (uniqueSubjectsSet.has(m)) {
+                    allSubjectsArr.push(m);
+                    uniqueSubjectsSet.delete(m);
+                }
+            });
+            let electivesArr = Array.from(uniqueSubjectsSet).sort();
+            allSubjectsArr = allSubjectsArr.concat(electivesArr);
+
+            const sheet = workbook.addWorksheet(`Semester ${sem}`);
+            
+            // Collect rows per class to calculate rank
+            const classGroups = {};
+            studentData.forEach(s => {
+                if (!classGroups[s.kelas]) classGroups[s.kelas] = [];
+                let rowData = { 
+                    id: s.id, nama: s.nama, kelas: s.kelas, nisn: s.nisn, nis: '',
+                    scores: {}, jumlah: 0, count: 0 
+                };
+                allSubjectsArr.forEach(m => {
+                    let val = s.mappedScores[m];
+                    if (val !== undefined) {
+                        rowData.scores[m] = val;
+                        rowData.jumlah += val;
+                        rowData.count++;
+                    }
+                });
+                rowData.rerata = rowData.count > 0 ? (rowData.jumlah / rowData.count) : 0;
+                
+                // Only include students who have at least one score in this semester
+                if (rowData.count > 0) {
+                    classGroups[s.kelas].push(rowData);
+                }
+            });
+
+            let finalRows = [];
+            Object.keys(classGroups).forEach(k => {
+                let group = classGroups[k];
+                // Sort by Jumlah DESC to get rank
+                group.sort((a, b) => b.jumlah - a.jumlah);
+                group.forEach((row, idx) => {
+                    row.peringkat = idx + 1;
+                    finalRows.push(row);
+                });
+            });
+
+            // Re-sort final rows by Kelas, then Nama
+            finalRows.sort((a, b) => {
+                if (a.kelas !== b.kelas) return (a.kelas || '').localeCompare(b.kelas || '');
+                return (a.nama || '').localeCompare(b.nama || '');
+            });
+            
+            // Header Row 1
+            const row1 = ['NO', 'NAMA SISWA', 'KELAS', 'NISN', 'NIS', 'MATA PELAJARAN'];
+            for(let i=1; i<allSubjectsArr.length; i++) row1.push(''); // merge placeholders
+            row1.push('JUMLAH', 'RERATA', 'PERINGKAT');
+
+            // Header Row 2
+            const row2 = ['', '', '', '', ''];
+            allSubjectsArr.forEach(m => row2.push(m.substring(0, 15).toUpperCase()));
+            row2.push('', '', '');
+
+            sheet.addRow(row1);
+            sheet.addRow(row2);
+
+            // Merge Cells
+            sheet.mergeCells('A1:A2');
+            sheet.mergeCells('B1:B2');
+            sheet.mergeCells('C1:C2');
+            sheet.mergeCells('D1:D2');
+            sheet.mergeCells('E1:E2');
+            
+            // Merge Mata Pelajaran
+            const startCol = 6;
+            const endCol = 5 + allSubjectsArr.length;
+            const startColLetter = sheet.getColumn(startCol).letter;
+            const endColLetter = sheet.getColumn(endCol).letter;
+            sheet.mergeCells(`${startColLetter}1:${endColLetter}1`);
+            
+            const jmlColLetter = sheet.getColumn(endCol + 1).letter;
+            sheet.mergeCells(`${jmlColLetter}1:${jmlColLetter}2`);
+            const rerataColLetter = sheet.getColumn(endCol + 2).letter;
+            sheet.mergeCells(`${rerataColLetter}1:${rerataColLetter}2`);
+            const peringColLetter = sheet.getColumn(endCol + 3).letter;
+            sheet.mergeCells(`${peringColLetter}1:${peringColLetter}2`);
+
+            // Apply Styles to Headers
+            for (let r = 1; r <= 2; r++) {
+                sheet.getRow(r).eachCell((cell) => {
+                    cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+                    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4F81BD' } };
+                    cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+                    cell.border = {
+                        top: { style: 'thin' }, left: { style: 'thin' },
+                        bottom: { style: 'thin' }, right: { style: 'thin' }
+                    };
+                });
+            }
+
+            // Set Column Widths
+            sheet.getColumn(1).width = 5;  // NO
+            sheet.getColumn(2).width = 30; // NAMA
+            sheet.getColumn(3).width = 10; // KELAS
+            sheet.getColumn(4).width = 15; // NISN
+            sheet.getColumn(5).width = 10; // NIS
+            
+            for(let i=0; i<allSubjectsArr.length; i++) {
+                sheet.getColumn(6 + i).width = 8;
+            }
+            sheet.getColumn(endCol + 1).width = 10; // JUMLAH
+            sheet.getColumn(endCol + 2).width = 10; // RERATA
+            sheet.getColumn(endCol + 3).width = 12; // PERINGKAT
+
+            // Add Data Rows
+            finalRows.forEach((r, idx) => {
+                const rowData = [
+                    idx + 1,
+                    r.nama,
+                    r.kelas,
+                    r.nisn,
+                    r.nis
+                ];
+                allSubjectsArr.forEach(m => {
+                    rowData.push(r.scores[m] !== undefined ? r.scores[m] : '');
+                });
+                rowData.push(r.jumlah);
+                rowData.push(r.rerata.toFixed(2));
+                rowData.push(r.peringkat);
+                
+                const addedRow = sheet.addRow(rowData);
+                addedRow.eachCell((cell, colNum) => {
+                    cell.border = {
+                        top: { style: 'thin' }, left: { style: 'thin' },
+                        bottom: { style: 'thin' }, right: { style: 'thin' }
+                    };
+                    if (colNum !== 2) {
+                        cell.alignment = { vertical: 'middle', horizontal: 'center' };
+                    }
+                });
+            });
+        }
+
+        if (workbook.worksheets.length === 0) {
+            workbook.addWorksheet('Kosong');
+        }
+
+        let fileName = "Data_Nilai_Rapor";
+        if (kelas) {
+            fileName += `_Kelas_${kelas.replace(/[^a-zA-Z0-9_\-\.]/g, '_')}`;
+        }
+        fileName += ".xlsx";
+
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+        await workbook.xlsx.write(res);
+        res.end();
+
+	} catch (e) { next(e); }
+});
+
 module.exports = router;

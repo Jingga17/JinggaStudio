@@ -231,7 +231,7 @@ router.get('/master', authMiddleware, async (req, res, next) => {
         // Must be admin
         if (!req.admin) return res.status(403).json({ status: 'error', message: 'Akses ditolak. Khusus Admin.' });
         
-        const students = await query('SELECT id, nama, kelas, nisn, password_hash FROM students ORDER BY kelas, nama');
+        const students = await query('SELECT * FROM students ORDER BY kelas, nama');
         res.json({ status: 'success', data: students });
     } catch (err) { next(err); }
 });
@@ -322,4 +322,79 @@ router.put('/akademik', authMiddleware, async (req, res, next) => {
     } catch (err) { next(err); }
 });
 
+// Get complete Buku Induk data (Admin Only)
+router.get('/:id/buku-induk', authMiddleware, async (req, res, next) => {
+    try {
+        if (!req.admin) return res.status(403).json({ status: 'error', message: 'Akses ditolak' });
+        
+        const studentId = req.params.id;
+        const student = await get('SELECT * FROM students WHERE id = ?', [studentId]);
+        if (!student) return res.status(404).json({ status: 'error', message: 'Siswa tidak ditemukan' });
+
+        // Parse data_pribadi JSON
+        let dataPribadi = {};
+        if (student.data_pribadi) {
+            try {
+                dataPribadi = typeof student.data_pribadi === 'string' 
+                    ? JSON.parse(student.data_pribadi) 
+                    : student.data_pribadi;
+            } catch(e) { dataPribadi = {}; }
+        }
+
+        // Parse nilai_akademik JSON
+        let nilaiAkademik = {};
+        if (student.nilai_akademik) {
+            try {
+                nilaiAkademik = typeof student.nilai_akademik === 'string'
+                    ? JSON.parse(student.nilai_akademik)
+                    : student.nilai_akademik;
+            } catch(e) { nilaiAkademik = {}; }
+        }
+
+        // Calculate scores
+        let scores = {};
+        try {
+            scores = await calculateStudentScores(studentId);
+        } catch(e) { scores = {}; }
+
+        // Get rapor
+        let rapor = [];
+        try {
+            rapor = await query('SELECT * FROM rapor WHERE student_id = ? ORDER BY semester', [studentId]);
+        } catch(e) { rapor = []; }
+
+        // Get prestasi
+        let prestasi = [];
+        try {
+            prestasi = await query('SELECT * FROM prestasi WHERE student_id = ?', [studentId]);
+        } catch(e) { prestasi = []; }
+
+        // Get ekskul (might not exist)
+        let ekskul = [];
+        try {
+            ekskul = await query('SELECT * FROM ekskul WHERE student_id = ?', [studentId]);
+        } catch(e) { ekskul = []; }
+
+        // Build complete student object with data_pribadi merged
+        const studentComplete = {
+            ...student,
+            ...dataPribadi,  // Merge all data_pribadi fields into root level
+            data_pribadi: dataPribadi,  // Also keep nested for explicit access
+            nilai_akademik: nilaiAkademik,
+            ...scores
+        };
+
+        res.json({
+            status: 'success',
+            data: {
+                student: studentComplete,
+                rapor,
+                prestasi,
+                ekskul
+            }
+        });
+    } catch (err) { next(err); }
+});
+
 module.exports = router;
+

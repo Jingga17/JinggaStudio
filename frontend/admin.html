@@ -7,7 +7,12 @@
   <meta name="description" content="Panel admin Resilien - Platform Asesmen Bimbingan dan Konseling">
   <meta name="robots" content="noindex,nofollow">
   <link rel="stylesheet" href="css/style.css">
-  
+  <style>
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
   <!-- PDF Generation Libraries (Client-side) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -118,7 +123,7 @@
         <span>Dashboard Utama</span>
       </div>
 
-      <div class="nav-group expanded">
+      <div class="nav-group">
         <div class="nav-group-title" onclick="AdminApp.toggleNavGroup(this)">
           <span class="nav-icon" style="display:flex; align-items:center; justify-content:center;">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/></svg>
@@ -146,6 +151,20 @@
             <span>IKMS</span>
           </div>
         </div>
+      </div>
+
+      <div class="nav-item" data-page="buku-induk">
+        <span class="nav-icon" style="display:flex; align-items:center; justify-content:center;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+        </span>
+        <span>Buku Induk Siswa</span>
+      </div>
+
+      <div class="nav-item" data-page="pemetaan">
+        <span class="nav-icon" style="display:flex; align-items:center; justify-content:center;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" x2="9" y1="3" y2="18"/><line x1="15" x2="15" y1="6" y2="21"/></svg>
+        </span>
+        <span>Peta Demografi Siswa</span>
       </div>
 
       <div class="nav-item" data-page="laporan">
@@ -230,6 +249,89 @@
         </div>
       
       <!-- ════════════════════════════════════════════════════════════════
+           PAGE: PETA DEMOGRAFI & KERAWANAN SISWA
+      ════════════════════════════════════════════════════════════════ -->
+      <div id="page-pemetaan" style="display:none">
+        
+        <!-- Header & Filter -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:16px;">
+          <div>
+            <h2 style="margin:0; font-size:22px; color:var(--text-primary); display:flex; align-items:center; gap:8px;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent);"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" x2="9" y1="3" y2="18"/><line x1="15" x2="15" y1="6" y2="21"/></svg>
+              Peta Demografi Siswa
+            </h2>
+            <p style="margin:4px 0 0 0; font-size:13px; color:var(--text-muted);">
+              Analitik persebaran demografi dan kondisi siswa secara real-time.
+            </p>
+          </div>
+          <div style="display:flex; gap:12px; align-items:center;">
+            <select id="filter-pemetaan-kelas" class="form-control" style="width:180px; font-weight:600; cursor:pointer; background-color:var(--bg-surface); border-color:var(--border);" onchange="AdminApp.renderPemetaanSiswa()">
+              <option value="">Semua Kelas</option>
+              <!-- Populated dynamically -->
+            </select>
+          </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:20px; margin-bottom:30px;">
+          <div class="card" style="padding:24px; display:flex; align-items:center; gap:20px; border-radius:16px; border:none; box-shadow:0 10px 40px -10px rgba(0,0,0,0.08); background:var(--bg-card); transition:transform 0.2s;">
+            <div style="width:56px; height:56px; border-radius:14px; background:linear-gradient(135deg, rgba(59,130,246,0.15), rgba(99,102,241,0.15)); display:flex; align-items:center; justify-content:center; color:#4f46e5;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div>
+              <div style="font-size:12px; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.8px; margin-bottom:4px;">Total Terfilter</div>
+              <div id="pemetaan-total" style="font-size:28px; font-weight:800; color:var(--text-primary); line-height:1;">0</div>
+            </div>
+          </div>
+          
+          <div class="card" style="padding:24px; display:flex; align-items:center; gap:20px; border-radius:16px; border:none; box-shadow:0 10px 40px -10px rgba(0,0,0,0.08); background:var(--bg-card); transition:transform 0.2s;">
+            <div style="width:56px; height:56px; border-radius:14px; background:linear-gradient(135deg, rgba(239,68,68,0.15), rgba(244,63,94,0.15)); display:flex; align-items:center; justify-content:center; color:#e11d48;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            </div>
+            <div>
+              <div style="font-size:12px; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.8px; margin-bottom:4px;">Broken Home</div>
+              <div id="pemetaan-broken" style="font-size:28px; font-weight:800; color:var(--text-primary); line-height:1;">0</div>
+            </div>
+          </div>
+
+          <div class="card" style="padding:24px; display:flex; align-items:center; gap:20px; border-radius:16px; border:none; box-shadow:0 10px 40px -10px rgba(0,0,0,0.08); background:var(--bg-card); transition:transform 0.2s;">
+            <div style="width:56px; height:56px; border-radius:14px; background:linear-gradient(135deg, rgba(245,158,11,0.15), rgba(251,146,60,0.15)); display:flex; align-items:center; justify-content:center; color:#d97706;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div>
+              <div style="font-size:12px; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.8px; margin-bottom:4px;">Riwayat Tgl Kelas</div>
+              <div id="pemetaan-tinggalkelas" style="font-size:28px; font-weight:800; color:var(--text-primary); line-height:1;">0</div>
+            </div>
+          </div>
+          
+          <div class="card" style="padding:24px; display:flex; align-items:center; gap:20px; border-radius:16px; border:none; box-shadow:0 10px 40px -10px rgba(0,0,0,0.08); background:var(--bg-card); transition:transform 0.2s;">
+            <div style="width:56px; height:56px; border-radius:14px; background:linear-gradient(135deg, rgba(16,185,129,0.15), rgba(52,211,153,0.15)); display:flex; align-items:center; justify-content:center; color:#059669;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+            </div>
+            <div>
+              <div style="font-size:12px; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.8px; margin-bottom:4px;">Ikut Bimbel</div>
+              <div id="pemetaan-bimbel" style="font-size:28px; font-weight:800; color:var(--text-primary); line-height:1;">0</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div style="display:flex; gap:12px; margin-bottom:24px; border-bottom: 2px solid var(--border); overflow-x:auto; padding-bottom:12px;">
+          <button id="tab-btn-demografi" class="btn btn-primary" onclick="AdminApp.switchPemetaanTab('demografi')" style="border-radius:20px; padding:8px 16px;">Demografi Dasar</button>
+          <button id="tab-btn-keluarga" class="btn" onclick="AdminApp.switchPemetaanTab('keluarga')" style="border-radius:20px; padding:8px 16px; background:var(--bg-surface); border:1px solid var(--border);">Keluarga & Ekonomi</button>
+          <button id="tab-btn-akademik" class="btn" onclick="AdminApp.switchPemetaanTab('akademik')" style="border-radius:20px; padding:8px 16px; background:var(--bg-surface); border:1px solid var(--border);">Akademik & Rencana</button>
+          <button id="tab-btn-kesehatan" class="btn" onclick="AdminApp.switchPemetaanTab('kesehatan')" style="border-radius:20px; padding:8px 16px; background:var(--bg-surface); border:1px solid var(--border);">Kesehatan Fisik</button>
+          <button id="tab-btn-sosial" class="btn" onclick="AdminApp.switchPemetaanTab('sosial')" style="border-radius:20px; padding:8px 16px; background:var(--bg-surface); border:1px solid var(--border);">Lingkungan & Sosial</button>
+        </div>
+
+        <!-- Dynamic Charts Container -->
+        <div id="dynamic-charts-container" class="charts-grid" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;">
+           <!-- JS will inject chart cards here based on the active tab -->
+        </div>
+
+      </div>
+
+      <!-- ════════════════════════════════════════════════════════════════
            PAGE: DUMMY (Sosiogram / IKMS)
       ════════════════════════════════════════════════════════════════ -->
       <div id="page-dummy-sosiogram" style="display:none">
@@ -245,6 +347,87 @@
           <div style="margin-bottom:16px;"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg></div>
           <h2 style="margin:0 0 8px 0; color:var(--text-primary);">IKMS</h2>
           <p style="color:var(--text-muted); max-width:500px; margin:0 auto; line-height:1.5;">Identifikasi Kebutuhan dan Masalah Siswa. <em>Dalam pengembangan.</em></p>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════════════════════════════
+           PAGE: BUKU INDUK SISWA
+      ════════════════════════════════════════════════════════════════ -->
+      <div id="page-buku-induk" style="display:none">
+        <div class="card" style="padding:20px; margin-bottom:20px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
+            <div>
+              <div class="section-title" style="font-size:16px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="margin-right:6px; vertical-align:-4px;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                Buku Induk Siswa
+              </div>
+              <p style="color:var(--text-muted); font-size:13px; margin-bottom:0;">Cari dan klik tombol detail pada siswa untuk melihat portofolio lengkap mereka (Biodata, Rapor, Ekskul, Prestasi).</p>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+              <select id="buku-induk-kelas-filter" class="form-control" onchange="AdminApp.renderBukuIndukList()" style="width:180px; flex-shrink:0;">
+                <option value="">— Semua Kelas —</option>
+              </select>
+              <input id="buku-induk-search" type="text" class="form-control search-input" placeholder="Cari nama atau NISN..." oninput="AdminApp.renderBukuIndukList()" style="width:240px; flex-shrink:0;">
+              <button class="btn btn-primary" onclick="AdminApp.exportBukuIndukExcel()" style="display:flex; align-items:center; gap:6px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                Unduh Data (Excel)
+              </button>
+              <button class="btn btn-primary" onclick="AdminApp.exportRaporExcel()" style="display:flex; align-items:center; gap:6px; box-shadow:0 4px 0 var(--warning);">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/><path d="M14 3v5h5M16 13H8M16 17H8M10 9H8"/></svg>
+                Unduh Nilai Rapor
+              </button>
+            </div>
+          </div>
+          <div class="table-container">
+            <table class="table" style="font-size:13px;">
+              <thead>
+                <tr>
+                  <th style="width:40px;">No</th>
+                  <th>NISN</th>
+                  <th>Nama Lengkap</th>
+                  <th>Kelas</th>
+                  <th style="text-align:center;">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-buku-induk">
+                <tr><td colspan="5" style="text-align:center; color:var(--text-muted);">Memuat data...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div><!-- end page-buku-induk -->
+
+      <!-- Drawer Overlay -->
+      <div id="buku-induk-drawer-overlay" class="drawer-overlay" onclick="AdminApp.closeBukuIndukDetail()"></div>
+      <!-- Drawer Detail Siswa -->
+      <div id="buku-induk-drawer" class="drawer">
+        <div class="drawer-header">
+          <div>
+            <h3 id="drawer-student-name" style="margin:0; font-size:18px; color:var(--text-primary);">Nama Siswa</h3>
+            <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">
+              NISN: <span id="drawer-student-nisn">-</span> &nbsp;|&nbsp; Kelas: <span id="drawer-student-kelas">-</span>
+            </div>
+          </div>
+          <button class="drawer-close-btn" onclick="AdminApp.closeBukuIndukDetail()">✕</button>
+        </div>
+        <div class="drawer-tabs">
+          <button class="drawer-tab active" onclick="AdminApp.switchDrawerTab('biodata')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Biodata
+          </button>
+          <button class="drawer-tab" onclick="AdminApp.switchDrawerTab('akademik')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>
+            Akademik
+          </button>
+          <button class="drawer-tab" onclick="AdminApp.switchDrawerTab('non-akademik')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+            Prestasi & Ekstrakurikuler
+          </button>
+        </div>
+        <div class="drawer-body">
+          <div id="drawer-biodata-view" class="drawer-content-pane active"></div>
+          <div id="drawer-akademik-view" class="drawer-content-pane"></div>
+          <div id="drawer-non-akademik-view" class="drawer-content-pane"></div>
         </div>
       </div>
 
@@ -814,13 +997,13 @@
 </div><!-- end admin-shell -->
 
 <!-- Scripts -->
-<script src="js/data-soal.js?v=14"></script>
-<script src="js/utils/storage.js?v=14"></script>
-<script src="js/utils/scoring.js?v=14"></script>
-<script src="js/utils/api.js?v=14"></script>
-<script src="js/components/ui.js?v=14"></script>
-<script src="js/pages/admin.js?v=14"></script>
-<script src="js/pages/export.js?v=14"></script>
+<script src="js/data-soal.js?v=23"></script>
+<script src="js/utils/storage.js?v=23"></script>
+<script src="js/utils/scoring.js?v=23"></script>
+<script src="js/utils/api.js?v=23"></script>
+<script src="js/components/ui.js?v=23"></script>
+<script src="js/pages/admin.js?v=23"></script>
+<script src="js/pages/export.js?v=23"></script>
 <script>
 window.addEventListener('DOMContentLoaded', () => {
   AdminApp.init();

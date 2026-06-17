@@ -109,6 +109,10 @@ async function httpStudent(method, path, body = null, token = null) {
 // API Functions
 // ──────────────────────────────────────────
 const API = {
+  get: (path) => http('GET', path),
+  post: (path, body) => http('POST', path, body),
+  put: (path, body) => http('PUT', path, body),
+  delete: (path) => http('DELETE', path),
   // ─── STUDENT API ─────────────────────────
   async studentLogin(nisn, password) {
     if (MOCK_MODE) return { token: 'student_token_123', user: { id:1, nisn, role:'student' } };

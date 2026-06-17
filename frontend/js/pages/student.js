@@ -81,10 +81,12 @@ const StudentApp = {
     header.className = 'profile-tabs-header';
     header.style.display = 'flex';
     header.style.flexWrap = 'wrap';
-    header.style.gap = '12px';
-    header.style.marginBottom = '20px';
-    header.style.borderBottom = '2px solid var(--border)';
-    header.style.paddingBottom = '12px';
+    header.style.gap = '8px';
+    header.style.marginBottom = '24px';
+    header.style.background = 'var(--bg-input)';
+    header.style.padding = '6px';
+    header.style.borderRadius = 'var(--radius-lg)';
+    header.style.boxShadow = 'inset 0 1px 3px rgba(0,0,0,0.03)';
 
     // Insert header before the first accordion
     container.insertBefore(header, accordions[0]);
@@ -97,17 +99,16 @@ const StudentApp = {
       btn.type = 'button';
       btn.className = 'profile-tab-btn ' + (index === 0 ? 'active' : '');
       btn.textContent = title;
-      btn.style.padding = '8px 12px';
-      btn.style.background = 'none';
+      btn.style.padding = '10px 16px';
+      btn.style.background = index === 0 ? 'var(--bg-surface)' : 'transparent';
       btn.style.border = 'none';
-      btn.style.borderBottom = '2px solid transparent';
-      btn.style.marginBottom = '-14px';
-      btn.style.fontWeight = index === 0 ? '700' : '600';
-      btn.style.fontSize = '14px';
-      btn.style.color = index === 0 ? 'var(--accent)' : 'var(--text-muted)';
+      btn.style.borderRadius = 'var(--radius-md)';
+      btn.style.fontWeight = '600';
+      btn.style.fontSize = '13px';
+      btn.style.color = index === 0 ? 'var(--accent)' : 'var(--text-secondary)';
       btn.style.cursor = 'pointer';
       btn.style.transition = 'all 0.2s ease';
-      if (index === 0) btn.style.borderBottomColor = 'var(--accent)';
+      if (index === 0) btn.style.boxShadow = '0 2px 4px rgba(0,0,0,0.06)';
 
       const content = acc.querySelector('.accordion-content');
       const pane = document.createElement('div');
@@ -126,9 +127,9 @@ const StudentApp = {
         // Reset all
         document.querySelectorAll('.profile-tab-btn').forEach(b => {
           b.classList.remove('active');
-          b.style.color = 'var(--text-muted)';
-          b.style.fontWeight = '600';
-          b.style.borderBottomColor = 'transparent';
+          b.style.color = 'var(--text-secondary)';
+          b.style.background = 'transparent';
+          b.style.boxShadow = 'none';
         });
         document.querySelectorAll('.profile-tab-pane').forEach(p => {
           p.classList.remove('active');
@@ -138,8 +139,9 @@ const StudentApp = {
         // Activate current
         btn.classList.add('active');
         btn.style.color = 'var(--accent)';
-        btn.style.fontWeight = '700';
-        btn.style.borderBottomColor = 'var(--accent)';
+        btn.style.background = 'var(--bg-surface)';
+        btn.style.boxShadow = '0 2px 4px rgba(0,0,0,0.06)';
+        
         pane.classList.add('active');
         pane.style.display = 'block';
       };
@@ -189,17 +191,17 @@ const StudentApp = {
 
     if (isDark) {
       document.body.classList.add('dark-theme');
-      _('student-theme-icon-sun')?.setAttribute('style', 'display:block;');
-      _('student-theme-icon-moon')?.setAttribute('style', 'display:none;');
-      // sync admin icons if on same page
-      document.getElementById('theme-icon-sun')?.setAttribute('style', 'display:block;');
-      document.getElementById('theme-icon-moon')?.setAttribute('style', 'display:none;');
-    } else {
-      document.body.classList.remove('dark-theme');
       _('student-theme-icon-sun')?.setAttribute('style', 'display:none;');
       _('student-theme-icon-moon')?.setAttribute('style', 'display:block;');
+      // sync admin icons if on same page
       document.getElementById('theme-icon-sun')?.setAttribute('style', 'display:none;');
       document.getElementById('theme-icon-moon')?.setAttribute('style', 'display:block;');
+    } else {
+      document.body.classList.remove('dark-theme');
+      _('student-theme-icon-sun')?.setAttribute('style', 'display:block;');
+      _('student-theme-icon-moon')?.setAttribute('style', 'display:none;');
+      document.getElementById('theme-icon-sun')?.setAttribute('style', 'display:block;');
+      document.getElementById('theme-icon-moon')?.setAttribute('style', 'display:none;');
     }
 
     // Update toggle switch in pengaturan page
@@ -258,13 +260,44 @@ const StudentApp = {
     overlay.classList.remove('visible');
   },
 
+  toggleNavSubmenu(id, btn) {
+    const sub = document.getElementById(id);
+    const chevron = btn.querySelector('.nav-chevron');
+    if (sub.style.display === 'none') {
+      sub.style.display = 'flex';
+      if(chevron) chevron.style.transform = 'rotate(180deg)';
+    } else {
+      sub.style.display = 'none';
+      if(chevron) chevron.style.transform = 'rotate(0deg)';
+    }
+  },
+
+  navigateToPorto(tab, btn) {
+    // 1. Route to portofolio page
+    this.navigateTo('portofolio');
+    
+    // 2. Remove active state from all items, since navigateTo sets it on the parent 
+    document.querySelectorAll('.student-nav-item').forEach(el => el.classList.remove('active'));
+    
+    // 3. Activate the clicked submenu item
+    btn.classList.add('active');
+    
+    // 4. Highlight the parent
+    const parentNav = btn.closest('.nav-group').querySelector('.student-nav-item');
+    if (parentNav) parentNav.classList.add('active');
+
+    // 5. Switch the inner tab content
+    this.switchPortoTab(tab);
+  },
+
   navigateTo(page) {
     this.currentPage = page;
     this.closeSidebar();
 
     // Update nav items
+    document.querySelectorAll('.student-nav-item').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.student-nav-item[data-student-page]').forEach(el => {
-      el.classList.toggle('active', el.dataset.studentPage === page);
+      if (el.dataset.studentPage === page) el.classList.add('active');
     });
 
     // Topbar title
@@ -273,7 +306,7 @@ const StudentApp = {
       'asesmen': 'Asesmen',
       'biodata': 'Data Diri',
       'pengaturan': 'Pengaturan',
-      'portofolio': 'Portofolio Akademik'
+      'portofolio': 'Portofolio Siswa'
     };
     const titleEl = _('student-topbar-title');
     if (titleEl) titleEl.textContent = titles[page] || 'Dashboard';
@@ -709,8 +742,9 @@ const StudentApp = {
       const btn = document.getElementById(`akademik-kelas-tab-${k}`);
       if (content) content.style.display = 'none';
       if (btn) {
-        btn.style.borderBottomColor = 'transparent';
-        btn.style.color = 'var(--text-muted)';
+        btn.style.background = 'transparent';
+        btn.style.boxShadow = 'none';
+        btn.style.color = 'var(--text-secondary)';
         btn.style.fontWeight = '600';
       }
     });
@@ -720,7 +754,8 @@ const StudentApp = {
     const activeBtn = document.getElementById(`akademik-kelas-tab-${kelasId}`);
     if (activeContent) activeContent.style.display = 'block';
     if (activeBtn) {
-      activeBtn.style.borderBottomColor = 'var(--accent)';
+      activeBtn.style.background = 'var(--bg-surface)';
+      activeBtn.style.boxShadow = '0 2px 4px rgba(0,0,0,0.06)';
       activeBtn.style.color = 'var(--accent)';
       activeBtn.style.fontWeight = '700';
     }
@@ -749,9 +784,10 @@ const StudentApp = {
       const btn = document.getElementById(`akademik-sem-tab-${s}`);
       if (content) content.style.display = 'none';
       if (btn) {
-        btn.style.borderBottomColor = 'transparent';
-        btn.style.color = 'var(--text-muted)';
-        btn.style.fontWeight = '500';
+        btn.style.background = 'transparent';
+        btn.style.boxShadow = 'none';
+        btn.style.color = 'var(--text-secondary)';
+        btn.style.fontWeight = '600';
       }
     });
 
@@ -759,7 +795,8 @@ const StudentApp = {
     const activeBtn = document.getElementById(`akademik-sem-tab-${semId}`);
     if (activeContent) activeContent.style.display = 'block';
     if (activeBtn) {
-      activeBtn.style.borderBottomColor = 'var(--accent)';
+      activeBtn.style.background = 'var(--bg-surface)';
+      activeBtn.style.boxShadow = '0 2px 4px rgba(0,0,0,0.06)';
       activeBtn.style.color = 'var(--accent)';
       activeBtn.style.fontWeight = '600';
     }
@@ -872,8 +909,9 @@ const StudentApp = {
       const content = _(`porto-content-${t}`);
       if (btn) {
         const isActive = t === tab;
-        btn.style.borderBottomColor = isActive ? 'var(--accent)' : 'transparent';
-        btn.style.color = isActive ? 'var(--accent)' : 'var(--text-muted)';
+        btn.style.background = isActive ? 'var(--bg-surface)' : 'transparent';
+        btn.style.boxShadow = isActive ? '0 2px 4px rgba(0,0,0,0.06)' : 'none';
+        btn.style.color = isActive ? 'var(--accent)' : 'var(--text-secondary)';
         btn.style.fontWeight = isActive ? '700' : '600';
       }
       if (content) content.style.display = t === tab ? 'block' : 'none';
@@ -1129,6 +1167,681 @@ const StudentApp = {
       await API.deletePrestasi(id, this.token);
       Toast.success('Prestasi dihapus');
       await this.loadPortofolio();
+    } catch (e) {
+      Spinner.hide();
+      Toast.error('Gagal: ' + e.message);
+    }
+  },
+
+  // ─────────────────────────────────────
+  // EKSTRAKURIKULER
+  // ─────────────────────────────────────
+  _ekskulBadgeColor(jenis) {
+    const map = {
+      'Ekstrakurikuler': { bg: 'rgba(59,130,246,0.12)', color: '#1d4ed8' },
+      'Organisasi':      { bg: 'rgba(16,185,129,0.12)', color: '#047857' },
+      'Kepanitiaan':     { bg: 'rgba(245,158,11,0.12)', color: '#b45309' },
+      'Lainnya':         { bg: 'rgba(100,116,139,0.1)', color: 'var(--text-muted)' }
+    };
+    return map[jenis] || map['Lainnya'];
+  },
+
+  renderEkskulList() {
+    const container = _('ekskul-list');
+    if (!container) return;
+    const data = this._ekskulData;
+
+    if (!data || !data.length) {
+      container.innerHTML = `<div style="text-align:center;padding:24px;color:var(--text-muted);font-size:13px;">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 8px;display:block;opacity:0.4"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        Belum ada Ekstrakurikuler / Organisasi yang ditambahkan.
+      </div>`;
+      return;
+    }
+
+    container.innerHTML = data.map(e => {
+      const badge = this._ekskulBadgeColor(e.jenis);
+      return `
+        <div style="display:flex;gap:14px;padding:14px;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:10px;background:var(--bg-primary);">
+          <div style="width:40px;height:40px;background:${badge.bg};border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${badge.color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+          </div>
+          <div style="flex:1;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
+              <div style="font-weight:700;font-size:14px;color:var(--text-primary);line-height:1.4;">${e.nama_ekskul || e.nama}</div>
+              <div style="display:flex;gap:4px;flex-shrink:0;">
+                <button class="btn btn-ghost btn-sm" onclick="StudentApp.editEkskul(${e.id})" title="Edit" style="padding:3px 7px;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </button>
+                <button class="btn btn-ghost btn-sm" onclick="StudentApp.deleteEkskul(${e.id})" title="Hapus" style="padding:3px 7px;color:var(--sangat-berat);">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="m19 6-.867 12.142A2 2 0 0 1 16.138 20H7.862a2 2 0 0 1-1.995-1.858L5 6m5 0V4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2"/></svg>
+                </button>
+              </div>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;">
+              <span style="padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;background:${badge.bg};color:${badge.color};">${e.jenis}</span>
+              ${e.posisi ? `<span style="padding:2px 8px;border-radius:999px;font-size:11px;background:var(--bg-input);color:var(--text-secondary);">${e.posisi}</span>` : ''}
+              ${e.tahun ? `<span style="padding:2px 8px;border-radius:999px;font-size:11px;background:var(--bg-input);color:var(--text-secondary);">${e.tahun}</span>` : ''}
+            </div>
+            ${e.keterangan ? `<div style="margin-top:6px;font-size:12px;color:var(--text-muted);line-height:1.5;">${e.keterangan}</div>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+  },
+
+  async submitEkskul() {
+    const editId = _('ekskul-edit-id').value;
+    const data = {
+      nama_ekskul: _('ekskul-nama').value.trim(),
+      jenis: _('ekskul-jenis').value,
+      posisi: _('ekskul-posisi').value.trim(),
+      tahun: _('ekskul-tahun').value.trim(),
+      keterangan: _('ekskul-keterangan').value.trim(),
+    };
+    if (!data.nama_ekskul || !data.jenis) return Toast.error('Nama dan Jenis wajib diisi');
+
+    Spinner.show();
+    try {
+      if (editId) {
+        await API.updateEkskul(editId, data, this.token);
+        Toast.success('Data berhasil diperbarui');
+      } else {
+        await API.addEkskul(data, this.token);
+        Toast.success('Data berhasil ditambahkan');
+      }
+      this.resetFormEkskul();
+      await this.loadPortofolio();
+      this.renderEkskulList(); // update immediately if loadPorto sets it
+    } catch (e) {
+      Spinner.hide();
+      Toast.error('Gagal: ' + e.message);
+    }
+  },
+
+  editEkskul(id) {
+    const e = this._ekskulData.find(x => x.id === id);
+    if (!e) return;
+    _('ekskul-edit-id').value = e.id;
+    _('ekskul-nama').value = e.nama_ekskul || e.nama;
+    _('ekskul-jenis').value = e.jenis;
+    _('ekskul-posisi').value = e.posisi || '';
+    _('ekskul-tahun').value = e.tahun || '';
+    _('ekskul-keterangan').value = e.keterangan || '';
+    
+    const submitBtn = _('form-ekskul').querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.innerHTML = '💾 Perbarui Data';
+    
+    const cancelBtn = _('btn-cancel-ekskul');
+    if (cancelBtn) cancelBtn.style.display = 'inline-flex';
+    
+    _('form-ekskul').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  },
+
+  resetFormEkskul() {
+    _('ekskul-edit-id').value = '';
+    _('form-ekskul').reset();
+    
+    const submitBtn = _('form-ekskul').querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.innerHTML = `Simpan Data`;
+    
+    const cancelBtn = _('btn-cancel-ekskul');
+    if (cancelBtn) cancelBtn.style.display = 'none';
+  },
+
+  async deleteEkskul(id) {
+    const ok = await Modal.confirm({
+      title: 'Hapus Data?',
+      body: 'Data ekstrakurikuler/organisasi ini akan dihapus permanen.',
+      confirmText: 'Hapus', danger: true
+    });
+    if (!ok) return;
+    Spinner.show();
+    try {
+      await API.deleteEkskul(id, this.token);
+      Toast.success('Data dihapus');
+      await this.loadPortofolio();
+      this.renderEkskulList();
+    } catch (e) {
+      Spinner.hide();
+      Toast.error('Gagal: ' + e.message);
+    }
+  }
+
+  // ─────────────────────────────────────
+  // EKSTRAKURIKULER
+  // ─────────────────────────────────────
+  _ekskulBadgeColor(jenis) {
+    const map = {
+      'Ekstrakurikuler': { bg: 'rgba(59,130,246,0.12)', color: '#1d4ed8' },
+      'Organisasi':      { bg: 'rgba(16,185,129,0.12)', color: '#047857' },
+      'Kepanitiaan':     { bg: 'rgba(245,158,11,0.12)', color: '#b45309' },
+      'Lainnya':         { bg: 'rgba(100,116,139,0.1)', color: 'var(--text-muted)' }
+    };
+    return map[jenis] || map['Lainnya'];
+  },
+
+  renderEkskulList() {
+    const container = _('ekskul-list');
+    if (!container) return;
+    const data = this._ekskulData;
+
+    if (!data || !data.length) {
+      container.innerHTML = `<div style="text-align:center;padding:24px;color:var(--text-muted);font-size:13px;">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 8px;display:block;opacity:0.4"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        Belum ada Ekstrakurikuler / Organisasi yang ditambahkan.
+      </div>`;
+      return;
+    }
+
+    container.innerHTML = data.map(e => {
+      const badge = this._ekskulBadgeColor(e.jenis);
+      return `
+        <div style="display:flex;gap:14px;padding:14px;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:10px;background:var(--bg-primary);">
+          <div style="width:40px;height:40px;background:${badge.bg};border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${badge.color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+          </div>
+          <div style="flex:1;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
+              <div style="font-weight:700;font-size:14px;color:var(--text-primary);line-height:1.4;">${e.nama_ekskul || e.nama}</div>
+              <div style="display:flex;gap:4px;flex-shrink:0;">
+                <button class="btn btn-ghost btn-sm" onclick="StudentApp.editEkskul(${e.id})" title="Edit" style="padding:3px 7px;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </button>
+                <button class="btn btn-ghost btn-sm" onclick="StudentApp.deleteEkskul(${e.id})" title="Hapus" style="padding:3px 7px;color:var(--sangat-berat);">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="m19 6-.867 12.142A2 2 0 0 1 16.138 20H7.862a2 2 0 0 1-1.995-1.858L5 6m5 0V4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2"/></svg>
+                </button>
+              </div>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;">
+              <span style="padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;background:${badge.bg};color:${badge.color};">${e.jenis}</span>
+              ${e.posisi ? `<span style="padding:2px 8px;border-radius:999px;font-size:11px;background:var(--bg-input);color:var(--text-secondary);">${e.posisi}</span>` : ''}
+              ${e.tahun ? `<span style="padding:2px 8px;border-radius:999px;font-size:11px;background:var(--bg-input);color:var(--text-secondary);">${e.tahun}</span>` : ''}
+            </div>
+            ${e.keterangan ? `<div style="margin-top:6px;font-size:12px;color:var(--text-muted);line-height:1.5;">${e.keterangan}</div>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+  },
+
+  async submitEkskul() {
+    const editId = _('ekskul-edit-id').value;
+    const data = {
+      nama_ekskul: _('ekskul-nama').value.trim(),
+      jenis: _('ekskul-jenis').value,
+      posisi: _('ekskul-posisi').value.trim(),
+      tahun: _('ekskul-tahun').value.trim(),
+      keterangan: _('ekskul-keterangan').value.trim(),
+    };
+    if (!data.nama_ekskul || !data.jenis) return Toast.error('Nama dan Jenis wajib diisi');
+
+    Spinner.show();
+    try {
+      if (editId) {
+        await API.updateEkskul(editId, data, this.token);
+        Toast.success('Data berhasil diperbarui');
+      } else {
+        await API.addEkskul(data, this.token);
+        Toast.success('Data berhasil ditambahkan');
+      }
+      this.resetFormEkskul();
+      await this.loadPortofolio();
+      this.renderEkskulList(); // update immediately if loadPorto sets it
+    } catch (e) {
+      Spinner.hide();
+      Toast.error('Gagal: ' + e.message);
+    }
+  },
+
+  editEkskul(id) {
+    const e = this._ekskulData.find(x => x.id === id);
+    if (!e) return;
+    _('ekskul-edit-id').value = e.id;
+    _('ekskul-nama').value = e.nama_ekskul || e.nama;
+    _('ekskul-jenis').value = e.jenis;
+    _('ekskul-posisi').value = e.posisi || '';
+    _('ekskul-tahun').value = e.tahun || '';
+    _('ekskul-keterangan').value = e.keterangan || '';
+    
+    const submitBtn = _('form-ekskul').querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.innerHTML = '💾 Perbarui Data';
+    
+    const cancelBtn = _('btn-cancel-ekskul');
+    if (cancelBtn) cancelBtn.style.display = 'inline-flex';
+    
+    _('form-ekskul').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  },
+
+  resetFormEkskul() {
+    _('ekskul-edit-id').value = '';
+    _('form-ekskul').reset();
+    
+    const submitBtn = _('form-ekskul').querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.innerHTML = `Simpan Data`;
+    
+    const cancelBtn = _('btn-cancel-ekskul');
+    if (cancelBtn) cancelBtn.style.display = 'none';
+  },
+
+  async deleteEkskul(id) {
+    const ok = await Modal.confirm({
+      title: 'Hapus Data?',
+      body: 'Data ekstrakurikuler/organisasi ini akan dihapus permanen.',
+      confirmText: 'Hapus', danger: true
+    });
+    if (!ok) return;
+    Spinner.show();
+    try {
+      await API.deleteEkskul(id, this.token);
+      Toast.success('Data dihapus');
+      await this.loadPortofolio();
+      this.renderEkskulList();
+    } catch (e) {
+      Spinner.hide();
+      Toast.error('Gagal: ' + e.message);
+    }
+  }
+
+  // ─────────────────────────────────────
+  // EKSTRAKURIKULER
+  // ─────────────────────────────────────
+  _ekskulBadgeColor(jenis) {
+    const map = {
+      'Ekstrakurikuler': { bg: 'rgba(59,130,246,0.12)', color: '#1d4ed8' },
+      'Organisasi':      { bg: 'rgba(16,185,129,0.12)', color: '#047857' },
+      'Kepanitiaan':     { bg: 'rgba(245,158,11,0.12)', color: '#b45309' },
+      'Lainnya':         { bg: 'rgba(100,116,139,0.1)', color: 'var(--text-muted)' }
+    };
+    return map[jenis] || map['Lainnya'];
+  },
+
+  renderEkskulList() {
+    const container = _('ekskul-list');
+    if (!container) return;
+    const data = this._ekskulData;
+
+    if (!data || !data.length) {
+      container.innerHTML = `<div style="text-align:center;padding:24px;color:var(--text-muted);font-size:13px;">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 8px;display:block;opacity:0.4"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        Belum ada Ekstrakurikuler / Organisasi yang ditambahkan.
+      </div>`;
+      return;
+    }
+
+    container.innerHTML = data.map(e => {
+      const badge = this._ekskulBadgeColor(e.jenis);
+      return `
+        <div style="display:flex;gap:14px;padding:14px;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:10px;background:var(--bg-primary);">
+          <div style="width:40px;height:40px;background:${badge.bg};border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${badge.color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+          </div>
+          <div style="flex:1;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
+              <div style="font-weight:700;font-size:14px;color:var(--text-primary);line-height:1.4;">${e.nama_ekskul || e.nama}</div>
+              <div style="display:flex;gap:4px;flex-shrink:0;">
+                <button class="btn btn-ghost btn-sm" onclick="StudentApp.editEkskul(${e.id})" title="Edit" style="padding:3px 7px;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </button>
+                <button class="btn btn-ghost btn-sm" onclick="StudentApp.deleteEkskul(${e.id})" title="Hapus" style="padding:3px 7px;color:var(--sangat-berat);">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="m19 6-.867 12.142A2 2 0 0 1 16.138 20H7.862a2 2 0 0 1-1.995-1.858L5 6m5 0V4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2"/></svg>
+                </button>
+              </div>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;">
+              <span style="padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;background:${badge.bg};color:${badge.color};">${e.jenis}</span>
+              ${e.posisi ? `<span style="padding:2px 8px;border-radius:999px;font-size:11px;background:var(--bg-input);color:var(--text-secondary);">${e.posisi}</span>` : ''}
+              ${e.tahun ? `<span style="padding:2px 8px;border-radius:999px;font-size:11px;background:var(--bg-input);color:var(--text-secondary);">${e.tahun}</span>` : ''}
+            </div>
+            ${e.keterangan ? `<div style="margin-top:6px;font-size:12px;color:var(--text-muted);line-height:1.5;">${e.keterangan}</div>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+  },
+
+  async submitEkskul() {
+    const editId = _('ekskul-edit-id').value;
+    const data = {
+      nama_ekskul: _('ekskul-nama').value.trim(),
+      jenis: _('ekskul-jenis').value,
+      posisi: _('ekskul-posisi').value.trim(),
+      tahun: _('ekskul-tahun').value.trim(),
+      keterangan: _('ekskul-keterangan').value.trim(),
+    };
+    if (!data.nama_ekskul || !data.jenis) return Toast.error('Nama dan Jenis wajib diisi');
+
+    Spinner.show();
+    try {
+      if (editId) {
+        await API.updateEkskul(editId, data, this.token);
+        Toast.success('Data berhasil diperbarui');
+      } else {
+        await API.addEkskul(data, this.token);
+        Toast.success('Data berhasil ditambahkan');
+      }
+      this.resetFormEkskul();
+      await this.loadPortofolio();
+      this.renderEkskulList(); // update immediately if loadPorto sets it
+    } catch (e) {
+      Spinner.hide();
+      Toast.error('Gagal: ' + e.message);
+    }
+  },
+
+  editEkskul(id) {
+    const e = this._ekskulData.find(x => x.id === id);
+    if (!e) return;
+    _('ekskul-edit-id').value = e.id;
+    _('ekskul-nama').value = e.nama_ekskul || e.nama;
+    _('ekskul-jenis').value = e.jenis;
+    _('ekskul-posisi').value = e.posisi || '';
+    _('ekskul-tahun').value = e.tahun || '';
+    _('ekskul-keterangan').value = e.keterangan || '';
+    
+    const submitBtn = _('form-ekskul').querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.innerHTML = '💾 Perbarui Data';
+    
+    const cancelBtn = _('btn-cancel-ekskul');
+    if (cancelBtn) cancelBtn.style.display = 'inline-flex';
+    
+    _('form-ekskul').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  },
+
+  resetFormEkskul() {
+    _('ekskul-edit-id').value = '';
+    _('form-ekskul').reset();
+    
+    const submitBtn = _('form-ekskul').querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.innerHTML = `Simpan Data`;
+    
+    const cancelBtn = _('btn-cancel-ekskul');
+    if (cancelBtn) cancelBtn.style.display = 'none';
+  },
+
+  async deleteEkskul(id) {
+    const ok = await Modal.confirm({
+      title: 'Hapus Data?',
+      body: 'Data ekstrakurikuler/organisasi ini akan dihapus permanen.',
+      confirmText: 'Hapus', danger: true
+    });
+    if (!ok) return;
+    Spinner.show();
+    try {
+      await API.deleteEkskul(id, this.token);
+      Toast.success('Data dihapus');
+      await this.loadPortofolio();
+      this.renderEkskulList();
+    } catch (e) {
+      Spinner.hide();
+      Toast.error('Gagal: ' + e.message);
+    }
+  }
+
+  // ─────────────────────────────────────
+  // EKSTRAKURIKULER
+  // ─────────────────────────────────────
+  _ekskulBadgeColor(jenis) {
+    const map = {
+      'Ekstrakurikuler': { bg: 'rgba(59,130,246,0.12)', color: '#1d4ed8' },
+      'Organisasi':      { bg: 'rgba(16,185,129,0.12)', color: '#047857' },
+      'Kepanitiaan':     { bg: 'rgba(245,158,11,0.12)', color: '#b45309' },
+      'Lainnya':         { bg: 'rgba(100,116,139,0.1)', color: 'var(--text-muted)' }
+    };
+    return map[jenis] || map['Lainnya'];
+  },
+
+  renderEkskulList() {
+    const container = _('ekskul-list');
+    if (!container) return;
+    const data = this._ekskulData;
+
+    if (!data || !data.length) {
+      container.innerHTML = `<div style="text-align:center;padding:24px;color:var(--text-muted);font-size:13px;">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 8px;display:block;opacity:0.4"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        Belum ada Ekstrakurikuler / Organisasi yang ditambahkan.
+      </div>`;
+      return;
+    }
+
+    container.innerHTML = data.map(e => {
+      const badge = this._ekskulBadgeColor(e.jenis);
+      return `
+        <div style="display:flex;gap:14px;padding:14px;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:10px;background:var(--bg-primary);">
+          <div style="width:40px;height:40px;background:${badge.bg};border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${badge.color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+          </div>
+          <div style="flex:1;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
+              <div style="font-weight:700;font-size:14px;color:var(--text-primary);line-height:1.4;">${e.nama_ekskul || e.nama}</div>
+              <div style="display:flex;gap:4px;flex-shrink:0;">
+                <button class="btn btn-ghost btn-sm" onclick="StudentApp.editEkskul(${e.id})" title="Edit" style="padding:3px 7px;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </button>
+                <button class="btn btn-ghost btn-sm" onclick="StudentApp.deleteEkskul(${e.id})" title="Hapus" style="padding:3px 7px;color:var(--sangat-berat);">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="m19 6-.867 12.142A2 2 0 0 1 16.138 20H7.862a2 2 0 0 1-1.995-1.858L5 6m5 0V4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2"/></svg>
+                </button>
+              </div>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;">
+              <span style="padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;background:${badge.bg};color:${badge.color};">${e.jenis}</span>
+              ${e.posisi ? `<span style="padding:2px 8px;border-radius:999px;font-size:11px;background:var(--bg-input);color:var(--text-secondary);">${e.posisi}</span>` : ''}
+              ${e.tahun ? `<span style="padding:2px 8px;border-radius:999px;font-size:11px;background:var(--bg-input);color:var(--text-secondary);">${e.tahun}</span>` : ''}
+            </div>
+            ${e.keterangan ? `<div style="margin-top:6px;font-size:12px;color:var(--text-muted);line-height:1.5;">${e.keterangan}</div>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+  },
+
+  async submitEkskul() {
+    const editId = _('ekskul-edit-id').value;
+    const data = {
+      nama_ekskul: _('ekskul-nama').value.trim(),
+      jenis: _('ekskul-jenis').value,
+      posisi: _('ekskul-posisi').value.trim(),
+      tahun: _('ekskul-tahun').value.trim(),
+      keterangan: _('ekskul-keterangan').value.trim(),
+    };
+    if (!data.nama_ekskul || !data.jenis) return Toast.error('Nama dan Jenis wajib diisi');
+
+    Spinner.show();
+    try {
+      if (editId) {
+        await API.updateEkskul(editId, data, this.token);
+        Toast.success('Data berhasil diperbarui');
+      } else {
+        await API.addEkskul(data, this.token);
+        Toast.success('Data berhasil ditambahkan');
+      }
+      this.resetFormEkskul();
+      await this.loadPortofolio();
+      this.renderEkskulList(); // update immediately if loadPorto sets it
+    } catch (e) {
+      Spinner.hide();
+      Toast.error('Gagal: ' + e.message);
+    }
+  },
+
+  editEkskul(id) {
+    const e = this._ekskulData.find(x => x.id === id);
+    if (!e) return;
+    _('ekskul-edit-id').value = e.id;
+    _('ekskul-nama').value = e.nama_ekskul || e.nama;
+    _('ekskul-jenis').value = e.jenis;
+    _('ekskul-posisi').value = e.posisi || '';
+    _('ekskul-tahun').value = e.tahun || '';
+    _('ekskul-keterangan').value = e.keterangan || '';
+    
+    const submitBtn = _('form-ekskul').querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.innerHTML = '💾 Perbarui Data';
+    
+    const cancelBtn = _('btn-cancel-ekskul');
+    if (cancelBtn) cancelBtn.style.display = 'inline-flex';
+    
+    _('form-ekskul').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  },
+
+  resetFormEkskul() {
+    _('ekskul-edit-id').value = '';
+    _('form-ekskul').reset();
+    
+    const submitBtn = _('form-ekskul').querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.innerHTML = `Simpan Data`;
+    
+    const cancelBtn = _('btn-cancel-ekskul');
+    if (cancelBtn) cancelBtn.style.display = 'none';
+  },
+
+  async deleteEkskul(id) {
+    const ok = await Modal.confirm({
+      title: 'Hapus Data?',
+      body: 'Data ekstrakurikuler/organisasi ini akan dihapus permanen.',
+      confirmText: 'Hapus', danger: true
+    });
+    if (!ok) return;
+    Spinner.show();
+    try {
+      await API.deleteEkskul(id, this.token);
+      Toast.success('Data dihapus');
+      await this.loadPortofolio();
+      this.renderEkskulList();
+    } catch (e) {
+      Spinner.hide();
+      Toast.error('Gagal: ' + e.message);
+    }
+  }
+
+  // ─────────────────────────────────────
+  // EKSTRAKURIKULER
+  // ─────────────────────────────────────
+  _ekskulBadgeColor(jenis) {
+    const map = {
+      'Ekstrakurikuler': { bg: 'rgba(59,130,246,0.12)', color: '#1d4ed8' },
+      'Organisasi':      { bg: 'rgba(16,185,129,0.12)', color: '#047857' },
+      'Kepanitiaan':     { bg: 'rgba(245,158,11,0.12)', color: '#b45309' },
+      'Lainnya':         { bg: 'rgba(100,116,139,0.1)', color: 'var(--text-muted)' }
+    };
+    return map[jenis] || map['Lainnya'];
+  },
+
+  renderEkskulList() {
+    const container = _('ekskul-list');
+    if (!container) return;
+    const data = this._ekskulData;
+
+    if (!data || !data.length) {
+      container.innerHTML = `<div style="text-align:center;padding:24px;color:var(--text-muted);font-size:13px;">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 8px;display:block;opacity:0.4"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        Belum ada Ekstrakurikuler / Organisasi yang ditambahkan.
+      </div>`;
+      return;
+    }
+
+    container.innerHTML = data.map(e => {
+      const badge = this._ekskulBadgeColor(e.jenis);
+      return `
+        <div style="display:flex;gap:14px;padding:14px;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:10px;background:var(--bg-primary);">
+          <div style="width:40px;height:40px;background:${badge.bg};border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${badge.color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+          </div>
+          <div style="flex:1;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
+              <div style="font-weight:700;font-size:14px;color:var(--text-primary);line-height:1.4;">${e.nama_ekskul || e.nama}</div>
+              <div style="display:flex;gap:4px;flex-shrink:0;">
+                <button class="btn btn-ghost btn-sm" onclick="StudentApp.editEkskul(${e.id})" title="Edit" style="padding:3px 7px;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </button>
+                <button class="btn btn-ghost btn-sm" onclick="StudentApp.deleteEkskul(${e.id})" title="Hapus" style="padding:3px 7px;color:var(--sangat-berat);">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="m19 6-.867 12.142A2 2 0 0 1 16.138 20H7.862a2 2 0 0 1-1.995-1.858L5 6m5 0V4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2"/></svg>
+                </button>
+              </div>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;">
+              <span style="padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;background:${badge.bg};color:${badge.color};">${e.jenis}</span>
+              ${e.posisi ? `<span style="padding:2px 8px;border-radius:999px;font-size:11px;background:var(--bg-input);color:var(--text-secondary);">${e.posisi}</span>` : ''}
+              ${e.tahun ? `<span style="padding:2px 8px;border-radius:999px;font-size:11px;background:var(--bg-input);color:var(--text-secondary);">${e.tahun}</span>` : ''}
+            </div>
+            ${e.keterangan ? `<div style="margin-top:6px;font-size:12px;color:var(--text-muted);line-height:1.5;">${e.keterangan}</div>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+  },
+
+  async submitEkskul() {
+    const editId = _('ekskul-edit-id').value;
+    const data = {
+      nama_ekskul: _('ekskul-nama').value.trim(),
+      jenis: _('ekskul-jenis').value,
+      posisi: _('ekskul-posisi').value.trim(),
+      tahun: _('ekskul-tahun').value.trim(),
+      keterangan: _('ekskul-keterangan').value.trim(),
+    };
+    if (!data.nama_ekskul || !data.jenis) return Toast.error('Nama dan Jenis wajib diisi');
+
+    Spinner.show();
+    try {
+      if (editId) {
+        await API.updateEkskul(editId, data, this.token);
+        Toast.success('Data berhasil diperbarui');
+      } else {
+        await API.addEkskul(data, this.token);
+        Toast.success('Data berhasil ditambahkan');
+      }
+      this.resetFormEkskul();
+      await this.loadPortofolio();
+      this.renderEkskulList(); // update immediately if loadPorto sets it
+    } catch (e) {
+      Spinner.hide();
+      Toast.error('Gagal: ' + e.message);
+    }
+  },
+
+  editEkskul(id) {
+    const e = this._ekskulData.find(x => x.id === id);
+    if (!e) return;
+    _('ekskul-edit-id').value = e.id;
+    _('ekskul-nama').value = e.nama_ekskul || e.nama;
+    _('ekskul-jenis').value = e.jenis;
+    _('ekskul-posisi').value = e.posisi || '';
+    _('ekskul-tahun').value = e.tahun || '';
+    _('ekskul-keterangan').value = e.keterangan || '';
+    
+    const submitBtn = _('form-ekskul').querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.innerHTML = '💾 Perbarui Data';
+    
+    const cancelBtn = _('btn-cancel-ekskul');
+    if (cancelBtn) cancelBtn.style.display = 'inline-flex';
+    
+    _('form-ekskul').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  },
+
+  resetFormEkskul() {
+    _('ekskul-edit-id').value = '';
+    _('form-ekskul').reset();
+    
+    const submitBtn = _('form-ekskul').querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.innerHTML = `Simpan Data`;
+    
+    const cancelBtn = _('btn-cancel-ekskul');
+    if (cancelBtn) cancelBtn.style.display = 'none';
+  },
+
+  async deleteEkskul(id) {
+    const ok = await Modal.confirm({
+      title: 'Hapus Data?',
+      body: 'Data ekstrakurikuler/organisasi ini akan dihapus permanen.',
+      confirmText: 'Hapus', danger: true
+    });
+    if (!ok) return;
+    Spinner.show();
+    try {
+      await API.deleteEkskul(id, this.token);
+      Toast.success('Data dihapus');
+      await this.loadPortofolio();
+      this.renderEkskulList();
     } catch (e) {
       Spinner.hide();
       Toast.error('Gagal: ' + e.message);
