@@ -208,6 +208,7 @@ const AdminApp = {
       'dummy-sosiogram': '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; vertical-align:-4px;"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg> Dashboard Sosiogram',
       'dummy-ikms': '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; vertical-align:-4px;"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg> Dashboard IKMS',
       'buku-induk': '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; vertical-align:-4px;"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg> Buku Induk Siswa',
+      'pemetaan': '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; vertical-align:-4px;"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" x2="9" y1="3" y2="18"/><line x1="15" x2="15" y1="6" y2="21"/></svg> Peta Demografi Siswa',
       'data-master': '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; vertical-align:-4px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Data Master Siswa',
       'laporan': '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; vertical-align:-4px;"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg> Pusat Cetak Laporan', 
       'pengaturan': '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px; vertical-align:-4px;"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg> Pengaturan Global' 
@@ -215,7 +216,33 @@ const AdminApp = {
     _('topbar-title').innerHTML = titles[page] || titles['dashboard-global'];
 
     // Show/hide content
-    const allPages = ['dashboard-global', 'home', 'dummy-sosiogram', 'dummy-ikms', 'data-master', 'laporan', 'pengaturan'];
+    const allPages = ['dashboard-global', 'home', 'dummy-sosiogram', 'dummy-ikms', 'data-master', 'laporan', 'pengaturan', 'buku-induk', 'pemetaan'];
+    allPages.forEach(p => {
+      const el = _(`page-${p}`);
+      if (el) el.style.display = p === page ? 'block' : 'none';
+    });
+
+    // Fetch data khusus page tertentu
+    if (page === 'dashboard-global') {
+      await this.loadGlobalDashboard();
+    } else if (page === 'home') {
+      await this.loadDashboardData();
+    } else if (page === 'laporan') {
+      this.populateLaporanSesi();
+    } else if (page === 'buku-induk') {
+      await this.renderBukuIndukList();
+    } else if (page === 'pemetaan') {
+      await this.renderPemetaanSiswa();
+    } else if (page === 'data-master') {
+      await this.loadMasterSiswa();
+    } else if (page === 'pengaturan') {
+      await this.loadSettings();
+    } 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg> Pengaturan Global' 
+    };
+    _('topbar-title').innerHTML = titles[page] || titles['dashboard-global'];
+
+    // Show/hide content
+    const allPages = ['dashboard-global', 'home', 'dummy-sosiogram', 'dummy-ikms', 'data-master', 'laporan', 'pengaturan', 'buku-induk', 'pemetaan'];
     allPages.forEach(p => {
       const el = _(`page-${p}`);
       if (el) el.style.display = p === page ? 'block' : 'none';
@@ -1548,6 +1575,446 @@ renderDrawerDCM(dcmData) {
         this.pemetaanCharts.push(chart);
     });
   },
+
+  // ─────────────────────────────────────
+  // BUKU INDUK SISWA
+  // ─────────────────────────────────────
+  async renderBukuIndukList() {
+    const tbody = document.getElementById('tbody-buku-induk');
+    if (!tbody) return;
+    
+    // Fetch if empty
+    if (!this.bukuIndukData || this.bukuIndukData.length === 0) {
+      try {
+        const res = await API.get('/students/master');
+        if (res && res.data && res.data.length > 0) {
+          this.bukuIndukData = res.data;
+        } else {
+          this.bukuIndukData = [];
+        }
+      } catch (e) {
+        console.error(e);
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--danger)">Gagal memuat data</td></tr>';
+        return;
+      }
+    }
+    
+    // Populate Kelas Filter if empty
+    const filterSelect = document.getElementById('buku-induk-kelas-filter');
+    if (filterSelect && filterSelect.options.length === 1) {
+      const kelasSet = new Set();
+      this.bukuIndukData.forEach(s => s.kelas && kelasSet.add(s.kelas));
+      Array.from(kelasSet).sort().forEach(k => {
+        const opt = document.createElement('option');
+        opt.value = k;
+        opt.textContent = k;
+        filterSelect.appendChild(opt);
+      });
+    }
+    
+    const filterVal = filterSelect ? filterSelect.value : '';
+    const searchVal = document.getElementById('buku-induk-search') ? document.getElementById('buku-induk-search').value.toLowerCase() : '';
+    
+    const filtered = this.bukuIndukData.filter(s => {
+      const matchKelas = !filterVal || s.kelas === filterVal;
+      const matchSearch = !searchVal || (s.nama && s.nama.toLowerCase().includes(searchVal)) || (s.nisn && s.nisn.toLowerCase().includes(searchVal));
+      return matchKelas && matchSearch;
+    });
+    
+    if (filtered.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted)">Tidak ada data siswa ditemukan.</td></tr>';
+      return;
+    }
+    
+    tbody.innerHTML = filtered.map((s, i) => `
+      <tr class="hover-row">
+        <td>${i + 1}</td>
+        <td>${s.nisn || '-'}</td>
+        <td style="font-weight:500; color:var(--text-primary);">${s.nama}</td>
+        <td><span class="badge" style="background:var(--accent-glow); color:var(--accent);">${s.kelas || '-'}</span></td>
+        <td style="text-align:center;">
+          <button class="btn btn-primary btn-sm" style="font-size:12px; padding:4px 10px;" onclick="AdminApp.openBukuIndukDetail(${s.id})">
+            👁️ Lihat Detail
+          </button>
+        </td>
+      </tr>
+    `).join('');
+  },
+
+  async openBukuIndukDetail(studentId) {
+    // Show drawer
+    const drawer = document.getElementById('buku-induk-drawer');
+    const overlay = document.getElementById('buku-induk-drawer-overlay');
+    if (!drawer || !overlay) return;
+    
+    overlay.classList.add('open');
+    drawer.classList.add('open');
+    
+    // Set default tab
+    this.switchDrawerTab('biodata');
+    
+    document.getElementById('drawer-biodata-view').innerHTML = '<div style="text-align:center;padding:20px;">Memuat data...</div>';
+    document.getElementById('drawer-akademik-view').innerHTML = '';
+    document.getElementById('drawer-non-akademik-view').innerHTML = '';
+    document.getElementById('drawer-dcm-view').innerHTML = '';
+    
+    try {
+      const res = await API.get('/students/' + studentId + '/buku-induk');
+      if (!res || !res.data) throw new Error("Data kosong");
+      
+      const data = res.data;
+      const s = data.student || {};
+      
+      document.getElementById('drawer-student-name').textContent = s.nama || '-';
+      document.getElementById('drawer-student-nisn').textContent = s.nisn || '-';
+      document.getElementById('drawer-student-kelas').textContent = s.kelas || '-';
+      
+      const biodata = {
+        nama: s.nama,
+        nisn: s.nisn,
+        kelas: s.kelas,
+        jk: s.jenis_kelamin || '-',
+        tempat_lahir: s.ttl ? s.ttl.split(',')[0] : '-',
+        tanggal_lahir: s.ttl && s.ttl.includes(',') ? s.ttl.split(',')[1].trim() : s.ttl || '-',
+        agama: '-',
+        nama_ayah: s.nama_ortu || '-',
+        pekerjaan_ayah: s.pekerjaan_ortu || '-',
+        no_hp_ortu: s.no_hp || '-'
+      };
+      
+      const dcm = {
+        is_valid: s.is_valid === 1 || s.is_valid === true,
+        pribadi: s.pribadi_pct || 0,
+        belajar: s.belajar_pct || 0,
+        sosial: s.sosial_pct || 0,
+        karir: s.karir_pct || 0
+      };
+      
+      this.renderDrawerBiodata(biodata);
+      this.renderDrawerAkademik(data.rapor || []);
+      this.renderDrawerNonAkademik(data.ekskul || [], data.prestasi || []);
+      this.renderDrawerDCM(dcm);
+      
+    } catch (e) {
+      console.error(e);
+      document.getElementById('drawer-biodata-view').innerHTML = '<div style="text-align:center;padding:20px;color:var(--danger);">Gagal memuat data detail siswa.</div>';
+    }
+  },
+
+  closeBukuIndukDetail() {
+    document.getElementById('buku-induk-drawer-overlay').classList.remove('open');
+    document.getElementById('buku-induk-drawer').classList.remove('open');
+  },
+
+  switchDrawerTab(tabId) {
+    document.querySelectorAll('.drawer-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.drawer-content-pane').forEach(p => p.classList.remove('active'));
+    
+    const targetTab = Array.from(document.querySelectorAll('.drawer-tab')).find(el => el.getAttribute('onclick').includes(tabId));
+    if (targetTab) targetTab.classList.add('active');
+    
+    const targetPane = document.getElementById(`drawer-content-${tabId}`);
+    if (targetPane) targetPane.classList.add('active');
+  },
+
+  renderDrawerBiodata(data) {
+    const container = document.getElementById('drawer-biodata-view');
+    container.innerHTML = `
+      <div class="detail-grid">
+        <div class="detail-item">
+          <div class="detail-label">Nama Lengkap</div>
+          <div class="detail-value">${data.nama || '-'}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">NISN</div>
+          <div class="detail-value">${data.nisn || '-'}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Kelas</div>
+          <div class="detail-value">${data.kelas || '-'}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Jenis Kelamin</div>
+          <div class="detail-value">${data.jk || '-'}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Tempat, Tanggal Lahir</div>
+          <div class="detail-value">${data.tempat_lahir || '-'}, ${data.tanggal_lahir || '-'}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Agama</div>
+          <div class="detail-value">${data.agama || '-'}</div>
+        </div>
+      </div>
+      
+      <h4 style="margin-top:24px; margin-bottom:12px; color:var(--text-primary);">Data Orang Tua / Wali</h4>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <div class="detail-label">Nama Ayah</div>
+          <div class="detail-value">${data.nama_ayah || '-'}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Pekerjaan Ayah</div>
+          <div class="detail-value">${data.pekerjaan_ayah || '-'}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">No. HP Orang Tua</div>
+          <div class="detail-value" style="display:flex; align-items:center; gap:8px;">
+            ${data.no_hp_ortu || '-'}
+          </div>
+        </div>
+      </div>
+    `;
+  },
+  
+  renderDrawerAkademik(raporList) {
+    const container = document.getElementById('drawer-akademik-view');
+    if (!raporList || raporList.length === 0) {
+      container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted);">Belum ada data rapor yang diinput.</div>';
+      return;
+    }
+    
+    let html = '<table class="table" style="width:100%; border-collapse:collapse; margin-top:10px;">';
+    html += '<thead><tr><th style="text-align:left; padding:8px; border-bottom:2px solid var(--border);">Semester</th><th style="text-align:right; padding:8px; border-bottom:2px solid var(--border);">Nilai Rata-Rata</th></tr></thead><tbody>';
+    raporList.forEach(r => {
+      html += `<tr><td style="padding:12px 8px; border-bottom:1px solid var(--border);">Semester ${r.semester}</td><td style="text-align:right; padding:12px 8px; border-bottom:1px solid var(--border); font-weight:bold; color:var(--accent);">${r.rata_rata || r.nilai || '-'}</td></tr>`;
+    });
+    html += '</tbody></table>';
+    
+    container.innerHTML = html;
+  },
+
+  renderDrawerNonAkademik(ekskulList, prestasiList) {
+    const container = document.getElementById('drawer-non-akademik-view');
+    container.innerHTML = `
+      <h4 style="margin-bottom:12px; color:var(--text-primary);">Ekstrakurikuler & Organisasi</h4>
+      ${(!ekskulList || ekskulList.length === 0) ? '<p style="color:var(--text-muted);font-size:14px;">Belum ada data.</p>' : ekskulList.map(e => `<div class="card" style="margin-bottom:10px;padding:12px;">${e.nama_ekskul || e.nama} - ${e.jabatan || 'Anggota'}</div>`).join('')}
+      
+      <h4 style="margin-top:24px; margin-bottom:12px; color:var(--text-primary);">Prestasi & Penghargaan</h4>
+      ${(!prestasiList || prestasiList.length === 0) ? '<p style="color:var(--text-muted);font-size:14px;">Belum ada data.</p>' : prestasiList.map(p => `<div class="card" style="margin-bottom:10px;padding:12px;">${p.nama_prestasi || p.nama} (${p.tingkat || 'Sekolah'})</div>`).join('')}
+    `;
+  },
+  
+  renderDrawerDCM(dcmData) {
+    const container = document.getElementById('drawer-dcm-view');
+    if (!dcmData || (!dcmData.pribadi && !dcmData.belajar && !dcmData.sosial && !dcmData.karir)) {
+      container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted);">Belum mengisi kuesioner DCM.</div>';
+      return;
+    }
+    
+    let highestVal = 0;
+    let highestCat = '-';
+    const cats = [
+      { name: 'Pribadi', val: dcmData.pribadi },
+      { name: 'Belajar', val: dcmData.belajar },
+      { name: 'Sosial', val: dcmData.sosial },
+      { name: 'Karir', val: dcmData.karir }
+    ];
+    cats.forEach(c => {
+      if(c.val > highestVal) {
+        highestVal = c.val;
+        highestCat = c.name;
+      }
+    });
+
+    container.innerHTML = `
+      <div class="card" style="padding:16px; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <div style="font-size:12px; color:var(--text-muted);">Status Pengisian</div>
+          <div style="font-weight:bold; font-size:16px;">${dcmData.is_valid ? '<span style="color:var(--success);">Telah Mengisi (Valid)</span>' : '<span style="color:var(--danger);">Belum Valid</span>'}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:12px; color:var(--text-muted);">Masalah Dominan</div>
+          <div style="font-weight:bold; font-size:16px; color:var(--danger);">Masalah ${highestCat}</div>
+        </div>
+      </div>
+      
+      <h4 style="margin-bottom:12px;">Persentase Masalah</h4>
+      <div class="detail-grid">
+        <div class="detail-item" style="text-align:center;">
+          <div class="detail-label">Pribadi</div>
+          <div class="detail-value" style="font-size:24px;">${dcmData.pribadi}%</div>
+        </div>
+        <div class="detail-item" style="text-align:center;">
+          <div class="detail-label">Belajar</div>
+          <div class="detail-value" style="font-size:24px;">${dcmData.belajar}%</div>
+        </div>
+        <div class="detail-item" style="text-align:center;">
+          <div class="detail-label">Sosial</div>
+          <div class="detail-value" style="font-size:24px;">${dcmData.sosial}%</div>
+        </div>
+        <div class="detail-item" style="text-align:center;">
+          <div class="detail-label">Karir</div>
+          <div class="detail-value" style="font-size:24px;">${dcmData.karir}%</div>
+        </div>
+      </div>
+    `;
+  }
+
+  // ─────────────────────────────────────
+  // PEMETAAN DEMOGRAFI
+  // ─────────────────────────────────────
+  switchPemetaanTab(tabId) {
+    const btnIds = ['tab-btn-demografi', 'tab-btn-keluarga', 'tab-btn-akademik', 'tab-btn-kesehatan', 'tab-btn-sosial'];
+    btnIds.forEach(id => {
+      const btn = _(id);
+      if (btn) {
+        btn.classList.remove('btn-primary');
+        btn.style.background = 'var(--bg-surface)';
+        btn.style.borderColor = 'var(--border)';
+        btn.style.color = 'var(--text-primary)';
+        if (id === `tab-btn-${tabId}`) {
+          btn.classList.add('btn-primary');
+          btn.style.background = '';
+          btn.style.borderColor = '';
+          btn.style.color = '';
+        }
+      }
+    });
+    this.activePemetaanTab = tabId;
+    this.renderPemetaanSiswa();
+  },
+
+  autoAggregate(students, key, overrides = null) {
+    const counts = {};
+    students.forEach(s => {
+      let p = {};
+      try { if (s.data_pribadi) p = typeof s.data_pribadi === 'string' ? JSON.parse(s.data_pribadi) : s.data_pribadi; } catch (e) {}
+      
+      let val = p[key] || '';
+      if (typeof val === 'string') val = val.trim();
+      
+      if (overrides) {
+        let overriden = false;
+        for (const [newKey, conditions] of Object.entries(overrides)) {
+          if (conditions.some(cond => val.toLowerCase().includes(cond.toLowerCase()))) {
+            val = newKey;
+            overriden = true;
+            break;
+          }
+        }
+        if (!overriden && !val) val = 'Tidak Mengisi';
+      } else {
+        if (!val || val === '— Pilih —') val = 'Tidak Mengisi';
+      }
+      
+      counts[val] = (counts[val] || 0) + 1;
+    });
+    return counts;
+  },
+
+  renderPemetaanSiswa() {
+    if (!this.activePemetaanTab) this.activePemetaanTab = 'demografi';
+    const tabId = this.activePemetaanTab;
+    const filterEl = _('filter-pemetaan-kelas');
+
+    const selectedClass = filterEl ? filterEl.value : '';
+    const filteredStudents = selectedClass 
+      ? this.bukuIndukData.filter(s => s.kelas === selectedClass)
+      : this.bukuIndukData;
+
+    if (_('pemetaan-total')) _('pemetaan-total').innerText = filteredStudents.length;
+
+    // Dummy logic for cards
+    if (_('pemetaan-broken')) _('pemetaan-broken').innerText = '0';
+    if (_('pemetaan-yatim')) _('pemetaan-yatim').innerText = '0';
+    if (_('pemetaan-khusus')) _('pemetaan-khusus').innerText = '26'; // placeholder
+    
+    // Clear old charts
+    if(this.pemetaanCharts) {
+        this.pemetaanCharts.forEach(c => c.destroy());
+    }
+    this.pemetaanCharts = [];
+    
+    const container = _('pemetaan-charts-container');
+    if(!container) return;
+    
+    let configs = [];
+    
+    if (tabId === 'demografi') {
+        const agamaCounts = this.autoAggregate(filteredStudents, 'agama');
+        configs.push({ title: 'Agama', data: agamaCounts, type: 'pie' });
+    } else if (tabId === 'keluarga') {
+        const pddCounts = this.autoAggregate(filteredStudents, 'pendidikan_ayah');
+        configs.push({ title: 'Pendidikan Ayah', data: pddCounts, type: 'bar' });
+        const hslCounts = this.autoAggregate(filteredStudents, 'penghasilan_ayah');
+        configs.push({ title: 'Penghasilan Ayah', data: hslCounts, type: 'bar' });
+    } else if (tabId === 'akademik') {
+        const ekskulCounts = this.autoAggregate(filteredStudents, 'ekstrakurikuler');
+        configs.push({ title: 'Minat Ekstrakurikuler', data: ekskulCounts, type: 'bar' });
+    } else if (tabId === 'sosial') {
+        const jarakCounts = this.autoAggregate(filteredStudents, 'jarak_ke_sekolah');
+        configs.push({ title: 'Jarak ke Sekolah', data: jarakCounts, type: 'pie' });
+    } else if (tabId === 'kesehatan') {
+        configs.push({ title: 'Kesehatan Fisik', data: {'Sehat': filteredStudents.length}, type: 'pie' });
+    }
+
+    container.innerHTML = '';
+    configs.forEach((cfg, idx) => {
+        const col = document.createElement('div');
+        col.className = 'col-md-6';
+        col.style.marginBottom = '20px';
+        
+        const card = document.createElement('div');
+        card.className = 'card fadeUp';
+        card.style.background = 'var(--bg-card)';
+        card.style.border = '1px solid var(--border)';
+        card.style.padding = '16px';
+        card.style.borderRadius = '8px';
+        
+        const title = document.createElement('div');
+        title.style.fontWeight = '600';
+        title.style.marginBottom = '12px';
+        title.innerText = cfg.title;
+        
+        const canvas = document.createElement('canvas');
+        canvas.id = 'pemetaan-chart-' + idx;
+        
+        card.appendChild(title);
+        card.appendChild(canvas);
+        col.appendChild(card);
+        container.appendChild(col);
+        
+        const ctx = canvas.getContext('2d');
+        const labels = Object.keys(cfg.data);
+        const data = Object.values(cfg.data);
+        
+        const chart = new Chart(ctx, {
+            type: cfg.type,
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Jumlah',
+                    data: data,
+                    backgroundColor: [
+                        '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: { color: getComputedStyle(document.body).getPropertyValue('--text-primary').trim() }
+                    }
+                },
+                scales: cfg.type === 'bar' ? {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-primary').trim() }
+                    },
+                    x: {
+                        ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-primary').trim() }
+                    }
+                } : {}
+            }
+        });
+        this.pemetaanCharts.push(chart);
+    });
+  }
 
 };
 window.AdminApp = AdminApp;
