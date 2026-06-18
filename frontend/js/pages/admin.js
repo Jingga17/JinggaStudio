@@ -51,24 +51,28 @@ const AdminApp = {
   // THEME MANAGEMENT
   // ─────────────────────────────────────
   initTheme() {
-    const savedTheme = localStorage.getItem('dcm_theme') || 'system';
+    let savedTheme = 'system';
+    try { savedTheme = localStorage.getItem('dcm_theme') || 'system'; } catch(e) {}
     this.applyTheme(savedTheme);
 
     // Listen to system theme changes if using system mode
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-      if (localStorage.getItem('dcm_theme') === 'system') {
-        this.applyTheme('system');
-      }
-    });
+    try {
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        let t = 'system';
+        try { t = localStorage.getItem('dcm_theme') || 'system'; } catch(e) {}
+        if (t === 'system') this.applyTheme('system');
+      });
+    } catch(e) {}
   },
 
   toggleTheme() {
-    let currentTheme = localStorage.getItem('dcm_theme') || 'system';
+    let currentTheme = 'system';
+    try { currentTheme = localStorage.getItem('dcm_theme') || 'system'; } catch(e) {}
     if (currentTheme === 'system') {
       currentTheme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    localStorage.setItem('dcm_theme', newTheme);
+    try { localStorage.setItem('dcm_theme', newTheme); } catch(e) {}
     this.applyTheme(newTheme);
   },
 
@@ -2349,8 +2353,4 @@ renderDrawerDCM(dcmData) {
         <button class="btn btn-primary" disabled>Upload Data</button>
       </div>
     `, () => {
-      Modal.hide();
-    });
-  }
-};
-window.AdminApp = AdminApp;
+    });\r\n  }\r\n};\r\nwindow.AdminApp = AdminApp;\r\n\r\n// ── Auto-init: jalankan segera setelah admin.js dimuat ──\r\n// Tidak bergantung pada DOMContentLoaded dari HTML luar\r\n(function() {\r\n  function runInit() {\r\n    // Pastikan belum diinisialisasi dari HTML\r\n    if (window.__adminInitDone) return;\r\n    window.__adminInitDone = true;\r\n    try { AdminApp.init(); } catch(e) { console.error('[AdminApp] init error:', e); }\r\n  }\r\n  if (document.readyState === 'loading') {\r\n    document.addEventListener('DOMContentLoaded', runInit);\r\n  } else {\r\n    runInit();\r\n  }\r\n})();

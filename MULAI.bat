@@ -4,64 +4,54 @@ color 0A
 
 echo.
 echo  ============================================================
-echo    Resilien DCM — Setup Otomatis ^& Jalankan Server
+echo    Resilien DCM — Mulai Aplikasi
 echo  ============================================================
 echo.
 
 cd /d "%~dp0"
 
-REM ── Cek Node.js tersedia ──
+REM ── Cek Node.js ──
 where node >nul 2>&1
 if %errorlevel% neq 0 (
+  color 0C
   echo [ERROR] Node.js tidak ditemukan!
-  echo Silakan install Node.js dari https://nodejs.org
+  echo Silakan install dari: https://nodejs.org
   pause
   exit /b 1
 )
 
-echo [OK] Node.js ditemukan.
+for /f "tokens=*" %%i in ('node --version') do set NODEVER=%%i
+echo [OK] Node.js %NODEVER% ditemukan.
 echo.
 
-REM ── Install dependensi backend jika belum ada ──
-if not exist "backend\node_modules\express" (
-  echo [SETUP] Menginstall dependensi backend...
-  cd backend
-  call npm install --legacy-peer-deps
-  if %errorlevel% neq 0 (
-    echo [ERROR] npm install gagal! Cek koneksi internet.
-    cd ..
-    pause
-    exit /b 1
-  )
-  cd ..
-  echo [OK] Dependensi backend siap!
-  echo.
+REM ── Jalankan Static Server di jendela sendiri ──
+echo [1/2] Menyalakan Static Server di port 8080...
+start "Resilien Static Server" cmd /k "node server.js"
+
+REM ── Tunggu sebentar lalu jalankan Backend ──
+timeout /t 2 /nobreak >nul
+
+REM ── Cek apakah node_modules sudah ada ──
+if exist "backend\node_modules\express" (
+  echo [2/2] Menyalakan Backend API di port 3000...
+  start "Resilien Backend API" cmd /k "cd backend && node src/index.js"
+) else (
+  echo [2/2] Install dependensi backend dulu...
+  start "Resilien Backend Setup" cmd /k "cd backend && npm install --legacy-peer-deps && node src/index.js"
 )
 
-REM ── Download vendor libraries jika belum ada ──
-if not exist "frontend\vendor\chart.umd.min.js" (
-  echo [SETUP] Mengunduh library frontend ke vendor\...
-  echo         Ini butuh koneksi internet sebentar...
-  node download-vendor.js
-  echo.
-)
-
+REM ── Tunggu server siap lalu buka browser ──
+timeout /t 3 /nobreak >nul
 echo.
 echo  ============================================================
-echo    Menyalakan Server Resilien di http://localhost:3000
+echo    Membuka browser...
 echo  ============================================================
 echo.
-echo  PENTING: Jangan tutup jendela ini selama menggunakan aplikasi!
-echo  Tekan Ctrl+C untuk menghentikan server.
+start "" http://localhost:8080/admin.html
+
 echo.
-
-REM ── Buka browser setelah 3 detik ──
-start "" /B cmd /c "timeout /t 3 /nobreak >nul && start http://localhost:3000/admin.html"
-
-REM ── Jalankan backend dengan DATABASE_PATH yang benar ──
-cd backend
-set DATABASE_PATH=%~dp0backend\database.sqlite
-set NODE_ENV=development
-node src/index.js
-
-pause
+echo  [INFO] Dua jendela server sudah terbuka.
+echo  [INFO] Jangan tutup jendela CMD manapun!
+echo.
+echo  Tekan Enter untuk menutup jendela ini (server tetap jalan).
+pause >nul

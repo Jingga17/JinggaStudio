@@ -13,16 +13,16 @@
       to { opacity: 1; transform: translateY(0); }
     }
   </style>
-  <!-- Vendor Libraries (lokal dulu, CDN sebagai fallback) -->
-  <script src="vendor/html2canvas.min.js" onerror="var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';document.head.appendChild(s)"></script>
-  <script src="vendor/jspdf.umd.min.js" onerror="var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';document.head.appendChild(s)"></script>
-  <script src="vendor/chart.umd.min.js" onerror="var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js';document.head.appendChild(s)"></script>
+  <!-- PDF Generation Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" crossorigin="anonymous"></script>
   <!-- SheetJS untuk Export Excel -->
-  <script src="vendor/xlsx.full.min.js" onerror="var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';document.head.appendChild(s)"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" crossorigin="anonymous"></script>
   <!-- JSZip untuk Bulk ZIP -->
-  <script src="vendor/jszip.min.js" onerror="var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js';document.head.appendChild(s)"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js" crossorigin="anonymous"></script>
   <!-- FileSaver untuk trigger download -->
-  <script src="vendor/FileSaver.min.js" onerror="var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js';document.head.appendChild(s)"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js" crossorigin="anonymous"></script>
 </head>
 <body>
 
@@ -1004,8 +1004,12 @@
 <script src="js/pages/admin.js?v=27"></script>
 <script src="js/pages/export.js?v=27"></script>
 <script>
-window.addEventListener('DOMContentLoaded', () => {
+// Jalankan init() segera kalau DOM sudah siap, jika belum tunggu event
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => { AdminApp.init(); });
+} else {
   AdminApp.init();
+}
 
   // Live preview pengaturan
   const fields = {
