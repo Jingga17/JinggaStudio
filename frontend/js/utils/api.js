@@ -5,7 +5,7 @@
  */
 
 const API_BASE = '/api';
-const MOCK_MODE = false;
+const MOCK_MODE = true; // Mode demo — backend tidak diperlukan
 
 // ──────────────────────────────────────────
 // MOCK DATA (Demo tanpa backend)
