@@ -1,6 +1,7 @@
 /**
  * Resilien — Admin App
  * Login, Home (Dashboard), Cetak Laporan, Pengaturan
+ * CACHE BUSTED: 2026-06-18
  */
 
 const AdminApp = {
@@ -1854,7 +1855,7 @@ renderDrawerDCM(dcmData) {
         </div>
       </div>
     `;
-  }
+  },
 
   // ─────────────────────────────────────
   // PEMETAAN DEMOGRAFI
@@ -2353,4 +2354,30 @@ renderDrawerDCM(dcmData) {
         <button class="btn btn-primary" disabled>Upload Data</button>
       </div>
     `, () => {
-    });\r\n  }\r\n};\r\nwindow.AdminApp = AdminApp;\r\n\r\n// ── Auto-init: jalankan segera setelah admin.js dimuat ──\r\n// Tidak bergantung pada DOMContentLoaded dari HTML luar\r\n(function() {\r\n  function runInit() {\r\n    // Pastikan belum diinisialisasi dari HTML\r\n    if (window.__adminInitDone) return;\r\n    window.__adminInitDone = true;\r\n    try { AdminApp.init(); } catch(e) { console.error('[AdminApp] init error:', e); }\r\n  }\r\n  if (document.readyState === 'loading') {\r\n    document.addEventListener('DOMContentLoaded', runInit);\r\n  } else {\r\n    runInit();\r\n  }\r\n})();
+      Modal.hide();
+    });
+  }
+};
+window.AdminApp = AdminApp;
+
+// Auto-init
+(function() {
+  function runInit() {
+    if (window.__adminInitDone) return;
+    window.__adminInitDone = true;
+    try { 
+      AdminApp.init(); 
+    } catch(e) { 
+      console.error('[AdminApp] init error:', e); 
+      const errDiv = document.createElement('div');
+      errDiv.style.cssText = 'color:red; position:fixed; top:150px; left:10px; z-index:99999; background:white; padding:15px; border:3px solid red; font-family:monospace; max-width:90%;';
+      errDiv.innerHTML = '<strong>INIT ERROR:</strong> ' + e.message + '<br><pre>' + e.stack + '</pre>';
+      document.body.appendChild(errDiv);
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', runInit);
+  } else {
+    runInit();
+  }
+})();

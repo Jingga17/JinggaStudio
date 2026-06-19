@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <script>
+  window.onerror = function(message, source, lineno, colno, error) {
+    const errDiv = document.createElement('div');
+    errDiv.style.cssText = 'color:red; position:fixed; top:10px; left:10px; z-index:99999; background:white; padding:15px; border:3px solid red; font-family:monospace; max-width:90%; box-shadow:0 0 10px rgba(0,0,0,0.5);';
+    errDiv.innerHTML = '<strong>GLOBAL ERROR:</strong> ' + message + '<br><small>at ' + source + ':' + lineno + ':' + colno + '</small>' + (error && error.stack ? '<br><pre style="margin-top:5px;max-height:200px;overflow:auto;">' + error.stack + '</pre>' : '');
+    document.body.appendChild(errDiv);
+    return false;
+  };
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin — Resilien · Platform Asesmen BK</title>
@@ -68,7 +77,7 @@
       <div style="color: var(--text-secondary); font-size:14px; font-style: italic;">"Unburdening the Resilient Counselor."</div>
     </div>
 
-    <form id="login-form" class="login-form" novalidate>
+    <form id="login-form" class="login-form" novalidate onsubmit="event.preventDefault(); AdminApp && AdminApp.doLogin();">
       <div class="form-group">
         <label class="form-label" for="login-user">Username</label>
         <input id="login-user" type="text" class="form-control" placeholder="Masukkan username" autocomplete="username" required>
@@ -996,19 +1005,24 @@
 </div><!-- end admin-shell -->
 
 <!-- Scripts -->
-<script src="js/data-soal.js?v=27"></script>
-<script src="js/utils/storage.js?v=27"></script>
-<script src="js/utils/scoring.js?v=27"></script>
-<script src="js/utils/api.js?v=27"></script>
-<script src="js/components/ui.js?v=27"></script>
-<script src="js/pages/admin.js?v=27"></script>
-<script src="js/pages/export.js?v=27"></script>
+<script src="js/data-soal.js"></script>
+<script src="js/utils/storage.js"></script>
+<script src="js/utils/scoring.js"></script>
+<script src="js/utils/api.js"></script>
+<script src="js/components/ui.js"></script>
+<script src="js/pages/admin.js"></script>
+<script src="js/pages/export.js"></script>
 <script>
-// Jalankan init() segera kalau DOM sudah siap, jika belum tunggu event
+// Jalankan init() hanya jika belum dijalankan oleh admin.js sendiri
+function _safeAdminInit() {
+  if (window.__adminInitDone) return;
+  window.__adminInitDone = true;
+  try { AdminApp.init(); } catch(e) { console.error('[AdminApp] init error:', e); }
+}
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => { AdminApp.init(); });
+  document.addEventListener('DOMContentLoaded', _safeAdminInit);
 } else {
-  AdminApp.init();
+  _safeAdminInit();
 }
 
   // Live preview pengaturan
@@ -1027,7 +1041,15 @@ if (document.readyState === 'loading') {
   });
 
   // Init upload boxes
-  AdminApp.initUploadBoxes();
+  if (typeof AdminApp !== 'undefined') {
+    AdminApp.initUploadBoxes();
+  } else {
+    const scripts = Array.from(document.scripts).map(s => s.src);
+    const errDiv = document.createElement('div');
+    errDiv.style.cssText = 'color:blue; position:fixed; top:250px; left:10px; z-index:99999; background:white; padding:15px; border:3px solid blue; font-family:monospace; max-width:90%;';
+    errDiv.innerHTML = '<strong>AdminApp is UNDEFINED. Loaded scripts:</strong><br>' + scripts.join('<br>');
+    document.body.appendChild(errDiv);
+  }
 
   // Resize charts on window resize
   let resizeTimer;
@@ -1037,7 +1059,6 @@ if (document.readyState === 'loading') {
       if (AdminApp.chartDataCache) AdminApp.renderCharts(AdminApp.chartDataCache);
     }, 200);
   });
-});
 </script>
 </body>
 </html>
