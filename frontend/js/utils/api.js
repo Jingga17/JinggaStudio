@@ -5,7 +5,7 @@
  */
 
 const API_BASE = '/api';
-const MOCK_MODE = true; // Mode demo — backend tidak diperlukan
+const MOCK_MODE = false; // Mode demo dinonaktifkan — menggunakan backend asli
 
 // ──────────────────────────────────────────
 // MOCK DATA (Demo tanpa backend)
@@ -109,8 +109,30 @@ async function httpStudent(method, path, body = null, token = null) {
 // API Functions
 // ──────────────────────────────────────────
 const API = {
-  get: (path) => http('GET', path),
-  post: (path, body) => http('POST', path, body),
+  get: async (path) => {
+    if (MOCK_MODE) {
+      if (path === '/students/master') {
+        return { data: MOCK.students };
+      }
+      if (path.startsWith('/students/') && path.endsWith('/buku-induk')) {
+        const idStr = path.split('/')[2];
+        const student = MOCK.students.find(s => s.id === parseInt(idStr));
+        return { data: student ? { ...student, riwayat: [] } : null };
+      }
+    }
+    return http('GET', path);
+  },
+  post: async (path, body) => {
+    if (MOCK_MODE) {
+      if (path.match(/^\/students\/master\/\d+\/reset-password$/)) {
+        return { status: 'success', message: 'Password berhasil direset (MOCK)' };
+      }
+      if (path.match(/^\/students\/master\/\d+\/delete$/)) {
+        return { status: 'success', message: 'Data siswa berhasil dihapus (MOCK)' };
+      }
+    }
+    return http('POST', path, body);
+  },
   put: (path, body) => http('PUT', path, body),
   delete: (path) => http('DELETE', path),
   // ─── STUDENT API ─────────────────────────

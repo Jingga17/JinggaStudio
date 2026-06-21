@@ -2094,7 +2094,7 @@ renderDrawerDCM(dcmData) {
           </button>
         </td>
         <td style="text-align:center;">
-          <button class="btn btn-sm" style="background:var(--danger);color:white;border:none" onclick="AdminApp.deleteMasterSiswa(${s.id}, '${s.nama.replace(/'/g, "\\'")}')">
+          <button class="btn btn-sm btn-danger" onclick="AdminApp.deleteMasterSiswa(${s.id}, '${s.nama.replace(/'/g, "\\'")}')">
             Hapus
           </button>
         </td>
@@ -2211,7 +2211,7 @@ renderDrawerDCM(dcmData) {
           </button>
         </td>
         <td style="text-align:center;">
-          <button class="btn btn-sm" style="background:var(--danger);color:white;border:none" onclick="AdminApp.deleteMasterSiswa(${s.id}, '${s.nama.replace(/'/g, "\\'")}')">
+          <button class="btn btn-sm btn-danger" onclick="AdminApp.deleteMasterSiswa(${s.id}, '${s.nama.replace(/'/g, "\\'")}')">
             Hapus
           </button>
         </td>
@@ -2313,7 +2313,7 @@ renderDrawerDCM(dcmData) {
           </button>
         </td>
         <td style="text-align:center;">
-          <button class="btn btn-sm" style="background:var(--danger);color:white;border:none" onclick="AdminApp.deleteMasterSiswa(${s.id}, '${s.nama.replace(/'/g, "\\'")}')">
+          <button class="btn btn-sm btn-danger" onclick="AdminApp.deleteMasterSiswa(${s.id}, '${s.nama.replace(/'/g, "\\'")}')">
             Hapus
           </button>
         </td>
