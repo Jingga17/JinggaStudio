@@ -59,6 +59,8 @@ async function seedFullDummyData() {
                 ibu_penghasilan: ['Tidak Berpenghasilan', 'Rp 3.000.000'][Math.floor(Math.random() * 2)],
                 ibu_nohp: '081234567891',
                 status_ortu: 'Lengkap',
+                status_keluarga: Math.random() > 0.8 ? 'Broken Home' : 'Utuh',
+                yatim_piatu: Math.random() > 0.9 ? 'Yatim' : 'Tidak',
                 gol_darah: ['A', 'B', 'AB', 'O'][Math.floor(Math.random() * 4)],
                 tinggi: String(150 + Math.floor(Math.random() * 30)),
                 berat: String(45 + Math.floor(Math.random() * 30)),
@@ -171,14 +173,32 @@ async function seedFullDummyData() {
             }
             
             // Answers (220)
-            const questions = await query("SELECT id FROM questions ORDER BY id");
+            const questions = await query("SELECT * FROM questions ORDER BY id");
             
             await new Promise((resolve, reject) => {
                 db.serialize(() => {
                     db.run("BEGIN TRANSACTION");
                     const stmt = db.prepare("INSERT INTO answers (student_id, question_id, jawaban) VALUES (?, ?, ?)");
+                    const consistencyMemory = {};
+                    
                     for (const q of questions) {
-                        const jaw = Math.random() > 0.5 ? 'ya' : 'tidak';
+                        let jaw = 'tidak';
+                        if (q.tipe_soal === 'Lie Scale') {
+                            jaw = 'tidak';
+                        } else if (q.tipe_soal === 'Consistency Check' && q.consistency_pair_id) {
+                            if (consistencyMemory[q.consistency_pair_id]) {
+                                jaw = consistencyMemory[q.consistency_pair_id] === 'ya' ? 'tidak' : 'ya';
+                            } else {
+                                jaw = Math.random() > 0.5 ? 'ya' : 'tidak';
+                                consistencyMemory[q.consistency_pair_id] = jaw;
+                            }
+                        } else {
+                            if (q.arah_jawaban === 'Positive') {
+                                jaw = Math.random() > 0.2 ? 'ya' : 'tidak';
+                            } else {
+                                jaw = Math.random() > 0.8 ? 'ya' : 'tidak';
+                            }
+                        }
                         stmt.run(student.id, q.id, jaw);
                     }
                     stmt.finalize();

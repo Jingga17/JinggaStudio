@@ -87,34 +87,11 @@ try {
         const txt1 = fs.readFileSync(csvPath1, 'utf8');
         const txt2 = fs.readFileSync(csvPath2, 'utf8');
 
-        function parseCSV(text) {
-            const lines = text.trim().split('\n');
-            if (lines.length === 0) return [];
-            const headers = lines[0].split(',').map(h => h.trim());
-            const result = [];
-            for (let i = 1; i < lines.length; i++) {
-                let line = lines[i];
-                if (!line.trim()) continue;
-                let row = [];
-                let curr = '';
-                let inQuotes = false;
-                for (let j = 0; j < line.length; j++) {
-                    let c = line[j];
-                    if (c === '"') inQuotes = !inQuotes;
-                    else if (c === ',' && !inQuotes) { row.push(curr.replace(/\r/g, '')); curr = ''; }
-                    else curr += c;
-                }
-                row.push(curr.replace(/\r/g, ''));
-                let obj = {};
-                headers.forEach((h, idx) => obj[h.replace(/\r/g, '')] = row[idx]);
-                result.push(obj);
-            }
-            return result;
-        }
-
+        const Papa = require('papaparse');
+        
         const data = {
-            bidang: parseCSV(txt1),
-            subBidang: parseCSV(txt2)
+            bidang: Papa.parse(txt1, { header: true, skipEmptyLines: true }).data,
+            subBidang: Papa.parse(txt2, { header: true, skipEmptyLines: true }).data
         };
 
         const jsContent = 'const DATA_ANALISIS_CSV = ' + JSON.stringify(data, null, 2) + ';';

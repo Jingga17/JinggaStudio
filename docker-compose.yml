@@ -50,7 +50,7 @@ services:
       # data-analisis.js yang digenerate backend
       - dcm_frontend_js:/usr/share/nginx/html/js_shared:ro
       # Nginx config
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       backend:
         condition: service_healthy
